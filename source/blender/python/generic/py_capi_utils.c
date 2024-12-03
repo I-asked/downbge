@@ -485,7 +485,6 @@ PyObject *PyC_ExceptionBuffer(void)
 
 	PyErr_Clear();
 
-	PyErr_Restore(error_type, error_value, error_traceback);
 	return string_io_buf;
 
 
