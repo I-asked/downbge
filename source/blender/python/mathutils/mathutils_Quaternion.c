@@ -933,41 +933,11 @@ static PyMappingMethods Quaternion_AsMapping = {
 };
 
 static PyNumberMethods Quaternion_NumMethods = {
-	(binaryfunc)    Quaternion_add, /*nb_add*/
-	(binaryfunc)    Quaternion_sub, /*nb_subtract*/
-	(binaryfunc)    Quaternion_mul, /*nb_multiply*/
-	NULL,
-	NULL,                           /*nb_remainder*/
-	NULL,                           /*nb_divmod*/
-	NULL,                           /*nb_power*/
-	(unaryfunc)     Quaternion_neg, /*nb_negative*/
-	(unaryfunc)     Quaternion_copy,/*tp_positive*/
-	(unaryfunc)     0,  /*tp_absolute*/
-	(inquiry)   0,      /*tp_bool*/
-	(unaryfunc) 0,      /*nb_invert*/
-	NULL,               /*nb_lshift*/
-	(binaryfunc)0,      /*nb_rshift*/
-	NULL,               /*nb_and*/
-	NULL,               /*nb_xor*/
-	NULL,               /*nb_or*/
-	NULL,               /*nb_int*/
-	NULL,               /*nb_reserved*/
-	NULL,               /*nb_float*/
-	NULL,               /* nb_inplace_add */
-	NULL,               /* nb_inplace_subtract */
-	NULL,               /* nb_inplace_multiply */
-	NULL,               /* nb_inplace_remainder */
-	NULL,               /* nb_inplace_power */
-	NULL,               /* nb_inplace_lshift */
-	NULL,               /* nb_inplace_rshift */
-	NULL,               /* nb_inplace_and */
-	NULL,               /* nb_inplace_xor */
-	NULL,               /* nb_inplace_or */
-	NULL,               /* nb_floor_divide */
-	NULL,               /* nb_true_divide */
-	NULL,               /* nb_inplace_floor_divide */
-	NULL,               /* nb_inplace_true_divide */
-	NULL,               /* nb_index */
+	.nb_add = Quaternion_add,
+	.nb_subtract = Quaternion_sub,
+	.nb_multiply = Quaternion_mul,
+	.nb_negative = Quaternion_neg,
+	.nb_positive = Quaternion_copy,
 };
 
 PyDoc_STRVAR(Quaternion_axis_doc,

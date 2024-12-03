@@ -479,7 +479,11 @@ def path_reference(filepath,
         return os.path.basename(filepath_abs)
 
 
-def path_reference_copy(copy_set, report=print):
+def _doprint(*args):
+    print args
+
+
+def path_reference_copy(copy_set, report=_doprint):
     """
     Execute copying files of path_reference
 

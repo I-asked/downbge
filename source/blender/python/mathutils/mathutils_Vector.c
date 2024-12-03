@@ -2149,41 +2149,18 @@ static PyMappingMethods Vector_AsMapping = {
 
 
 static PyNumberMethods Vector_NumMethods = {
-	(binaryfunc)    Vector_add, /*nb_add*/
-	(binaryfunc)    Vector_sub, /*nb_subtract*/
-	(binaryfunc)    Vector_mul, /*nb_multiply*/
-	NULL,
-	NULL,                       /*nb_remainder*/
-	NULL,                       /*nb_divmod*/
-	NULL,                       /*nb_power*/
-	(unaryfunc)     Vector_neg, /*nb_negative*/
-	(unaryfunc)     Vector_copy,/*tp_positive*/
-	(unaryfunc)     NULL,       /*tp_absolute*/
-	(inquiry)   NULL,           /*tp_bool*/
-	(unaryfunc) NULL,           /*nb_invert*/
-	NULL,                       /*nb_lshift*/
-	(binaryfunc)NULL,           /*nb_rshift*/
-	NULL,                       /*nb_and*/
-	NULL,                       /*nb_xor*/
-	NULL,                       /*nb_or*/
-	NULL,                       /*nb_int*/
-	NULL,                       /*nb_reserved*/
-	NULL,                       /*nb_float*/
-	Vector_iadd,                /* nb_inplace_add */
-	Vector_isub,                /* nb_inplace_subtract */
-	Vector_imul,                /* nb_inplace_multiply */
-	NULL,                       /* nb_inplace_remainder */
-	NULL,                       /* nb_inplace_power */
-	NULL,                       /* nb_inplace_lshift */
-	NULL,                       /* nb_inplace_rshift */
-	NULL,                       /* nb_inplace_and */
-	NULL,                       /* nb_inplace_xor */
-	NULL,                       /* nb_inplace_or */
-	NULL,                       /* nb_floor_divide */
-	Vector_div,                 /* nb_true_divide */
-	NULL,                       /* nb_inplace_floor_divide */
-	Vector_idiv,                /* nb_inplace_true_divide */
-	NULL,                       /* nb_index */
+	.nb_add = Vector_add,
+	.nb_subtract = Vector_sub,
+	.nb_multiply = Vector_mul,
+	.nb_divide = Vector_div,
+	.nb_negative = Vector_neg,
+	.nb_positive = Vector_copy,
+	.nb_inplace_add = Vector_iadd,
+	.nb_inplace_subtract = Vector_isub,
+	.nb_inplace_multiply = Vector_imul,
+	.nb_inplace_divide = Vector_idiv,
+	.nb_true_divide = Vector_div,
+	.nb_inplace_true_divide = Vector_idiv,
 };
 
 /*------------------PY_OBECT DEFINITION--------------------------*/

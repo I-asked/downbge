@@ -661,41 +661,18 @@ static PyObject *Color_neg(ColorObject *self)
 
 
 static PyNumberMethods Color_NumMethods = {
-	(binaryfunc) Color_add, /*nb_add*/
-	(binaryfunc) Color_sub, /*nb_subtract*/
-	(binaryfunc) Color_mul, /*nb_multiply*/
-	NULL,
-	NULL,               /*nb_remainder*/
-	NULL,               /*nb_divmod*/
-	NULL,               /*nb_power*/
-	(unaryfunc) Color_neg,   /*nb_negative*/
-	(unaryfunc) Color_copy,  /*tp_positive*/
-	(unaryfunc) NULL,   /*tp_absolute*/
-	(inquiry)   NULL,   /*tp_bool*/
-	(unaryfunc) NULL,   /*nb_invert*/
-	NULL,               /*nb_lshift*/
-	(binaryfunc)NULL,   /*nb_rshift*/
-	NULL,               /*nb_and*/
-	NULL,               /*nb_xor*/
-	NULL,               /*nb_or*/
-	NULL,               /*nb_int*/
-	NULL,               /*nb_reserved*/
-	NULL,               /*nb_float*/
-	Color_iadd,         /* nb_inplace_add */
-	Color_isub,         /* nb_inplace_subtract */
-	Color_imul,         /* nb_inplace_multiply */
-	NULL,               /* nb_inplace_remainder */
-	NULL,               /* nb_inplace_power */
-	NULL,               /* nb_inplace_lshift */
-	NULL,               /* nb_inplace_rshift */
-	NULL,               /* nb_inplace_and */
-	NULL,               /* nb_inplace_xor */
-	NULL,               /* nb_inplace_or */
-	NULL,               /* nb_floor_divide */
-	Color_div,          /* nb_true_divide */
-	NULL,               /* nb_inplace_floor_divide */
-	Color_idiv,         /* nb_inplace_true_divide */
-	NULL,               /* nb_index */
+	.nb_add      = Color_add,
+	.nb_subtract = Color_sub,
+	.nb_multiply = Color_mul,
+	.nb_divide = Color_div,
+	.nb_negative = Color_neg,
+	.nb_positive = Color_copy,
+	.nb_inplace_add = Color_iadd,
+	.nb_inplace_subtract = Color_isub,
+	.nb_inplace_multiply = Color_imul,
+	.nb_inplace_divide = Color_idiv,
+	.nb_true_divide = Color_div,
+	.nb_inplace_true_divide = Color_idiv,
 };
 
 /* color channel, vector.r/g/b */

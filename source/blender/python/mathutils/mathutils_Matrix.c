@@ -2496,41 +2496,10 @@ static PyMappingMethods Matrix_AsMapping = {
 
 
 static PyNumberMethods Matrix_NumMethods = {
-	(binaryfunc)    Matrix_add,     /*nb_add*/
-	(binaryfunc)    Matrix_sub,     /*nb_subtract*/
-	(binaryfunc)    Matrix_mul,     /*nb_multiply*/
-	NULL,
-	NULL,                               /*nb_remainder*/
-	NULL,                               /*nb_divmod*/
-	NULL,                               /*nb_power*/
-	(unaryfunc)     0,      /*nb_negative*/
-	(unaryfunc)     0,      /*tp_positive*/
-	(unaryfunc)     0,      /*tp_absolute*/
-	(inquiry)   0,      /*tp_bool*/
-	(unaryfunc) Matrix_inverted_noargs,        /*nb_invert*/
-	NULL,                   /*nb_lshift*/
-	(binaryfunc)0,      /*nb_rshift*/
-	NULL,                   /*nb_and*/
-	NULL,                   /*nb_xor*/
-	NULL,                   /*nb_or*/
-	NULL,                   /*nb_int*/
-	NULL,                   /*nb_reserved*/
-	NULL,                   /*nb_float*/
-	NULL,                   /* nb_inplace_add */
-	NULL,                   /* nb_inplace_subtract */
-	NULL,                   /* nb_inplace_multiply */
-	NULL,                   /* nb_inplace_remainder */
-	NULL,                   /* nb_inplace_power */
-	NULL,                   /* nb_inplace_lshift */
-	NULL,                   /* nb_inplace_rshift */
-	NULL,                   /* nb_inplace_and */
-	NULL,                   /* nb_inplace_xor */
-	NULL,                   /* nb_inplace_or */
-	NULL,                   /* nb_floor_divide */
-	NULL,                   /* nb_true_divide */
-	NULL,                   /* nb_inplace_floor_divide */
-	NULL,                   /* nb_inplace_true_divide */
-	NULL,                   /* nb_index */
+	.nb_add = Matrix_add,
+	.nb_subtract = Matrix_sub,
+	.nb_multiply = Matrix_mul,
+	.nb_invert = Matrix_inverted_noargs,
 };
 
 PyDoc_STRVAR(Matrix_translation_doc,
