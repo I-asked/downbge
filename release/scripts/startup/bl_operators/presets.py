@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 from __future__ import absolute_import
+import string
 import bpy
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty, BoolProperty
@@ -67,7 +68,8 @@ class AddPresetBase(object):
 
             trans = getattr(cls, attr, None)
             if trans is None:
-                trans = str.maketrans(dict((char, "_") for char in " !@#$%^&*(){}:\";'[]<>,.\\/?"))
+                dic = dict((char, "_") for char in " !@#$%^&*(){}:\";'[]<>,.\\/?")
+                trans = string.maketrans(str(bytearray(dic.keys())), str(bytearray(dic.values())))
                 setattr(cls, attr, trans)
             return trans
 

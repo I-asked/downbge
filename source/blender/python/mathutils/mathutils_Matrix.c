@@ -2499,6 +2499,7 @@ static PyNumberMethods Matrix_NumMethods = {
 	(binaryfunc)    Matrix_add,     /*nb_add*/
 	(binaryfunc)    Matrix_sub,     /*nb_subtract*/
 	(binaryfunc)    Matrix_mul,     /*nb_multiply*/
+	NULL,
 	NULL,                               /*nb_remainder*/
 	NULL,                               /*nb_divmod*/
 	NULL,                               /*nb_power*/
@@ -2787,7 +2788,7 @@ PyTypeObject matrix_Type = {
 	NULL,                               /*tp_getattro*/
 	NULL,                               /*tp_setattro*/
 	NULL,                               /*tp_as_buffer*/
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_CHECKTYPES | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
 	matrix_doc,                         /*tp_doc*/
 	(traverseproc)BaseMathObject_traverse,  /* tp_traverse */
 	(inquiry)BaseMathObject_clear,      /*tp_clear*/

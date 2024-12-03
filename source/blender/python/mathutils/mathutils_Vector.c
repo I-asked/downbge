@@ -2152,6 +2152,7 @@ static PyNumberMethods Vector_NumMethods = {
 	(binaryfunc)    Vector_add, /*nb_add*/
 	(binaryfunc)    Vector_sub, /*nb_subtract*/
 	(binaryfunc)    Vector_mul, /*nb_multiply*/
+	NULL,
 	NULL,                       /*nb_remainder*/
 	NULL,                       /*nb_divmod*/
 	NULL,                       /*nb_power*/
@@ -2949,7 +2950,7 @@ PyTypeObject vector_Type = {
 	NULL,                       /* PyBufferProcs *tp_as_buffer; */
 
 	/*** Flags to define presence of optional/expanded features ***/
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC,
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_CHECKTYPES | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC,
 	vector_doc,                       /*  char *tp_doc;  Documentation string */
 	/*** Assigned meaning in release 2.0 ***/
 

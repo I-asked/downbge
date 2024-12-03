@@ -41,6 +41,7 @@ __all__ = (
     "resolve_ncase",
     )
 
+import string
 import bpy as _bpy
 import os as _os
 
@@ -172,7 +173,8 @@ def clean_name(name, replace="_"):
                 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7,
                 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe,
                 )
-            trans = str.maketrans(dict((char, replace) for char in bad_chars))
+            dic = dict((char, replace) for char in bad_chars)
+            trans = string.maketrans(str(bytearray(dic.keys())), str(bytearray(dic.values())))
             trans_cache[replace] = trans
         return trans
 

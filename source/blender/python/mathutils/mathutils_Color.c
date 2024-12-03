@@ -664,6 +664,7 @@ static PyNumberMethods Color_NumMethods = {
 	(binaryfunc) Color_add, /*nb_add*/
 	(binaryfunc) Color_sub, /*nb_subtract*/
 	(binaryfunc) Color_mul, /*nb_multiply*/
+	NULL,
 	NULL,               /*nb_remainder*/
 	NULL,               /*nb_divmod*/
 	NULL,               /*nb_power*/
