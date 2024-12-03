@@ -108,6 +108,10 @@ public:
 
 	bool writeAnimationList(const COLLADAFW::AnimationList*);
 
+	bool writeAnimationClip(const COLLADAFW::AnimationClip*) {
+		fputs("writeAnimationClip unsupported\n", stderr);
+	}
+
 	bool writeGeometry(const COLLADAFW::Geometry*);
 
 	bool writeMaterial(const COLLADAFW::Material*);
