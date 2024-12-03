@@ -498,8 +498,6 @@ if env['WITH_BF_CPP11']:
     else:
         env['CXXFLAGS'].append('-std=gnu++11')
 
-env.Append(CPPFLAGS=['-ffunction-sections', '-fdata-sections', '-fno-inline'])
-
 #check for additional debug libnames
 
 if env.has_key('BF_DEBUG_LIBS'):
