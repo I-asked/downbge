@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8-80 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 
@@ -40,10 +42,10 @@ def add_torus(major_rad, minor_rad, major_seg, minor_seg):
     faces = []
     i1 = 0
     tot_verts = major_seg * minor_seg
-    for major_index in range(major_seg):
+    for major_index in xrange(major_seg):
         quat = Quaternion(z_axis, (major_index / major_seg) * PI_2)
 
-        for minor_index in range(minor_seg):
+        for minor_index in xrange(minor_seg):
             angle = 2 * pi * minor_index / minor_seg
 
             vec = quat * Vector((major_rad + (cos(angle) * minor_rad),
@@ -85,7 +87,7 @@ class AddTorus(Operator, object_utils.AddObjectHelper):
     """Add a torus mesh"""
     bl_idname = "mesh.primitive_torus_add"
     bl_label = "Add Torus"
-    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+    bl_options = set(['REGISTER', 'UNDO', 'PRESET'])
 
     def mode_update_callback(self, context):
         if self.mode == 'EXT_INT':
@@ -214,11 +216,11 @@ class AddTorus(Operator, object_utils.AddObjectHelper):
         mesh.polygons.add(nbr_polys)
 
         mesh.vertices.foreach_set("co", verts_loc)
-        mesh.polygons.foreach_set("loop_start", range(0, nbr_loops, 4))
+        mesh.polygons.foreach_set("loop_start", xrange(0, nbr_loops, 4))
         mesh.polygons.foreach_set("loop_total", (4,) * nbr_polys)
         mesh.loops.foreach_set("vertex_index", faces)
         mesh.update()
 
         object_utils.object_data_add(context, mesh, operator=self)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

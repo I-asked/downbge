@@ -17,16 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from bpy.app.translations import pgettext_iface as iface_
 
 
-class ModifierButtonsPanel:
+class ModifierButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "modifier"
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
 
 class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
@@ -780,14 +781,14 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         col.label(text="Origin:")
         col.prop(md, "origin", text="")
 
-        if md.deform_method in {'TAPER', 'STRETCH', 'TWIST'}:
+        if md.deform_method in set(['TAPER', 'STRETCH', 'TWIST']):
             col.label(text="Lock:")
             col.prop(md, "lock_x")
             col.prop(md, "lock_y")
 
         col = split.column()
         col.label(text="Deform:")
-        if md.deform_method in {'TAPER', 'STRETCH'}:
+        if md.deform_method in set(['TAPER', 'STRETCH']):
             col.prop(md, "factor")
         else:
             col.prop(md, "angle")

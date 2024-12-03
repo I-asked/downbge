@@ -22,6 +22,7 @@
 #  Purpose  : Draws the visible lines (chaining follows same nature lines)
 #             (most basic style module)
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

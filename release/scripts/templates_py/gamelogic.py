@@ -1,6 +1,7 @@
 # This script must be assigned to a python controller
 # where it can access the object that owns it and the sensors/actuators that it connects to.
 
+from __future__ import absolute_import
 import bge
 
 # support for Vector(), Matrix() types and advanced functions like Matrix.Scale(...) and Matrix.Rotation(...)
@@ -21,23 +22,23 @@ def main():
 
     # Some example functions, remove to write your own script.
     # check for a positive sensor, will run on any object without errors.
-    print("Logic info for KX_GameObject", own.name)
+    print "Logic info for KX_GameObject", own.name
     input = False
 
     for sens in cont.sensors:
         # The sensor can be on another object, we may want to use it
         own_sens = sens.owner
-        print("    sensor:", sens.name, end=" ")
+        print "    sensor:", sens.name,
         if sens.positive:
-            print("(true)")
+            print "(true)"
             input = True
         else:
-            print("(false)")
+            print "(false)"
 
     for actu in cont.actuators:
         # The actuator can be on another object, we may want to use it
         own_actu = actu.owner
-        print("    actuator:", actu.name)
+        print "    actuator:", actu.name
 
         # This runs the actuator or turns it off
         # note that actuators will continue to run unless explicitly turned off.
@@ -54,9 +55,9 @@ def main():
 
     # Loop through all other objects in the scene
     sce = bge.logic.getCurrentScene()
-    print("Scene Objects:", sce.name)
+    print "Scene Objects:", sce.name
     for ob in sce.objects:
-        print("   ", ob.name, ob.worldPosition)
+        print "   ", ob.name, ob.worldPosition
 
     # Example where collision objects are checked for their properties
     # adding to our objects "life" property

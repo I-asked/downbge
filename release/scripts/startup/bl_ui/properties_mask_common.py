@@ -21,6 +21,7 @@
 # panels get subclassed (not registered directly)
 # menus are referenced `as is`
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, UIList
 
@@ -30,7 +31,7 @@ class MASK_UL_layers(UIList):
                   active_data, active_propname, index):
         # assert(isinstance(item, bpy.types.MaskLayer)
         mask = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             layout.prop(mask, "name", text="", emboss=False, icon_value=icon)
             row = layout.row(align=True)
             row.prop(mask, "hide", text="", emboss=False)
@@ -41,12 +42,12 @@ class MASK_UL_layers(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class MASK_PT_mask:
+class MASK_PT_mask(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'UI'
     bl_label = "Mask Settings"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -64,7 +65,7 @@ class MASK_PT_mask:
         col.prop(mask, "frame_end")
 
 
-class MASK_PT_layers:
+class MASK_PT_layers(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'UI'
@@ -112,7 +113,7 @@ class MASK_PT_layers:
             row.prop(active_layer, "use_fill_holes", text="Holes")
 
 
-class MASK_PT_spline:
+class MASK_PT_spline(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'UI'
@@ -146,7 +147,7 @@ class MASK_PT_spline:
         col.prop(spline, "use_self_intersection_check")
 
 
-class MASK_PT_point:
+class MASK_PT_point(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'UI'
@@ -201,12 +202,12 @@ class MASK_PT_point:
                                 tracks_list, icon='ANIM_DATA', text="Track:")
 
 
-class MASK_PT_display:
+class MASK_PT_display(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'UI'
     bl_label = "Mask Display"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -227,13 +228,13 @@ class MASK_PT_display:
         sub.prop(space_data, "mask_overlay_mode", text="")
 
 
-class MASK_PT_transforms:
+class MASK_PT_transforms(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'TOOLS'
     bl_label = "Transforms"
     bl_category = "Mask"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -251,7 +252,7 @@ class MASK_PT_transforms:
         col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
 
 
-class MASK_PT_tools:
+class MASK_PT_tools(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'TOOLS'
@@ -289,7 +290,7 @@ class MASK_PT_tools:
         col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
 
 
-class MASK_PT_add:
+class MASK_PT_add(object):
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
     #~ bl_region_type = 'TOOLS'

@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, UIList
 from rna_prop_ui import PropertyPanel
@@ -32,7 +33,7 @@ class SCENE_UL_keying_set_paths(UIList):
         # assert(isinstance(item, bpy.types.KeyingSetPath)
         kspath = item
         icon = layout.enum_item_icon(kspath, "id_type", kspath.id_type)
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             # Do not make this one editable in uiList for now...
             layout.label(text=kspath.data_path, translate=False, icon_value=icon)
         elif self.layout_type == 'GRID':
@@ -40,7 +41,7 @@ class SCENE_UL_keying_set_paths(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class SceneButtonsPanel:
+class SceneButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -53,7 +54,7 @@ class SceneButtonsPanel:
 
 class SCENE_PT_scene(SceneButtonsPanel, Panel):
     bl_label = "Scene"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -68,7 +69,7 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
 
 class SCENE_PT_unit(SceneButtonsPanel, Panel):
     bl_label = "Units"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -85,7 +86,7 @@ class SCENE_PT_unit(SceneButtonsPanel, Panel):
             row.prop(unit, "use_separate")
 
 
-class SceneKeyingSetsPanel:
+class SceneKeyingSetsPanel(object):
 
     @staticmethod
     def draw_keyframing_settings(context, layout, ks, ksp):
@@ -139,7 +140,7 @@ class SceneKeyingSetsPanel:
 
 class SCENE_PT_keying_sets(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
     bl_label = "Keying Sets"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -172,7 +173,7 @@ class SCENE_PT_keying_sets(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
 
 class SCENE_PT_keying_set_paths(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
     bl_label = "Active Keying Set"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -228,8 +229,8 @@ class SCENE_PT_keying_set_paths(SceneButtonsPanel, SceneKeyingSetsPanel, Panel):
 
 class SCENE_PT_color_management(SceneButtonsPanel, Panel):
     bl_label = "Color Management"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -253,8 +254,8 @@ class SCENE_PT_color_management(SceneButtonsPanel, Panel):
 
 class SCENE_PT_audio(SceneButtonsPanel, Panel):
     bl_label = "Audio"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -283,7 +284,7 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
     bl_label = "Gravity"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         self.layout.prop(context.scene, "use_gravity", text="")
@@ -300,7 +301,7 @@ class SCENE_PT_physics(SceneButtonsPanel, Panel):
 
 class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
     bl_label = "Rigid Body World"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -346,8 +347,8 @@ class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
 
 class SCENE_PT_rigid_body_cache(SceneButtonsPanel, Panel):
     bl_label = "Rigid Body Cache"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -364,8 +365,8 @@ class SCENE_PT_rigid_body_cache(SceneButtonsPanel, Panel):
 
 class SCENE_PT_rigid_body_field_weights(SceneButtonsPanel, Panel):
     bl_label = "Rigid Body Field Weights"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -382,7 +383,7 @@ class SCENE_PT_rigid_body_field_weights(SceneButtonsPanel, Panel):
 
 class SCENE_PT_simplify(SceneButtonsPanel, Panel):
     bl_label = "Simplify"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -412,7 +413,7 @@ class SCENE_PT_simplify(SceneButtonsPanel, Panel):
 
 
 class SCENE_PT_custom_props(SceneButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "scene"
     _property_type = bpy.types.Scene
 

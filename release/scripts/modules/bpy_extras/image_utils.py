@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 __all__ = (
     "load_image",
     )
@@ -71,7 +72,7 @@ def load_image(imagepath,
 
     def _image_load_placeholder(path):
         name = bpy.path.basename(path)
-        if type(name) == bytes:
+        if type(name) == str:
             name = name.decode("utf-8", "replace")
         image = bpy.data.images.new(name, 128, 128)
         # allow the path to be resolved later
@@ -92,9 +93,9 @@ def load_image(imagepath,
 
         if verbose:
             if image:
-                print("    image loaded '%s'" % path)
+                print "    image loaded '%s'" % path
             else:
-                print("    image load failed '%s'" % path)
+                print "    image load failed '%s'" % path
 
         # image path has been checked so the path could not be read for some
         # reason, so be sure to return a placeholder
@@ -122,7 +123,7 @@ def load_image(imagepath,
             for dirpath, dirnames, filenames in os.walk(path):
 
                 # skip '.svn'
-                if dirpath[0] in {".", b'.'}:
+                if dirpath[0] in set([".", '.']):
                     continue
 
                 for filename in filenames:
@@ -132,7 +133,7 @@ def load_image(imagepath,
     # -------------------------------------------------------------------------
 
     if verbose:
-        print("load_image('%s', '%s', ...)" % (imagepath, dirname))
+        print "load_image('%s', '%s', ...)" % (imagepath, dirname)
 
     if os.path.exists(imagepath):
         return _image_load(imagepath)
@@ -174,7 +175,7 @@ def load_image(imagepath,
             def image_filter(fn):
                 return (imagepath_base == fn)
 
-        nfilepath = next(_recursive_search(search_paths, image_filter), None)
+        nfilepath = _recursive_search(search_paths, image_filter), None.next()
         if nfilepath is not None:
             return _image_load(nfilepath)
 

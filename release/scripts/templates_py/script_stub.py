@@ -1,8 +1,11 @@
 # This stub runs a python script relative to the currently open
 # blend file, useful when editing scripts externally.
 
+from __future__ import with_statement
+from __future__ import absolute_import
 import bpy
 import os
+from io import open
 
 # Use your own script name here:
 filename = "my_script.py"

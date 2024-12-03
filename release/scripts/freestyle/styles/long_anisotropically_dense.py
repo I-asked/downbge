@@ -28,6 +28,7 @@
 #             ******** The Directional a priori density maps must          ****** 
 #             ******** have been computed prior to using this style module ******
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.functions import DensityF1D
 from freestyle.predicates import (

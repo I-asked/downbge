@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Panel, Menu
 
@@ -108,7 +109,7 @@ class FILEBROWSER_UL_dir(bpy.types.UIList):
         if active_propname == "recent_folders_active":
             icon = 'FILE_FOLDER'
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             row = layout.row(align=True)
             row.enabled = direntry.is_valid
             # Non-editable entries would show grayed-out, which is bad in this specific case, so switch to mere label.

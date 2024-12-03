@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Removes strokes extremities
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

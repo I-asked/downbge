@@ -108,6 +108,7 @@ Class hierarchy:
 
 
 # module members
+from __future__ import absolute_import
 from _freestyle import (
     AdjacencyIterator,
     BBox,

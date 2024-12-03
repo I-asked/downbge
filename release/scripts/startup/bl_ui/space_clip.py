@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, Header, Menu, UIList
 from bpy.app.translations import pgettext_iface as iface_
@@ -26,6 +28,7 @@ from bl_ui.properties_grease_pencil_common import (
         GreasePencilStrokeEditPanel,
         GreasePencilDataPanel
         )
+from io import open
 
 
 class CLIP_UL_tracking_objects(UIList):
@@ -33,7 +36,7 @@ class CLIP_UL_tracking_objects(UIList):
                   active_data, active_propname, index):
         # assert(isinstance(item, bpy.types.MovieTrackingObject)
         tobj = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             layout.prop(tobj, "name", text="", emboss=False,
                         icon='CAMERA_DATA' if tobj.is_camera
                         else 'OBJECT_DATA')
@@ -202,7 +205,7 @@ class CLIP_MT_masking_editor_menus(Menu):
             layout.menu("CLIP_MT_clip")  # XXX - remove?
 
 
-class CLIP_PT_clip_view_panel:
+class CLIP_PT_clip_view_panel(object):
 
     @classmethod
     def poll(cls, context):
@@ -212,7 +215,7 @@ class CLIP_PT_clip_view_panel:
         return clip and sc.view == 'CLIP'
 
 
-class CLIP_PT_tracking_panel:
+class CLIP_PT_tracking_panel(object):
 
     @classmethod
     def poll(cls, context):
@@ -222,7 +225,7 @@ class CLIP_PT_tracking_panel:
         return clip and sc.mode == 'TRACKING' and sc.view == 'CLIP'
 
 
-class CLIP_PT_reconstruction_panel:
+class CLIP_PT_reconstruction_panel(object):
 
     @classmethod
     def poll(cls, context):
@@ -401,7 +404,7 @@ class CLIP_PT_tools_plane_tracking(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
     bl_label = "Plane Track"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Solve"
 
     def draw(self, context):
@@ -454,7 +457,7 @@ class CLIP_PT_tools_cleanup(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
     bl_label = "Clean up"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Solve"
 
     def draw(self, context):
@@ -474,7 +477,7 @@ class CLIP_PT_tools_geometry(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
     bl_label = "Geometry"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Solve"
 
     def draw(self, context):
@@ -555,7 +558,7 @@ class CLIP_PT_objects(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Objects"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -642,7 +645,7 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Plane Track"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -668,7 +671,7 @@ class CLIP_PT_track_settings(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Tracking Settings"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -709,7 +712,7 @@ class CLIP_PT_tracking_camera(Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Camera"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -749,7 +752,7 @@ class CLIP_PT_tracking_lens(Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Lens"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -866,7 +869,7 @@ class CLIP_PT_marker(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Marker"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -886,7 +889,7 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
     bl_region_type = 'UI'
     bl_label = "2D Stabilization"
     bl_category = "Stabilization"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -949,7 +952,7 @@ class CLIP_PT_proxy(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Proxy / Timecode"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         sc = context.space_data
@@ -1064,7 +1067,7 @@ class CLIP_PT_footage(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Footage Settings"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -1082,7 +1085,7 @@ class CLIP_PT_footage_info(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Footage Information"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -1118,7 +1121,7 @@ class CLIP_PT_tools_scenesetup(Panel):
 class CLIP_PT_grease_pencil(GreasePencilDataPanel, CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     # NOTE: this is just a wrapper around the generic GP Panel
     # But, this should only be visible in "clip" view

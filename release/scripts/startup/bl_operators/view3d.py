@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import BoolProperty
@@ -55,7 +56,7 @@ class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
 
         # ignore return from operators above because they are 'RUNNING_MODAL',
         # and cause this one not to be freed. [#24671]
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         return self.execute(context)
@@ -101,7 +102,7 @@ class VIEW3D_OT_edit_mesh_extrude_move(Operator):
 
         # ignore return from operators above because they are 'RUNNING_MODAL',
         # and cause this one not to be freed. [#24671]
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def execute(self, context):
         return VIEW3D_OT_edit_mesh_extrude_move.extrude_region(context, False)
@@ -131,7 +132,7 @@ class VIEW3D_OT_select_or_deselect_all(Operator):
     "Select element under the mouse, deselect everything is there's nothing under the mouse"
     bl_label = "Select or Deselect All"
     bl_idname = "view3d.select_or_deselect_all"
-    bl_options = {'UNDO'}
+    bl_options = set(['UNDO'])
 
     extend = BoolProperty(
             name="Extend",
@@ -173,7 +174,7 @@ class VIEW3D_OT_select_or_deselect_all(Operator):
     def poll(cls, context):
         active_object = context.active_object
         if active_object:
-            return active_object.mode in {'EDIT', 'OBJECT', 'POSE'}
+            return active_object.mode in set(['EDIT', 'OBJECT', 'POSE'])
         return True
 
     def invoke(self, context, event):

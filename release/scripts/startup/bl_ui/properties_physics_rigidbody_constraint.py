@@ -17,11 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 
 
-class PHYSICS_PT_rigidbody_constraint_panel:
+class PHYSICS_PT_rigidbody_constraint_panel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -138,7 +139,7 @@ class PHYSICS_PT_rigid_body_constraint(PHYSICS_PT_rigidbody_constraint_panel, Pa
             sub.prop(rbc, "motor_ang_target_velocity", text="Target Velocity")
             sub.prop(rbc, "motor_ang_max_impulse", text="Max Impulse")
 
-        elif rbc.type in {'GENERIC', 'GENERIC_SPRING'}:
+        elif rbc.type in set(['GENERIC', 'GENERIC_SPRING']):
             col = layout.column(align=True)
             col.label("Limits:")
 

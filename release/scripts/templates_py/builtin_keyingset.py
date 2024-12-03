@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 
 
@@ -19,7 +20,7 @@ class BUILTIN_KSI_hello(bpy.types.KeyingSetInfo):
 
         ks.paths.add(id_block, "location")
 
-        for i in range(5):
+        for i in xrange(5):
             ks.paths.add(id_block, "layers", i, group_method='NAMED', group_name="5x Hello Layers")
 
         ks.paths.add(id_block, "show_x_ray", group_method='NONE')

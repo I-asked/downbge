@@ -20,7 +20,11 @@
 
 # <pep8 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
+import sys
+from io import open
 
 
 def build_property_typemap(skip_classes, skip_typemap):
@@ -50,15 +54,15 @@ def build_property_typemap(skip_classes, skip_typemap):
                     try:
                         properties.remove(prop_id)
                     except:
-                        print("skip_typemap unknown prop_id '%s.%s'" % (cls_name, prop_id))
+                        print "skip_typemap unknown prop_id '%s.%s'" % (cls_name, prop_id)
             else:
-                print("skip_typemap unknown class '%s'" % cls_name)
+                print "skip_typemap unknown class '%s'" % cls_name
 
     return property_typemap
 
 
 def print_ln(data):
-    print(data, end="")
+    print data,; sys.stdout.write("")
 
 
 def rna2xml(fw=print_ln,
@@ -125,7 +129,7 @@ def rna2xml(fw=print_ln,
             subvalue = getattr(value, prop)
             subvalue_type = type(subvalue)
 
-            if subvalue_type in {int, bool, float}:
+            if subvalue_type in set([int, bool, float]):
                 node_attrs.append("%s=\"%s\"" % (prop, number_to_str(subvalue, subvalue_type)))
             elif subvalue_type is str:
                 node_attrs.append("%s=%s" % (prop, quoteattr(subvalue)))
@@ -154,7 +158,7 @@ def rna2xml(fw=print_ln,
                         if (prop_rna.subtype == 'COLOR_GAMMA' and
                                 prop_rna.hard_min == 0.0 and
                                 prop_rna.hard_max == 1.0 and
-                                prop_rna.array_length in {3, 4}):
+                                prop_rna.array_length in set([3, 4])):
                             # -----
                             # color
                             array_value = "#" + "".join(("%.2x" % int(v * 255) for v in subvalue_rna))
@@ -163,7 +167,7 @@ def rna2xml(fw=print_ln,
                             # default
                             def str_recursive(s):
                                 subsubvalue_type = type(s)
-                                if subsubvalue_type in {int, float, bool}:
+                                if subsubvalue_type in set([int, float, bool]):
                                     return number_to_str(s, subsubvalue_type)
                                 else:
                                     return " ".join([str_recursive(si) for si in s])
@@ -254,7 +258,7 @@ def xml2rna(root_xml,
             subvalue = getattr(value, attr, Ellipsis)
 
             if subvalue is Ellipsis:
-                print("%s.%s not found" % (type(value).__name__, attr))
+                print "%s.%s not found" % (type(value).__name__, attr)
             else:
                 value_xml = xml_node.attributes[attr].value
 
@@ -276,7 +280,7 @@ def xml2rna(root_xml,
                     if value_xml.startswith("#"):
                         # read hexidecimal value as float array
                         value_xml_split = value_xml[1:]
-                        value_xml_coerce = [int(value_xml_split[i:i + 2], 16) / 255 for i in range(0, len(value_xml_split), 2)]
+                        value_xml_coerce = [int(value_xml_split[i:i + 2], 16) / 255 for i in xrange(0, len(value_xml_split), 2)]
                         del value_xml_split
                     else:
                         value_xml_split = value_xml.split()
@@ -319,14 +323,14 @@ def xml2rna(root_xml,
                     if hasattr(subvalue, "__len__"):
                         # Collection
                         if len(elems) != len(subvalue):
-                            print("Size Mismatch! collection:", child_xml.nodeName)
+                            print "Size Mismatch! collection:", child_xml.nodeName
                         else:
-                            for i in range(len(elems)):
+                            for i in xrange(len(elems)):
                                 child_xml_real = elems[i]
                                 subsubvalue = subvalue[i]
 
                                 if child_xml_real is None or subsubvalue is None:
-                                    print("None found %s - %d collection:", (child_xml.nodeName, i))
+                                    print "None found %s - %d collection:", (child_xml.nodeName, i)
                                 else:
                                     rna2xml_node(child_xml_real, subsubvalue)
 
@@ -360,7 +364,7 @@ def _get_context_val(context, path):
     except:
         import traceback
         traceback.print_exc()
-        print("Error: %r could not be found" % path_full)
+        print "Error: %r could not be found" % path_full
 
         value = Ellipsis
 
@@ -383,7 +387,7 @@ def xml_file_run(context, filepath, rna_map):
         value = _get_context_val(context, rna_path)
 
         if value is not Ellipsis and value is not None:
-            print("  loading XML: %r -> %r" % (filepath, rna_path))
+            print "  loading XML: %r -> %r" % (filepath, rna_path)
             xml2rna(xml_node, root_rna=value)
 
 

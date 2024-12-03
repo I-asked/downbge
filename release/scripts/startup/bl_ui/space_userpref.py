@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import pgettext_iface as iface_
@@ -73,7 +74,7 @@ class USERPREF_PT_tabs(Panel):
     bl_label = ""
     bl_space_type = 'USER_PREFERENCES'
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -132,7 +133,7 @@ class USERPREF_PT_interface(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Interface"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -254,7 +255,7 @@ class USERPREF_PT_edit(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Edit"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -379,7 +380,7 @@ class USERPREF_PT_system(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "System"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -559,7 +560,7 @@ class USERPREF_PT_theme(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Themes"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @staticmethod
     def _theme_generic(split, themedata):
@@ -873,7 +874,7 @@ class USERPREF_PT_file(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Files"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -1047,7 +1048,7 @@ class USERPREF_PT_input(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Input"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -1099,7 +1100,7 @@ class USERPREF_PT_input(Panel):
 
         sub.label(text="Zoom Style:")
         sub.row().prop(inputs, "view_zoom_method", text="")
-        if inputs.view_zoom_method in {'DOLLY', 'CONTINUE'}:
+        if inputs.view_zoom_method in set(['DOLLY', 'CONTINUE']):
             sub.row().prop(inputs, "view_zoom_axis", expand=True)
             sub.prop(inputs, "invert_mouse_zoom", text="Invert Mouse Zoom Direction")
 
@@ -1189,7 +1190,7 @@ class USERPREF_PT_addons(Panel):
     bl_space_type = 'USER_PREFERENCES'
     bl_label = "Add-ons"
     bl_region_type = 'WINDOW'
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     _support_icon_mapping = {
         'OFFICIAL': 'FILE_BLEND',
@@ -1234,7 +1235,7 @@ class USERPREF_PT_addons(Panel):
         layout = self.layout
 
         userpref = context.user_preferences
-        used_ext = {ext.module for ext in userpref.addons}
+        used_ext = set(ext.module for ext in userpref.addons)
 
         userpref_addons_folder = os.path.join(userpref.filepaths.script_directory, "addons")
         scripts_addons_folder = bpy.utils.user_resource('SCRIPTS', "addons")
@@ -1361,7 +1362,7 @@ class USERPREF_PT_addons(Panel):
                         if user_addon:
                             split.operator("wm.addon_remove", text="Remove", icon='CANCEL').module = mod.__name__
 
-                        for i in range(4 - tot_row):
+                        for i in xrange(4 - tot_row):
                             split.separator()
 
                     # Show addon user preferences
@@ -1384,14 +1385,14 @@ class USERPREF_PT_addons(Panel):
 
         # Append missing scripts
         # First collect scripts that are used but have no script file.
-        module_names = {mod.__name__ for mod, info in addons}
-        missing_modules = {ext for ext in used_ext if ext not in module_names}
+        module_names = set(mod.__name__ for mod, info in addons)
+        missing_modules = set(ext for ext in used_ext if ext not in module_names)
 
-        if missing_modules and filter in {"All", "Enabled"}:
+        if missing_modules and filter in set(["All", "Enabled"]):
             col.column().separator()
             col.column().label(text="Missing script files")
 
-            module_names = {mod.__name__ for mod, info in addons}
+            module_names = set(mod.__name__ for mod, info in addons)
             for module_name in sorted(missing_modules):
                 is_enabled = module_name in used_ext
                 # Addon UI Code

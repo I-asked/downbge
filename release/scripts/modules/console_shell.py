@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import os
 import bpy
 
@@ -49,7 +50,7 @@ def execute(context, is_interactive):
     try:
         line = sc.history[-1].body
     except:
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
     bpy.ops.console.scrollback_append(text=sc.prompt + line, type='INPUT')
 
@@ -59,20 +60,20 @@ def execute(context, is_interactive):
     bpy.ops.console.history_append(text="", current_character=0,
                                    remove_duplicates=True)
 
-    sc.prompt = os.getcwd() + PROMPT
-    return {'FINISHED'}
+    sc.prompt = os.getcwdu() + PROMPT
+    return set(['FINISHED'])
 
 
 def autocomplete(context):
     #~ sc = context.space_data
     # TODO
-    return {'CANCELLED'}
+    return set(['CANCELLED'])
 
 
 def banner(context):
     sc = context.space_data
 
     shell_run("bash --version")
-    sc.prompt = os.getcwd() + PROMPT
+    sc.prompt = os.getcwdu() + PROMPT
 
-    return {'FINISHED'}
+    return set(['FINISHED'])

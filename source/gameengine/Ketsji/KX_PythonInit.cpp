@@ -48,6 +48,7 @@
 #      undef _XPG4
 #    endif
 #  endif
+#  define PYTHON_ENTRY
 #  include <Python.h>
 
 extern "C" {
@@ -725,8 +726,7 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 	KX_Scene *kx_scene= gp_KetsjiScene;
 	char *path;
 	char *group;
-	Py_buffer py_buffer;
-	py_buffer.buf = NULL;
+	PyObject *py_buffer;
 	char *err_str= NULL;
 	KX_LibLoadStatus *status = NULL;
 
@@ -735,7 +735,7 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 
 	static const char *kwlist[] = {"path", "group", "buffer", "load_actions", "verbose", "load_scripts", "async", NULL};
 	
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|y*iiIi:LibLoad", const_cast<char**>(kwlist),
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|OiiIi:LibLoad", const_cast<char**>(kwlist),
 									&path, &group, &py_buffer, &load_actions, &verbose, &load_scripts, &async))
 		return NULL;
 
@@ -749,7 +749,7 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 	if (async != 0)
 		options |= KX_BlenderSceneConverter::LIB_LOAD_ASYNC;
 
-	if (!py_buffer.buf)
+	if (!PyBuffer_Check(py_buffer))
 	{
 		char abs_path[FILE_MAX];
 		// Make the path absolute
@@ -763,12 +763,16 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 	else
 	{
 
-		if ((status=kx_scene->GetSceneConverter()->LinkBlendFileMemory(py_buffer.buf, py_buffer.len, path, group, kx_scene, &err_str, options)))	{
-			PyBuffer_Release(&py_buffer);
+		char *ptr = NULL;
+		long long sz = 0;
+
+		if ((PyObject_AsCharBuffer(py_buffer, &ptr, &sz) < 0)
+				|| (status=kx_scene->GetSceneConverter()->LinkBlendFileMemory(ptr, sz, path, group, kx_scene, &err_str, options)))	{
+			Py_DECREF(py_buffer);
 			return status->GetProxy();
 		}
 
-		PyBuffer_Release(&py_buffer);
+		Py_DECREF(py_buffer);
 	}
 	
 	if (err_str) {
@@ -2116,9 +2120,10 @@ PyObject *initGamePlayerPythonScripting(Main *maggie, int argc, char** argv)
 	const char * const py_path_bundle = BKE_appdir_folder_id(BLENDER_SYSTEM_PYTHON, NULL);
 
 	/* not essential but nice to set our name */
-	static wchar_t program_path_wchar[FILE_MAX]; /* python holds a reference */
-	BLI_strncpy_wchar_from_utf8(program_path_wchar, BKE_appdir_program_path(), ARRAY_SIZE(program_path_wchar));
-	Py_SetProgramName(program_path_wchar);
+	//static wchar_t program_path_wchar[FILE_MAX]; /* python holds a reference */
+	//BLI_strncpy_wchar_from_utf8(program_path_wchar, BKE_appdir_program_path(), ARRAY_SIZE(program_path_wchar));
+	//Py_SetProgramName(program_path_wchar);
+	Py_SetProgramName(BKE_appdir_program_path());
 
 	/* Update, Py3.3 resolves attempting to parse non-existing header */
 #if 0

@@ -21,16 +21,18 @@
 # Populate a template file (POT format currently) from Blender RNA/py/C data.
 # Note: This script is meant to be used from inside Blender!
 
+from __future__ import absolute_import
 import collections
 import os
 import sys
 
 import bpy
 from mathutils import Vector, Euler
+from itertools import izip
 
 
-INTERN_PREVIEW_TYPES = {'MATERIAL', 'LAMP', 'WORLD', 'TEXTURE', 'IMAGE'}
-OBJECT_TYPES_RENDER = {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}
+INTERN_PREVIEW_TYPES = set(['MATERIAL', 'LAMP', 'WORLD', 'TEXTURE', 'IMAGE'])
+OBJECT_TYPES_RENDER = set(['MESH', 'CURVE', 'SURFACE', 'META', 'FONT'])
 
 
 def ids_nolib(bids):
@@ -41,7 +43,7 @@ def rna_backup_gen(data, include_props=None, exclude_props=None, root=()):
     # only writable properties...
     for p in data.bl_rna.properties:
         pid = p.identifier
-        if pid in {'rna_type', }:
+        if pid in set(['rna_type',]):
             continue
         path = root + (pid,)
         if include_props is not None and path not in include_props:
@@ -79,7 +81,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         if engine == '__SCENE':
             backup_scene, backup_world, backup_camera, backup_lamp, backup_camera_data, backup_lamp_data = [()] * 6
             scene = bpy.context.screen.scene
-            exclude_props = {('world',), ('camera',), ('tool_settings',), ('preview',)}
+            exclude_props = set([('world',), ('camera',), ('tool_settings',), ('preview',)])
             backup_scene = tuple(rna_backup_gen(scene, exclude_props=exclude_props))
             world = scene.world
             camera = scene.camera
@@ -173,8 +175,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 scene = None
             else:
                 rna_backup_restore(scene, render_context.backup_scene)
-        except Exception as e:
-            print("ERROR:", e)
+        except Exception, e:
+            print "ERROR:", e
             success = False
 
         if render_context.world is not None:
@@ -187,8 +189,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                     bpy.data.worlds.remove(world)
                 else:
                     rna_backup_restore(world, render_context.backup_world)
-            except Exception as e:
-                print("ERROR:", e)
+            except Exception, e:
+                print "ERROR:", e
                 success = False
 
         if render_context.camera:
@@ -205,8 +207,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                     rna_backup_restore(camera, render_context.backup_camera)
                     rna_backup_restore(bpy.data.cameras[render_context.camera_data, None],
                                        render_context.backup_camera_data)
-            except Exception as e:
-                print("ERROR:", e)
+            except Exception, e:
+                print "ERROR:", e
                 success = False
 
         if render_context.lamp:
@@ -221,16 +223,16 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 else:
                     rna_backup_restore(lamp, render_context.backup_lamp)
                     rna_backup_restore(bpy.data.lamps[render_context.lamp_data, None], render_context.backup_lamp_data)
-            except Exception as e:
-                print("ERROR:", e)
+            except Exception, e:
+                print "ERROR:", e
                 success = False
 
         try:
             image = bpy.data.images[render_context.image, None]
             image.user_clear()
             bpy.data.images.remove(image)
-        except Exception as e:
-            print("ERROR:", e)
+        except Exception, e:
+            print "ERROR:", e
             success = False
 
         return success
@@ -242,7 +244,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 mat = matslot.material
                 if mat and mat.use_nodes and mat.node_tree:
                     for nd in mat.node_tree.nodes:
-                        if nd.shading_compatibility == {'NEW_SHADING'}:
+                        if nd.shading_compatibility == set(['NEW_SHADING']):
                             return 'CYCLES'
         return 'BLENDER_RENDER'
 
@@ -368,7 +370,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 scene.objects.unlink(ob)
                 ob.hide_render = True
 
-        for ob, is_rendered in zip(tuple(ids_nolib(bpy.data.objects)), prev_shown):
+        for ob, is_rendered in izip(tuple(ids_nolib(bpy.data.objects)), prev_shown):
             ob.hide_render = is_rendered
 
     if do_groups:
@@ -387,7 +389,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             bpy.context.screen.scene = scene
 
             bpy.ops.object.group_instance_add(group=grp.name)
-            grp_ob = next((ob for ob in scene.objects if ob.dupli_group and ob.dupli_group.name == grp.name))
+            grp_ob = (ob for ob in scene.objects if ob.dupli_group and ob.dupli_group.name == grp.name).next()
             grp_obname = grp_ob.name
             scene.update()
 
@@ -421,15 +423,15 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
 
     bpy.context.screen.scene = bpy.data.scenes[prev_scenename, None]
     if do_save:
-        print("Saving %s..." % bpy.data.filepath)
+        print "Saving %s..." % bpy.data.filepath
         try:
             bpy.ops.wm.save_mainfile()
-        except Exception as e:
+        except Exception, e:
             # Might fail in some odd cases, like e.g. in regression files we have glsl/ram_glsl.blend which
             # references an inexistent texture... Better not break in this case, just spit error to console.
-            print("ERROR:", e)
+            print "ERROR:", e
     else:
-        print("*NOT* Saving %s, because some error(s) happened while deleting temp render data..." % bpy.data.filepath)
+        print "*NOT* Saving %s, because some error(s) happened while deleting temp render data..." % bpy.data.filepath
 
 
 def do_clear_previews(do_objects, do_groups, do_scenes, do_data_intern):
@@ -448,7 +450,7 @@ def do_clear_previews(do_objects, do_groups, do_scenes, do_data_intern):
         for scene in ids_nolib(bpy.data.scenes):
             scene.preview.image_size = (0, 0)
 
-    print("Saving %s..." % bpy.data.filepath)
+    print "Saving %s..." % bpy.data.filepath
     bpy.ops.wm.save_mainfile()
 
 
@@ -456,7 +458,7 @@ def main():
     try:
         import bpy
     except ImportError:
-        print("This script must run from inside blender")
+        print "This script must run from inside blender"
         return
 
     import sys
@@ -475,17 +477,17 @@ def main():
     args = parser.parse_args(argv)
 
     if args.clear:
-        print("clear!")
+        print "clear!"
         do_clear_previews(do_objects=args.no_objects, do_groups=args.no_groups, do_scenes=args.no_scenes,
                           do_data_intern=args.no_data_intern)
     else:
-        print("render!")
+        print "render!"
         do_previews(do_objects=args.no_objects, do_groups=args.no_groups, do_scenes=args.no_scenes,
                     do_data_intern=args.no_data_intern)
 
 
 if __name__ == "__main__":
-    print("\n\n *** Running {} *** \n".format(__file__))
-    print(" *** Blend file {} *** \n".format(bpy.data.filepath))
+    print "\n\n *** Running {} *** \n".format(__file__)
+    print " *** Blend file {} *** \n".format(bpy.data.filepath)
     main()
     bpy.ops.wm.quit_blender()

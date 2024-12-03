@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : The strokes are drawn through small occlusions
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import pyFillOcclusionsAbsoluteChainingIterator
 from freestyle.predicates import (
     QuantitativeInvisibilityUP1D,

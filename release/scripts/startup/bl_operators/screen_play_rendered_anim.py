@@ -20,6 +20,8 @@
 
 # Originally written by Matt Ebb
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 import os
@@ -71,7 +73,7 @@ class PlayRenderedAnim(Operator):
     """Play back rendered frames/movies using an external player"""
     bl_idname = "render.play_rendered_anim"
     bl_label = "Play Rendered Animation"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     def execute(self, context):
         import subprocess
@@ -89,7 +91,7 @@ class PlayRenderedAnim(Operator):
         if player_path == "":
             player_path = guess_player_path(preset)
 
-        if is_movie is False and preset in {'FRAMECYCLER', 'RV', 'MPLAYER'}:
+        if is_movie is False and preset in set(['FRAMECYCLER', 'RV', 'MPLAYER']):
             # replace the number with '#'
             file_a = rd.frame_path(frame=0)
 
@@ -104,7 +106,7 @@ class PlayRenderedAnim(Operator):
 
             file = ("".join((c if file_b[i] == c else "#")
                     for i, c in enumerate(file_a)))
-            del file_a, file_b, frame_tmp
+            #del file_a, file_b, frame_tmp
             file = bpy.path.abspath(file)  # expand '//'
         else:
             path_valid = True
@@ -112,7 +114,7 @@ class PlayRenderedAnim(Operator):
             file = rd.frame_path(frame=scene.frame_start, preview=scene.use_preview_range)
             file = bpy.path.abspath(file)  # expand '//'
             if not os.path.exists(file):
-                self.report({'WARNING'}, "File %r not found" % file)
+                self.report(set(['WARNING']), "File %r not found" % file)
                 path_valid = False
 
             #one last try for full range if we used preview range
@@ -120,7 +122,7 @@ class PlayRenderedAnim(Operator):
                 file = rd.frame_path(frame=scene.frame_start, preview=False)
                 file = bpy.path.abspath(file)  # expand '//'
                 if not os.path.exists(file):
-                    self.report({'WARNING'}, "File %r not found" % file)
+                    self.report(set(['WARNING']), "File %r not found" % file)
 
         cmd = [player_path]
         # extra options, fps controls etc.
@@ -163,7 +165,7 @@ class PlayRenderedAnim(Operator):
             cmd.append(file)
 
         # launch it
-        print("Executing command:\n  %r" % " ".join(cmd))
+        print "Executing command:\n  %r" % " ".join(cmd)
 
         # workaround for boost 1.46, can be eventually removed. bug: [#32350]
         env_copy = os.environ.copy()
@@ -173,10 +175,10 @@ class PlayRenderedAnim(Operator):
 
         try:
             subprocess.Popen(cmd, env=env_copy)
-        except Exception as e:
-            self.report({'ERROR'},
+        except Exception, e:
+            self.report(set(['ERROR']),
                         "Couldn't run external animation player with command "
                         "%r\n%s" % (" ".join(cmd), str(e)))
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

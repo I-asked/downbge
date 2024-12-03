@@ -22,6 +22,7 @@
 #  Purpose  : Draws the visible lines (chaining follows same nature lines)
 #             that do not belong to the external contour of the scene
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     AndUP1D,

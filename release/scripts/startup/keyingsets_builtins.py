@@ -27,6 +27,7 @@ Beware also about changing the order that these are defined here, since this can
 wrong Keying Set as the active one, potentially resulting in lost (i.e. unkeyed) animation.
 """
 
+from __future__ import absolute_import
 import bpy
 import keyingsets_utils
 from bpy.types import KeyingSetInfo
@@ -182,7 +183,7 @@ class BUILTIN_KSI_VisualLoc(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual Location"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -200,7 +201,7 @@ class BUILTIN_KSI_VisualRot(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual Rotation"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -218,7 +219,7 @@ class BUILTIN_KSI_VisualScaling(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual Scaling"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -236,7 +237,7 @@ class BUILTIN_KSI_VisualLocRot(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual LocRot"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -258,7 +259,7 @@ class BUILTIN_KSI_VisualLocScale(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual LocScale"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -280,7 +281,7 @@ class BUILTIN_KSI_VisualLocRotScale(KeyingSetInfo):
     """of constraints and relationships"""
     bl_label = "Visual LocRotScale"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -304,7 +305,7 @@ class BUILTIN_KSI_VisualRotScale(KeyingSetInfo):
     """and relationships"""
     bl_label = "Visual RotScale"
 
-    bl_options = {'INSERTKEY_VISUAL'}
+    bl_options = set(['INSERTKEY_VISUAL'])
 
     # poll - use predefined callback for selected bones/objects
     poll = keyingsets_utils.RKS_POLL_selected_items
@@ -381,7 +382,7 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
         # loc, rot, scale - only include unlocked ones
         ksi.doLoc(ks, bone)
 
-        if bone.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+        if bone.rotation_mode in set(['QUATERNION', 'AXIS_ANGLE']):
             ksi.doRot4d(ks, bone)
         else:
             ksi.doRot3d(ks, bone)
@@ -418,7 +419,7 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
         if bone.lock_location == (False, False, False):
             ksi.addProp(ks, bone, "location")
         else:
-            for i in range(3):
+            for i in xrange(3):
                 if not bone.lock_location[i]:
                     ksi.addProp(ks, bone, "location", i)
 
@@ -439,7 +440,7 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
                 if bone.lock_rotation_w is False:
                     ksi.addProp(ks, bone, prop, 0)  # w = 0
 
-                for i in range(3):
+                for i in xrange(3):
                     if not bone.lock_rotation[i]:
                         ksi.addProp(ks, bone, prop, i + 1)  # i + 1, since here x/y/z = 1,2,3, and w=0
         elif True not in bone.lock_rotation:
@@ -451,7 +452,7 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
         if bone.lock_rotation == (False, False, False):
             ksi.addProp(ks, bone, "rotation_euler")
         else:
-            for i in range(3):
+            for i in xrange(3):
                 if not bone.lock_rotation[i]:
                     ksi.addProp(ks, bone, "rotation_euler", i)
 
@@ -460,7 +461,7 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
         if bone.lock_scale == (0, 0, 0):
             ksi.addProp(ks, bone, "scale")
         else:
-            for i in range(3):
+            for i in xrange(3):
                 if not bone.lock_scale[i]:
                     ksi.addProp(ks, bone, "scale", i)
 
@@ -469,9 +470,9 @@ class BUILTIN_KSI_WholeCharacter(KeyingSetInfo):
     # custom properties
     def doCustomProps(ksi, ks, bone):
 
-        prop_type_compat = {bpy.types.BoolProperty,
+        prop_type_compat = set([bpy.types.BoolProperty,
                             bpy.types.IntProperty,
-                            bpy.types.FloatProperty}
+                            bpy.types.FloatProperty])
 
         # go over all custom properties for bone
         for prop in bone.keys():

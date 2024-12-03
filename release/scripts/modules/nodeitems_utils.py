@@ -17,10 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 
 
-class NodeCategory:
+class NodeCategory(object):
     @classmethod
     def poll(cls, context):
         return True
@@ -42,7 +43,7 @@ class NodeCategory:
             self.items = items_gen
 
 
-class NodeItem:
+class NodeItem(object):
     def __init__(self, nodetype, label=None, settings=None, poll=None):
 
         if settings is None:
@@ -77,7 +78,7 @@ class NodeItem:
             ops.value = setting[1]
 
 
-class NodeItemCustom:
+class NodeItemCustom(object):
     def __init__(self, poll=None, draw=None):
         self.poll = poll
         self.draw = draw

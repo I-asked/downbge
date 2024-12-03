@@ -30,6 +30,9 @@ User-defined stroke shaders inherit the
 :class:`freestyle.types.StrokeShader` class.
 """
 
+from __future__ import division
+from __future__ import absolute_import
+from itertools import izip
 __all__ = (
     "BackboneStretcherShader",
     "BezierCurveShader",
@@ -340,13 +343,13 @@ class pyTVertexThickenerShader(StrokeShader):
         term = (a - 1.0) / (n - 1.0)
 
         if (stroke[0].nature & Nature.T_VERTEX):
-            for count, svert in zip(range(n), stroke):
+            for count, svert in izip(xrange(n), stroke):
                 r = term * (n / (count + 1.0) - 1.0) + 1.0
                 (tr, tl) = svert.attribute.thickness
                 svert.attribute.thickness = (r * tr, r * tl)
 
         if (stroke[-1].nature & Nature.T_VERTEX):
-            for count, svert in zip(range(n), reversed(stroke)):
+            for count, svert in izip(xrange(n), reversed(stroke)):
                 r = term * (n / (count + 1.0) - 1.0) + 1.0
                 (tr, tl) = svert.attribute.thickness
                 svert.attribute.thickness = (r * tr, r * tl)
@@ -411,7 +414,7 @@ class pyZDependingThicknessShader(StrokeShader):
         z_min, z_max = min(1, *z_indices), max(0, *z_indices)
         z_diff = 1 / (z_max - z_min)
 
-        for svert, z_index in zip(stroke, z_indices):
+        for svert, z_index in izip(stroke, z_indices):
             z = (z_index - z_min) * z_diff
             thickness = (1 - z) * self.__max + z * self.__min
             svert.attribute.thickness = (thickness, thickness)
@@ -508,7 +511,9 @@ class pyMaterialColorShader(StrokeShader):
         for svert in it:
             mat = self._func(it)
 
-            r, g, b, *_ = mat.diffuse
+            _3to2list = list(mat.diffuse)
+
+            r, g, b, _, = _3to2list[:3] + [_3to2list[3:]]
 
             X = 0.412453 * r + 0.35758 * g + 0.180423 * b
             Y = 0.212671 * r + 0.71516 * g + 0.072169 * b
@@ -577,7 +582,7 @@ class py2DCurvatureColorShader(StrokeShader):
         for svert in it:
             c = func(it)
             if c < 0 and bpy.app.debug_freestyle:
-                print("py2DCurvatureColorShader: negative 2D curvature")
+                print "py2DCurvatureColorShader: negative 2D curvature"
             color = 10.0 * c / pi
             svert.attribute.color = (color, color, color)
 
@@ -713,7 +718,7 @@ class pyDiffusion2Shader(StrokeShader):
         self._curvatureInfo = Curvature2DAngleF0D()
 
     def shade(self, stroke):
-        for i in range (1, self._nbIter):
+        for i in xrange (1, self._nbIter):
             it = Interface0DIterator(stroke)
             for svert in it:
                 svert.point += self._normalInfo(it) * self._lambda * self._curvatureInfo(it)
@@ -752,9 +757,9 @@ class pyTipRemoverShader(StrokeShader):
         stroke.update_length()
         stroke.resample(n)
         if len(stroke) != n and bpy.app.debug_freestyle:
-            print("pyTipRemover: Warning: resampling problem")
+            print "pyTipRemover: Warning: resampling problem"
 
-        for svert, a in zip(stroke, oldAttributes):
+        for svert, a in izip(stroke, oldAttributes):
             svert.attribute = a
         stroke.update_length()
 
@@ -785,7 +790,7 @@ class pyHLRShader(StrokeShader):
             return
 
         it = iter(stroke)
-        for v1, v2 in zip(it, it.incremented()):
+        for v1, v2 in izip(it, it.incremented()):
             if (v1.nature & Nature.VIEW_VERTEX):
                 visible = (v1.get_fedge(v2).viewedge.qi != 0)
             v1.attribute.visible = not visible
@@ -891,13 +896,13 @@ class pyBluePrintCirclesShader(StrokeShader):
 
         it = iter(stroke)
 
-        for j in range(self.__turns):
+        for j in xrange(self.__turns):
             prev_radius = radius
             prev_center = center
             radius += randint(-R, R)
             center += Vector((randint(-C, C), randint(-C, C)))
 
-            for (phase, direction), svert in zip(directions, it):
+            for (phase, direction), svert in izip(directions, it):
                 r = prev_radius + (radius - prev_radius) * phase
                 c = prev_center + (center - prev_center) * phase
                 svert.point = c + r * direction
@@ -932,13 +937,13 @@ class pyBluePrintEllipsesShader(StrokeShader):
         # for description of the line below, see pyBluePrintCirclesShader
         directions = phase_to_direction(sv_nb)
         it = iter(stroke)
-        for j in range(self.__turns):
+        for j in xrange(self.__turns):
             prev_radius = radius
             prev_center = center
             radius = radius + Vector((randint(-R, R), randint(-R, R)))
             center = center + Vector((randint(-C, C), randint(-C, C)))
 
-            for (phase, direction), svert in zip(directions, it):
+            for (phase, direction), svert in izip(directions, it):
                 r = prev_radius + (radius - prev_radius) * phase
                 c = prev_center + (center - prev_center) * phase
                 svert.point = (c.x + r.x * direction.x, c.y + r.y * direction.y)
@@ -1002,17 +1007,17 @@ class pyBluePrintSquaresShader(StrokeShader):
                 )
 
             # combine both tuples
-            points = tuple(p + rand for (p, rand) in zip(points, randomization_mat))
+            points = tuple(p + rand for (p, rand) in izip(points, randomization_mat))
 
 
         # subtract even from uneven; result is length four tuple of vectors
         it = iter(points)
-        old_vecs = tuple(next(it) - current for current in it)
+        old_vecs = tuple(it.next() - current for current in it)
 
         it = iter(stroke)
         verticesToRemove = list()
-        for j in range(self.__turns):
-            for i, svert in zip(range(num_segments), it):
+        for j in xrange(self.__turns):
+            for i, svert in izip(xrange(num_segments), it):
                 if i < first:
                     svert.point = points[0] + old_vecs[0] * i / (first - 1)
                     svert.attribute.visible = (i != first - 1)
@@ -1102,8 +1107,8 @@ class pyBluePrintDirectedSquaresShader(StrokeShader):
 
         it = iter(stroke)
         verticesToRemove = list()
-        for j in range(self.__turns):
-            for i, svert in zip(range(num_segments), it):
+        for j in xrange(self.__turns):
+            for i, svert in izip(xrange(num_segments), it):
                 if i < first:
                     svert.point = points[0] + old_vecs[0] * i / (first - 1)
                     svert.attribute.visible = (i != first - 1)
@@ -1172,7 +1177,7 @@ class RoundCapShader(StrokeShader):
         direction = (p - q).normalized() * caplen_beg
         n = 1.0 / nverts_beg
         R, L = attr.thickness
-        for t, svert in zip(range(nverts_beg, 0, -1), stroke):
+        for t, svert in izip(xrange(nverts_beg, 0, -1), stroke):
             r = self.round_cap_thickness((t + 1) * n)
             svert.point = p + direction * t * n
             svert.attribute = attr
@@ -1183,7 +1188,7 @@ class RoundCapShader(StrokeShader):
         direction = (p - q).normalized() * caplen_beg
         n = 1.0 / nverts_end
         R, L = attr.thickness
-        for t, svert in zip(range(nverts_end, 0, -1), reversed(stroke)):
+        for t, svert in izip(xrange(nverts_end, 0, -1), reversed(stroke)):
             r = self.round_cap_thickness((t + 1) * n)
             svert.point = p + direction * t * n
             svert.attribute = attr
@@ -1209,7 +1214,7 @@ class SquareCapShader(StrokeShader):
         # adjust the total number of stroke vertices
         stroke.resample(nverts + nverts_beg + nverts_end)
         # restore the location and attribute of the original vertices
-        for i, (p, attr) in zip(range(nverts), buffer):
+        for i, (p, attr) in izip(xrange(nverts), buffer):
             stroke[nverts_beg + i].point = p
             stroke[nverts_beg + i].attribute = attr
         # reshape the cap at the beginning of the stroke

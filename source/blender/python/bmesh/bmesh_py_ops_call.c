@@ -170,8 +170,8 @@ static int bpy_slot_from_py(
 		}
 		case BMO_OP_SLOT_INT:
 		{
-			int overflow;
-			long param = PyLong_AsLongAndOverflow(value, &overflow);
+			int overflow = 0;
+			long long param = PyLong_AsLong(value);
 			if (overflow || (param > INT_MAX) || (param < INT_MIN)) {
 				PyErr_Format(PyExc_ValueError,
 				             "%.200s: keyword \"%.200s\" value not in 'int' range "

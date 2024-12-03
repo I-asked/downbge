@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 bpy.context.lamp.sky.atmosphere_turbidity = 4.0
 bpy.context.lamp.sky.sky_blend_type = 'ADD'

@@ -23,6 +23,10 @@ This module contains utility functions specific to blender but
 not associated with blenders internal data.
 """
 
+from __future__ import division
+from __future__ import with_statement
+from __future__ import absolute_import
+#from io import open
 __all__ = (
     "blend_paths",
     "escape_identifier",
@@ -78,8 +82,7 @@ def _test_import(module_name, loaded_modules):
     if module_name in loaded_modules:
         return None
     if "." in module_name:
-        print("Ignoring '%s', can't import files containing "
-              "multiple periods" % module_name)
+        print "Ignoring '%s', can't import files containing multiple periods" % module_name
         return None
 
     if use_time:
@@ -94,7 +97,7 @@ def _test_import(module_name, loaded_modules):
         return None
 
     if use_time:
-        print("time %s %.4f" % (module_name, time.time() - t))
+        print "time %s %.4f" % (module_name, time.time() - t)
 
     loaded_modules.add(mod.__name__)  # should match mod.__name__ too
     return mod
@@ -172,9 +175,7 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
                 import traceback
                 traceback.print_exc()
         else:
-            print("\nWarning! '%s' has no register function, "
-                  "this is now a requirement for registerable scripts" %
-                  mod.__file__)
+            print "\nWarning! '%s' has no register function, this is now a requirement for registerable scripts" % mod.__file__
 
     def unregister_module_call(mod):
         unregister = getattr(mod, "unregister", None)
@@ -205,7 +206,7 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
             return
 
         if reload_scripts and mod:
-            print("Reloading:", mod)
+            print "Reloading:", mod
             mod = test_reload(mod)
 
         if mod:
@@ -263,10 +264,10 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
 
     if reload_scripts:
         import gc
-        print("gc.collect() -> %d" % gc.collect())
+        print "gc.collect() -> %d" % gc.collect()
 
     if use_time:
-        print("Python Script Load Time %.4f" % (time.time() - t_main))
+        print "Python Script Load Time %.4f" % (time.time() - t_main)
 
 
 # base scripts
@@ -499,7 +500,7 @@ def keyconfig_set(filepath, report=None):
     from itertools import chain
 
     if _bpy.app.debug_python:
-        print("loading preset:", filepath)
+        print "loading preset:", filepath
 
     keyconfigs = _bpy.context.window_manager.keyconfigs
 
@@ -516,14 +517,14 @@ def keyconfig_set(filepath, report=None):
 
     if error_msg:
         if report is not None:
-            report({'ERROR'}, error_msg)
-        print(error_msg)
+            report(set(['ERROR']), error_msg)
+        print error_msg
 
-    kc_new = next(chain(iter(kc for kc in keyconfigs
-                             if kc not in keyconfigs_old), (None,)))
+    kc_new = chain(iter(kc for kc in keyconfigs
+                             if kc not in keyconfigs_old), (None,)).next()
     if kc_new is None:
         if report is not None:
-            report({'ERROR'}, "Failed to load keymap %r" % filepath)
+            report(set(['ERROR']), "Failed to load keymap %r" % filepath)
         return False
     else:
         kc_new.name = ""
@@ -571,7 +572,7 @@ def user_resource(resource_type, path="", create=False):
                     traceback.print_exc()
                     target_path = ""
             elif not _os.path.isdir(target_path):
-                print("Path %r found but isn't a directory!" % target_path)
+                print "Path %r found but isn't a directory!" % target_path
                 target_path = ""
 
     return target_path
@@ -594,39 +595,37 @@ def _bpy_module_classes(module, is_registered=False):
 
 def register_module(module, verbose=False):
     if verbose:
-        print("bpy.utils.register_module(%r): ..." % module)
+        print "bpy.utils.register_module(%r): ..." % module
     cls = None
     for cls in _bpy_module_classes(module, is_registered=False):
         if verbose:
-            print("    %r" % cls)
+            print "    %r" % cls
         try:
             register_class(cls)
         except:
-            print("bpy.utils.register_module(): "
-                  "failed to registering class %r" % cls)
+            print "bpy.utils.register_module(): failed to registering class %r" % cls
             import traceback
             traceback.print_exc()
     if verbose:
-        print("done.\n")
+        print "done.\n"
     if cls is None:
         raise Exception("register_module(%r): defines no classes" % module)
 
 
 def unregister_module(module, verbose=False):
     if verbose:
-        print("bpy.utils.unregister_module(%r): ..." % module)
+        print "bpy.utils.unregister_module(%r): ..." % module
     for cls in _bpy_module_classes(module, is_registered=True):
         if verbose:
-            print("    %r" % cls)
+            print "    %r" % cls
         try:
             unregister_class(cls)
         except:
-            print("bpy.utils.unregister_module(): "
-                  "failed to unregistering class %r" % cls)
+            print "bpy.utils.unregister_module(): failed to unregistering class %r" % cls
             import traceback
             traceback.print_exc()
     if verbose:
-        print("done.\n")
+        print "done.\n"
 
 
 # -----------------------------------------------------------------------------
@@ -660,7 +659,7 @@ def manual_map():
         try:
             prefix, url_manual_mapping = cb()
         except:
-            print("Error calling %r" % cb)
+            print "Error calling %r" % cb
             import traceback
             traceback.print_exc()
             continue

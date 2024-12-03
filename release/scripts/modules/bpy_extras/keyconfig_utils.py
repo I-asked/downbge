@@ -23,6 +23,8 @@
 #    ('Script', 'EMPTY', 'WINDOW', []),
 
 
+from __future__ import absolute_import
+from io import open
 KM_HIERARCHY = [
     ('Window', 'EMPTY', 'WINDOW', []),  # file save, window change, exit
     ('Screen', 'EMPTY', 'WINDOW', [     # full screen, undo, screenshot
@@ -167,7 +169,7 @@ def _export_properties(prefix, properties, kmi_id, lines=None):
         elif getattr(value, '__len__', False):
             return repr(list(value))
         else:
-            print("Export key configuration: can't write ", value)
+            print "Export key configuration: can't write ", value
 
         return result
 
@@ -245,7 +247,7 @@ def keyconfig_export(wm, kc, filepath):
     # the default blender keyconfig, recreating the current setup from a fresh blender
     # without needing to export keymaps which haven't been edited.
 
-    class FakeKeyConfig:
+    class FakeKeyConfig(object):
         keymaps = []
     edited_kc = FakeKeyConfig()
     for km in wm.keyconfigs.user.keymaps:
@@ -286,31 +288,31 @@ def keyconfig_test(kc):
             if src:
                 for item in km.keymap_items:
                     if src.compare(item):
-                        print("===========")
-                        print(parent.name)
-                        print(_kmistr(src, is_modal).strip())
-                        print(km.name)
-                        print(_kmistr(item, is_modal).strip())
+                        print "==========="
+                        print parent.name
+                        print _kmistr(src, is_modal).strip()
+                        print km.name
+                        print _kmistr(item, is_modal).strip()
                         result = True
 
                 for child in children:
                     if testEntry(kc, child, src, parent):
                         result = True
             else:
-                for i in range(len(km.keymap_items)):
+                for i in xrange(len(km.keymap_items)):
                     src = km.keymap_items[i]
 
                     for child in children:
                         if testEntry(kc, child, src, km):
                             result = True
 
-                    for j in range(len(km.keymap_items) - i - 1):
+                    for j in xrange(len(km.keymap_items) - i - 1):
                         item = km.keymap_items[j + i + 1]
                         if src.compare(item):
-                            print("===========")
-                            print(km.name)
-                            print(_kmistr(src, is_modal).strip())
-                            print(_kmistr(item, is_modal).strip())
+                            print "==========="
+                            print km.name
+                            print _kmistr(src, is_modal).strip()
+                            print _kmistr(item, is_modal).strip()
                             result = True
 
                 for child in children:

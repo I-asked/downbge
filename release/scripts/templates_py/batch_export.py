@@ -1,5 +1,6 @@
 # exports each selected object into its own file
 
+from __future__ import absolute_import
 import bpy
 import os
 
@@ -33,7 +34,7 @@ for obj in selection:
 
     obj.select = False
 
-    print("written:", fn)
+    print "written:", fn
 
 
 scene.objects.active = obj_active

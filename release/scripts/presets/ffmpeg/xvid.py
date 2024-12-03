@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 is_ntsc = (bpy.context.scene.render.fps != 25)
 

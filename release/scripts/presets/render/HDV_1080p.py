@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 bpy.context.scene.render.resolution_x = 1440
 bpy.context.scene.render.resolution_y = 1080

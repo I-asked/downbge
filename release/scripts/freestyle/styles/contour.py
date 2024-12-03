@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Draws each object's visible contour
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainPredicateIterator
 from freestyle.predicates import (
     AndUP1D,

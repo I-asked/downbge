@@ -20,6 +20,7 @@
 
 # note, properties_animviz is a helper module only.
 
+from __future__ import absolute_import
 if "bpy" in locals():
     from importlib import reload
     for val in _modules_loaded.values():
@@ -86,7 +87,7 @@ if bpy.app.build_options.freestyle:
     _modules.append("properties_freestyle")
 __import__(name=__name__, fromlist=_modules)
 _namespace = globals()
-_modules_loaded = {name: _namespace[name] for name in _modules if name != "bpy"}
+_modules_loaded = dict((name, _namespace[name]) for name in _modules if name != "bpy")
 del _namespace
 
 
@@ -118,7 +119,7 @@ def register():
     WindowManager.addon_search = StringProperty(
             name="Search",
             description="Search within the selected filter",
-            options={'TEXTEDIT_UPDATE'},
+            options=set(['TEXTEDIT_UPDATE']),
             )
     WindowManager.addon_filter = EnumProperty(
             items=addon_filter_items,
@@ -133,8 +134,8 @@ def register():
                    ],
             name="Support",
             description="Display support level",
-            default={'OFFICIAL', 'COMMUNITY'},
-            options={'ENUM_FLAG'},
+            default=set(['OFFICIAL', 'COMMUNITY']),
+            options=set(['ENUM_FLAG']),
             )
     # done...
 
@@ -185,8 +186,8 @@ class UI_UL_list(bpy.types.UIList):
         """
         sort_data.sort(key=key, reverse=reverse)
         neworder = [None] * len(sort_data)
-        for newidx, (orgidx, *_) in enumerate(sort_data):
-            neworder[orgidx] = newidx
+        for newidx, orgidx in enumerate(sort_data):
+            neworder[orgidx[0]] = newidx
         return neworder
 
     @classmethod

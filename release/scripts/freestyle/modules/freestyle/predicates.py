@@ -31,6 +31,8 @@ depending on the object type (0D or 1D) to operate on and the arity
 - :class:`freestyle.types.UnaryPredicate1D`
 """
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "AndBP1D",
     "AndUP1D",
@@ -444,13 +446,13 @@ class pyIsOccludedByUP1D(UnaryPredicate1D):
         itlast = inter.vertices_end()
         itlast.decrement()
 
-        vertex = next(it)
+        vertex = it.next()
         if type(vertex) is TVertex:
             eit = vertex.edges_begin()
             if any(ve.id == self._id for (ve, incoming) in eit):
                 return True
 
-        vertex = next(itlast)
+        vertex = itlast.next()
         if type(vertex) is TVertex:
             eit = tvertex.edges_begin()
             if any(ve.id == self._id for (ve, incoming) in eit):
@@ -559,7 +561,7 @@ class pyClosedCurveUP1D(UnaryPredicate1D):
         it = inter.vertices_begin()
         itlast = inter.vertices_end()
         itlast.decrement()
-        return (next(it).id == next(itlast).id)
+        return (it.next().id == itlast.next().id)
 
 
 # -- Binary predicates for 1D elements (curves) -- #
@@ -676,5 +678,5 @@ class MaterialBP1D(BinaryPredicate1D):
     """Checks whether the two supplied ViewEdges have the same material."""
     def __call__(self, i1, i2):
         fedges = (fe for ve in (i1, i2) for fe in (ve.first_fedge, ve.last_fedge))
-        materials = {material_from_fedge(fe) for fe in fedges}
+        materials = set(material_from_fedge(fe) for fe in fedges)
         return len(materials) < 2

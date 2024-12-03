@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 import os
 from bpy.types import Operator
@@ -128,7 +130,7 @@ class CLIP_OT_filter_tracks(bpy.types.Operator):
     """Filter tracks which has weirdly looking spikes in motion curves"""
     bl_label = "Filter Tracks"
     bl_idname = "clip.filter_tracks"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     track_threshold = FloatProperty(
             name="Track Threshold",
@@ -158,7 +160,7 @@ class CLIP_OT_filter_tracks(bpy.types.Operator):
 
         tracks_to_clean = set()
 
-        for frame in range(frame_start, frame_end + 1):
+        for frame in xrange(frame_start, frame_end + 1):
 
             # Find tracks with markers in both this frame and the previous one.
             relevant_tracks = [
@@ -196,8 +198,8 @@ class CLIP_OT_filter_tracks(bpy.types.Operator):
 
     def execute(self, context):
         num_tracks = self._filter_values(context, self.track_threshold)
-        self.report({'INFO'}, "Identified %d problematic tracks" % num_tracks)
-        return {'FINISHED'}
+        self.report(set(['INFO']), "Identified %d problematic tracks" % num_tracks)
+        return set(['FINISHED'])
 
 
 class CLIP_OT_set_active_clip(bpy.types.Operator):
@@ -215,7 +217,7 @@ class CLIP_OT_set_active_clip(bpy.types.Operator):
         scene.active_clip = clip
         scene.render.resolution_x = clip.size[0]
         scene.render.resolution_y = clip.size[1]
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_track_to_empty(Operator):
@@ -223,7 +225,7 @@ class CLIP_OT_track_to_empty(Operator):
 
     bl_idname = "clip.track_to_empty"
     bl_label = "Link Empty to Track"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     @staticmethod
     def _link_track(context, clip, tracking_object, track):
@@ -260,7 +262,7 @@ class CLIP_OT_track_to_empty(Operator):
             if CLIP_track_view_selected(sc, track):
                 self._link_track(context, clip, tracking_object, track)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_bundles_to_mesh(Operator):
@@ -268,7 +270,7 @@ class CLIP_OT_bundles_to_mesh(Operator):
 
     bl_idname = "clip.bundles_to_mesh"
     bl_label = "3D Markers to Mesh"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     @classmethod
     def poll(cls, context):
@@ -308,7 +310,7 @@ class CLIP_OT_bundles_to_mesh(Operator):
 
         context.scene.objects.link(ob)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_delete_proxy(Operator):
@@ -316,7 +318,7 @@ class CLIP_OT_delete_proxy(Operator):
 
     bl_idname = "clip.delete_proxy"
     bl_label = "Delete Proxy"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     @classmethod
     def poll(cls, context):
@@ -385,7 +387,7 @@ class CLIP_OT_delete_proxy(Operator):
         except OSError:
             pass
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_set_viewport_background(Operator):
@@ -394,7 +396,7 @@ class CLIP_OT_set_viewport_background(Operator):
 
     bl_idname = "clip.set_viewport_background"
     bl_label = "Set as Background"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     @classmethod
     def poll(cls, context):
@@ -409,7 +411,7 @@ class CLIP_OT_set_viewport_background(Operator):
         sc = context.space_data
         CLIP_set_viewport_background(context, False, sc.clip, sc.clip_user)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_constraint_to_fcurve(Operator):
@@ -418,7 +420,7 @@ object's movement caused by this constraint"""
 
     bl_idname = "clip.constraint_to_fcurve"
     bl_label = "Constraint to F-Curve"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     def _bake_object(self, scene, ob):
         con = None
@@ -432,14 +434,14 @@ object's movement caused by this constraint"""
         # TODO: several camera solvers and track followers would fail,
         #       but can't think about real work-flow where it'll be useful
         for x in ob.constraints:
-            if x.type in {'CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER'}:
+            if x.type in set(['CAMERA_SOLVER', 'FOLLOW_TRACK', 'OBJECT_SOLVER']):
                 con = x
 
         if not con:
-            self.report({'ERROR'},
+            self.report(set(['ERROR']),
                         "Motion Tracking constraint to be converted not found")
 
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         # Get clip used for parenting
         if con.use_active_clip:
@@ -448,17 +450,17 @@ object's movement caused by this constraint"""
             clip = con.clip
 
         if not clip:
-            self.report({'ERROR'},
+            self.report(set(['ERROR']),
                         "Movie clip to use tracking data from isn't set")
 
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         if con.type == 'FOLLOW_TRACK' and con.use_3d_position:
             mat = ob.matrix_world.copy()
             ob.constraints.remove(con)
             ob.matrix_world = mat
 
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
         # Find start and end frames
         for track in clip.tracking.tracks:
@@ -476,7 +478,7 @@ object's movement caused by this constraint"""
             return
 
         # Store object matrices
-        for x in range(sfra, efra + 1):
+        for x in xrange(sfra, efra + 1):
             scene.frame_set(x)
             matrices.append(ob.matrix_world.copy())
 
@@ -484,7 +486,7 @@ object's movement caused by this constraint"""
 
         # Apply matrices on object and insert key-frames
         i = 0
-        for x in range(sfra, efra + 1):
+        for x in xrange(sfra, efra + 1):
             scene.frame_set(x)
             ob.matrix_world = matrices[i]
 
@@ -509,7 +511,7 @@ object's movement caused by this constraint"""
             if ob.select:
                 self._bake_object(scene, ob)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_setup_tracking_scene(Operator):
@@ -517,7 +519,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
 
     bl_idname = "clip.setup_tracking_scene"
     bl_label = "Setup Tracking Scene"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     @classmethod
     def poll(cls, context):
@@ -663,7 +665,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
             return True
 
         for node in tree.nodes:
-            if node.type in {'MOVIECLIP', 'MOVIEDISTORTION'}:
+            if node.type in set(['MOVIECLIP', 'MOVIEDISTORTION']):
                 return False
 
         return True
@@ -860,7 +862,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
         mesh.loops.add(nbr_loops)
         mesh.polygons.add(nbr_polys)
 
-        mesh.polygons.foreach_set("loop_start", range(0, nbr_loops, 4))
+        mesh.polygons.foreach_set("loop_start", xrange(0, nbr_loops, 4))
         mesh.polygons.foreach_set("loop_total", (4,) * nbr_polys)
         mesh.loops.foreach_set("vertex_index", faces)
 
@@ -902,7 +904,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
     @staticmethod
     def _mergeLayers(layers_a, layers_b):
 
-        return [(layers_a[i] | layers_b[i]) for i in range(len(layers_a))]
+        return [(layers_a[i] | layers_b[i]) for i in xrange(len(layers_a))]
 
     @staticmethod
     def _createLamp(scene):
@@ -985,7 +987,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
         # NOTE: The active layer is always true.
         scene.layers[current_active_layer] = True
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_track_settings_as_default(Operator):
@@ -993,7 +995,7 @@ class CLIP_OT_track_settings_as_default(Operator):
 
     bl_idname = "clip.track_settings_as_default"
     bl_label = "Track Settings As Default"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     @classmethod
     def poll(cls, context):
@@ -1015,7 +1017,7 @@ class CLIP_OT_track_settings_as_default(Operator):
 
         CLIP_default_settings_from_track(clip, track, framenr)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class CLIP_OT_track_settings_to_track(bpy.types.Operator):
@@ -1023,7 +1025,7 @@ class CLIP_OT_track_settings_to_track(bpy.types.Operator):
 
     bl_label = "Copy Track Settings"
     bl_idname = "clip.track_settings_to_track"
-    bl_options = {'UNDO', 'REGISTER'}
+    bl_options = set(['UNDO', 'REGISTER'])
 
     _attrs_track = (
         "correlation_min",
@@ -1070,4 +1072,4 @@ class CLIP_OT_track_settings_to_track(bpy.types.Operator):
                 for attr in self._attrs_marker:
                     setattr(marker_selected, attr, getattr(marker, attr))
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

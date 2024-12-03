@@ -24,6 +24,7 @@
 #             object and trims them in order to produce
 #             a haloing effect around the target shape
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     AndUP1D,

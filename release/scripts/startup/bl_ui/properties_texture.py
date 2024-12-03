@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel, UIList
 
@@ -34,11 +35,12 @@ from bpy.types import (
 from rna_prop_ui import PropertyPanel
 
 from bl_ui.properties_paint_common import brush_texture_settings
+from io import open
 
 
 class TEXTURE_MT_specials(Menu):
     bl_label = "Texture Specials"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -49,7 +51,7 @@ class TEXTURE_MT_specials(Menu):
 
 class TEXTURE_MT_envmap_specials(Menu):
     bl_label = "Environment Map Specials"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -65,7 +67,7 @@ class TEXTURE_UL_texslots(UIList):
         ma = data
         slot = item
         tex = slot.texture if slot else None
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             if tex:
                 layout.prop(tex, "name", text="", emboss=False, icon_value=icon)
             else:
@@ -116,7 +118,7 @@ def id_tex_datablock(bid):
     return bid
 
 
-class TextureButtonsPanel:
+class TextureButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "texture"
@@ -129,8 +131,8 @@ class TextureButtonsPanel:
 
 class TEXTURE_PT_context_texture(TextureButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -228,7 +230,7 @@ class TEXTURE_PT_context_texture(TextureButtonsPanel, Panel):
 
 class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
     bl_label = "Preview"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -249,8 +251,8 @@ class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
 
 class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
     bl_label = "Colors"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -283,7 +285,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
 
 
 class TextureSlotPanel(TextureButtonsPanel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -309,7 +311,7 @@ class TextureTypePanel(TextureButtonsPanel):
 class TEXTURE_PT_clouds(TextureTypePanel, Panel):
     bl_label = "Clouds"
     tex_type = 'CLOUDS'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -333,7 +335,7 @@ class TEXTURE_PT_clouds(TextureTypePanel, Panel):
 class TEXTURE_PT_wood(TextureTypePanel, Panel):
     bl_label = "Wood"
     tex_type = 'WOOD'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -344,13 +346,13 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
         layout.prop(tex, "wood_type", expand=True)
 
         col = layout.column()
-        col.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        col.active = tex.wood_type in set(['RINGNOISE', 'BANDNOISE'])
         col.label(text="Noise:")
         col.row().prop(tex, "noise_type", text="Type", expand=True)
         layout.prop(tex, "noise_basis", text="Basis")
 
         split = layout.split()
-        split.active = tex.wood_type in {'RINGNOISE', 'BANDNOISE'}
+        split.active = tex.wood_type in set(['RINGNOISE', 'BANDNOISE'])
 
         col = split.column()
         col.prop(tex, "noise_scale", text="Size")
@@ -362,7 +364,7 @@ class TEXTURE_PT_wood(TextureTypePanel, Panel):
 class TEXTURE_PT_marble(TextureTypePanel, Panel):
     bl_label = "Marble"
     tex_type = 'MARBLE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -389,7 +391,7 @@ class TEXTURE_PT_marble(TextureTypePanel, Panel):
 class TEXTURE_PT_magic(TextureTypePanel, Panel):
     bl_label = "Magic"
     tex_type = 'MAGIC'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -404,7 +406,7 @@ class TEXTURE_PT_magic(TextureTypePanel, Panel):
 class TEXTURE_PT_blend(TextureTypePanel, Panel):
     bl_label = "Blend"
     tex_type = 'BLEND'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -415,14 +417,14 @@ class TEXTURE_PT_blend(TextureTypePanel, Panel):
 
         sub = layout.row()
 
-        sub.active = (tex.progression in {'LINEAR', 'QUADRATIC', 'EASING', 'RADIAL'})
+        sub.active = (tex.progression in set(['LINEAR', 'QUADRATIC', 'EASING', 'RADIAL']))
         sub.prop(tex, "use_flip_axis", expand=True)
 
 
 class TEXTURE_PT_stucci(TextureTypePanel, Panel):
     bl_label = "Stucci"
     tex_type = 'STUCCI'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -442,7 +444,7 @@ class TEXTURE_PT_stucci(TextureTypePanel, Panel):
 class TEXTURE_PT_image(TextureTypePanel, Panel):
     bl_label = "Image"
     tex_type = 'IMAGE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -455,7 +457,7 @@ class TEXTURE_PT_image(TextureTypePanel, Panel):
 def texture_filter_common(tex, layout):
     layout.label(text="Filter:")
     layout.prop(tex, "filter_type", text="")
-    if tex.use_mipmap and tex.filter_type in {'AREA', 'EWA', 'FELINE'}:
+    if tex.use_mipmap and tex.filter_type in set(['AREA', 'EWA', 'FELINE']):
         if tex.filter_type == 'FELINE':
             layout.prop(tex, "filter_probes", text="Probes")
         else:
@@ -467,9 +469,9 @@ def texture_filter_common(tex, layout):
 
 class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
     bl_label = "Image Sampling"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     tex_type = 'IMAGE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         if context.scene.render.engine == 'BLENDER_GAME':
@@ -547,9 +549,9 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
 class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
     bl_label = "Image Mapping"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     tex_type = 'IMAGE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -604,7 +606,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
 class TEXTURE_PT_envmap(TextureTypePanel, Panel):
     bl_label = "Environment Map"
     tex_type = 'ENVIRONMENT_MAP'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -641,9 +643,9 @@ class TEXTURE_PT_envmap(TextureTypePanel, Panel):
 
 class TEXTURE_PT_envmap_sampling(TextureTypePanel, Panel):
     bl_label = "Environment Map Sampling"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     tex_type = 'ENVIRONMENT_MAP'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -656,7 +658,7 @@ class TEXTURE_PT_envmap_sampling(TextureTypePanel, Panel):
 class TEXTURE_PT_musgrave(TextureTypePanel, Panel):
     bl_label = "Musgrave"
     tex_type = 'MUSGRAVE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -674,10 +676,10 @@ class TEXTURE_PT_musgrave(TextureTypePanel, Panel):
 
         musgrave_type = tex.musgrave_type
         col = split.column()
-        if musgrave_type in {'HETERO_TERRAIN', 'RIDGED_MULTIFRACTAL', 'HYBRID_MULTIFRACTAL'}:
+        if musgrave_type in set(['HETERO_TERRAIN', 'RIDGED_MULTIFRACTAL', 'HYBRID_MULTIFRACTAL']):
             col.prop(tex, "offset")
         col.prop(tex, "noise_intensity", text="Intensity")
-        if musgrave_type in {'RIDGED_MULTIFRACTAL', 'HYBRID_MULTIFRACTAL'}:
+        if musgrave_type in set(['RIDGED_MULTIFRACTAL', 'HYBRID_MULTIFRACTAL']):
             col.prop(tex, "gain")
 
         layout.label(text="Noise:")
@@ -692,7 +694,7 @@ class TEXTURE_PT_musgrave(TextureTypePanel, Panel):
 class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
     bl_label = "Voronoi"
     tex_type = 'VORONOI'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -728,7 +730,7 @@ class TEXTURE_PT_voronoi(TextureTypePanel, Panel):
 class TEXTURE_PT_distortednoise(TextureTypePanel, Panel):
     bl_label = "Distorted Noise"
     tex_type = 'DISTORTED_NOISE'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -749,7 +751,7 @@ class TEXTURE_PT_distortednoise(TextureTypePanel, Panel):
 
 class TEXTURE_PT_voxeldata(TextureButtonsPanel, Panel):
     bl_label = "Voxel Data"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -764,7 +766,7 @@ class TEXTURE_PT_voxeldata(TextureButtonsPanel, Panel):
         vd = tex.voxel_data
 
         layout.prop(vd, "file_format")
-        if vd.file_format in {'BLENDER_VOXEL', 'RAW_8BIT'}:
+        if vd.file_format in set(['BLENDER_VOXEL', 'RAW_8BIT']):
             layout.prop(vd, "filepath")
         if vd.file_format == 'RAW_8BIT':
             layout.prop(vd, "resolution")
@@ -779,7 +781,7 @@ class TEXTURE_PT_voxeldata(TextureButtonsPanel, Panel):
             layout.template_image(tex, "image", tex.image_user, compact=True)
             #layout.prop(vd, "frame_duration")
 
-        if vd.file_format in {'BLENDER_VOXEL', 'RAW_8BIT'}:
+        if vd.file_format in set(['BLENDER_VOXEL', 'RAW_8BIT']):
             layout.prop(vd, "use_still_frame")
             row = layout.row()
             row.active = vd.use_still_frame
@@ -792,7 +794,7 @@ class TEXTURE_PT_voxeldata(TextureButtonsPanel, Panel):
 
 class TEXTURE_PT_pointdensity(TextureButtonsPanel, Panel):
     bl_label = "Point Density"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -833,9 +835,9 @@ class TEXTURE_PT_pointdensity(TextureButtonsPanel, Panel):
         if pd.point_source == 'PARTICLE_SYSTEM':
             col.label(text="Color Source:")
             col.prop(pd, "color_source", text="")
-            if pd.color_source in {'PARTICLE_SPEED', 'PARTICLE_VELOCITY'}:
+            if pd.color_source in set(['PARTICLE_SPEED', 'PARTICLE_VELOCITY']):
                 col.prop(pd, "speed_scale")
-            if pd.color_source in {'PARTICLE_SPEED', 'PARTICLE_AGE'}:
+            if pd.color_source in set(['PARTICLE_SPEED', 'PARTICLE_AGE']):
                 layout.template_color_ramp(pd, "color_ramp", expand=True)
 
         col = split.column()
@@ -858,7 +860,7 @@ class TEXTURE_PT_pointdensity(TextureButtonsPanel, Panel):
 
 class TEXTURE_PT_pointdensity_turbulence(TextureButtonsPanel, Panel):
     bl_label = "Turbulence"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -896,7 +898,7 @@ class TEXTURE_PT_pointdensity_turbulence(TextureButtonsPanel, Panel):
 class TEXTURE_PT_ocean(TextureTypePanel, Panel):
     bl_label = "Ocean"
     tex_type = 'OCEAN'
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -911,7 +913,7 @@ class TEXTURE_PT_ocean(TextureTypePanel, Panel):
 
 class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
     bl_label = "Mapping"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -990,7 +992,7 @@ class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
                 split = layout.split()
 
                 col = split.column()
-                if tex.texture_coords in {'ORCO', 'UV'}:
+                if tex.texture_coords in set(['ORCO', 'UV']):
                     col.prop(tex, "use_from_dupli")
                     if (idblock.type == 'VOLUME' and tex.texture_coords == 'ORCO'):
                         col.prop(tex, "use_map_to_bounds")
@@ -1014,7 +1016,7 @@ class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
 
 class TEXTURE_PT_influence(TextureSlotPanel, Panel):
     bl_label = "Influence"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -1045,7 +1047,7 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
             return sub  # XXX, temp. use_map_normal needs to override.
 
         if isinstance(idblock, Material):
-            if idblock.type in {'SURFACE', 'WIRE'}:
+            if idblock.type in set(['SURFACE', 'WIRE']):
                 split = layout.split()
 
                 col = split.column()
@@ -1206,12 +1208,12 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
 
             # the space setting is supported for: derivative-maps + bump-maps (DEFAULT,BEST_QUALITY), not for normal-maps
             sub = row.row()
-            sub.active = (tex.use_map_normal or tex.use_map_warp) and not (tex.texture.type == 'IMAGE' and tex.texture.use_normal_map) and ((tex.bump_method in {'BUMP_LOW_QUALITY', 'BUMP_MEDIUM_QUALITY', 'BUMP_BEST_QUALITY'}) or (tex.texture.type == 'IMAGE' and tex.texture.use_derivative_map))
+            sub.active = (tex.use_map_normal or tex.use_map_warp) and not (tex.texture.type == 'IMAGE' and tex.texture.use_normal_map) and ((tex.bump_method in set(['BUMP_LOW_QUALITY', 'BUMP_MEDIUM_QUALITY', 'BUMP_BEST_QUALITY'])) or (tex.texture.type == 'IMAGE' and tex.texture.use_derivative_map))
             sub.prop(tex, "bump_objectspace", text="Space")
 
 
 class TEXTURE_PT_custom_props(TextureButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "texture"
     _property_type = Texture
 

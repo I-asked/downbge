@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
 
@@ -49,7 +50,7 @@ class MyCustomSocket(NodeSocket):
 
 # Mix-in class for all custom nodes in this tree type.
 # Defines a poll function to enable instantiation.
-class MyCustomTreeNode:
+class MyCustomTreeNode(object):
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'CustomTreeType'
@@ -90,11 +91,11 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     # Copy function to initialize a copied node from an existing one.
     def copy(self, node):
-        print("Copying from node ", node)
+        print "Copying from node ", node
 
     # Free function to clean up on removal.
     def free(self):
-        print("Removing node ", self, ", Goodbye!")
+        print "Removing node ", self, ", Goodbye!"
 
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):

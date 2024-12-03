@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel
 from rna_prop_ui import PropertyPanel
@@ -26,11 +27,11 @@ class LAMP_MT_sunsky_presets(Menu):
     bl_label = "Sun & Sky Presets"
     preset_subdir = "sunsky"
     preset_operator = "script.execute_preset"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     draw = Menu.draw_preset
 
 
-class DataButtonsPanel:
+class DataButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -43,8 +44,8 @@ class DataButtonsPanel:
 
 class DATA_PT_context_lamp(DataButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -68,7 +69,7 @@ class DATA_PT_context_lamp(DataButtonsPanel, Panel):
 
 class DATA_PT_preview(DataButtonsPanel, Panel):
     bl_label = "Preview"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         self.layout.template_preview(context.lamp)
@@ -76,7 +77,7 @@ class DATA_PT_preview(DataButtonsPanel, Panel):
 
 class DATA_PT_lamp(DataButtonsPanel, Panel):
     bl_label = "Lamp"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -92,7 +93,7 @@ class DATA_PT_lamp(DataButtonsPanel, Panel):
         sub.prop(lamp, "color", text="")
         sub.prop(lamp, "energy")
 
-        if lamp.type in {'POINT', 'SPOT'}:
+        if lamp.type in set(['POINT', 'SPOT']):
             sub.label(text="Falloff:")
             sub.prop(lamp, "falloff_type", text="")
             sub.prop(lamp, "distance")
@@ -118,7 +119,7 @@ class DATA_PT_lamp(DataButtonsPanel, Panel):
 
 class DATA_PT_sunsky(DataButtonsPanel, Panel):
     bl_label = "Sky & Atmosphere"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -190,13 +191,13 @@ class DATA_PT_sunsky(DataButtonsPanel, Panel):
 
 class DATA_PT_shadow(DataButtonsPanel, Panel):
     bl_label = "Shadow"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         lamp = context.lamp
         engine = context.scene.render.engine
-        return (lamp and lamp.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and (engine in cls.COMPAT_ENGINES)
+        return (lamp and lamp.type in set(['POINT', 'SUN', 'SPOT', 'AREA'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -235,7 +236,7 @@ class DATA_PT_shadow(DataButtonsPanel, Panel):
             col = split.column()
             col.label(text="Sampling:")
 
-            if lamp.type in {'POINT', 'SUN', 'SPOT'}:
+            if lamp.type in set(['POINT', 'SUN', 'SPOT']):
                 sub = col.row()
 
                 sub.prop(lamp, "shadow_ray_samples", text="Samples")
@@ -266,7 +267,7 @@ class DATA_PT_shadow(DataButtonsPanel, Panel):
             col.label(text="Buffer Type:")
             col.row().prop(lamp, "shadow_buffer_type", expand=True)
 
-            if lamp.shadow_buffer_type in {'REGULAR', 'HALFWAY', 'DEEP'}:
+            if lamp.shadow_buffer_type in set(['REGULAR', 'HALFWAY', 'DEEP']):
                 split = layout.split()
 
                 col = split.column()
@@ -305,7 +306,7 @@ class DATA_PT_shadow(DataButtonsPanel, Panel):
 
 class DATA_PT_area(DataButtonsPanel, Panel):
     bl_label = "Area Shape"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -331,7 +332,7 @@ class DATA_PT_area(DataButtonsPanel, Panel):
 
 class DATA_PT_spot(DataButtonsPanel, Panel):
     bl_label = "Spot Shape"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -366,15 +367,15 @@ class DATA_PT_spot(DataButtonsPanel, Panel):
 
 class DATA_PT_falloff_curve(DataButtonsPanel, Panel):
     bl_label = "Falloff Curve"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         lamp = context.lamp
         engine = context.scene.render.engine
 
-        return (lamp and lamp.type in {'POINT', 'SPOT'} and lamp.falloff_type == 'CUSTOM_CURVE') and (engine in cls.COMPAT_ENGINES)
+        return (lamp and lamp.type in set(['POINT', 'SPOT']) and lamp.falloff_type == 'CUSTOM_CURVE') and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         lamp = context.lamp
@@ -383,7 +384,7 @@ class DATA_PT_falloff_curve(DataButtonsPanel, Panel):
 
 
 class DATA_PT_custom_props_lamp(DataButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object.data"
     _property_type = bpy.types.Lamp
 

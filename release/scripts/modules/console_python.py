@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8-80 compliant>
+from __future__ import absolute_import
 import sys
 import bpy
 
@@ -84,8 +85,8 @@ def get_console(console_id):
         # seems there is no way to clear StringIO objects for writing, have to
         # make new ones each time.
         import io
-        stdout = io.StringIO()
-        stderr = io.StringIO()
+        stdout = io.BytesIO()
+        stderr = io.BytesIO()
     else:
         if _BPY_MAIN_OWN:
             import types
@@ -94,7 +95,8 @@ def get_console(console_id):
         else:
             namespace = {}
 
-        namespace["__builtins__"] = sys.modules["builtins"]
+
+        namespace["__builtins__"] = sys.modules["__builtin__"]
         namespace["bpy"] = bpy
 
         # weak! - but highly convenient
@@ -113,8 +115,8 @@ def get_console(console_id):
             console._bpy_main_mod = bpy_main_mod
 
         import io
-        stdout = io.StringIO()
-        stderr = io.StringIO()
+        stdout = io.BytesIO()
+        stderr = io.BytesIO()
 
         consoles[console_id] = console, stdout, stderr
 
@@ -132,7 +134,7 @@ def execute(context, is_interactive):
     try:
         line_object = sc.history[-1]
     except:
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
     console, stdout, stderr = get_console(hash(context.region))
 
@@ -184,7 +186,7 @@ def execute(context, is_interactive):
 
     # special exception. its possible the command loaded a new user interface
     if hash(sc) != hash(context.space_data):
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     bpy.ops.console.scrollback_append(text=sc.prompt + line, type='INPUT')
 
@@ -220,7 +222,7 @@ def execute(context, is_interactive):
     for func, args in execute.hooks:
         func(*args)
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 execute.hooks = []
 
@@ -235,7 +237,7 @@ def autocomplete(context):
     console = get_console(hash(context.region))[0]
 
     if not console:
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
     # don't allow the stdin to be used, can lock blender.
     # note: unlikely stdin would be used for autocomplete. but its possible.
@@ -297,7 +299,7 @@ def autocomplete(context):
 
     context.area.tag_redraw()
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 def copy_as_script(context):
@@ -331,7 +333,7 @@ def copy_as_script(context):
 
     context.window_manager.clipboard = "\n".join(lines)
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 def banner(context):
@@ -357,7 +359,7 @@ def banner(context):
     add_scrollback("", 'OUTPUT')
     sc.prompt = PROMPT
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 # workaround for readline crashing, see: T43491

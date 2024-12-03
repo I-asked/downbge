@@ -17,11 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, UIList
 
 
-class RenderLayerButtonsPanel:
+class RenderLayerButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render_layer"
@@ -37,7 +38,7 @@ class RENDERLAYER_UL_renderlayers(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         # assert(isinstance(item, bpy.types.SceneRenderLayer)
         layer = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             layout.prop(layer, "name", text="", icon_value=icon, emboss=False)
             layout.prop(layer, "use", text="", index=index)
         elif self.layout_type == 'GRID':
@@ -47,8 +48,8 @@ class RENDERLAYER_UL_renderlayers(UIList):
 
 class RENDERLAYER_PT_layers(RenderLayerButtonsPanel, Panel):
     bl_label = "Layer List"
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -73,7 +74,7 @@ class RENDERLAYER_PT_layers(RenderLayerButtonsPanel, Panel):
 
 class RENDERLAYER_PT_layer_options(RenderLayerButtonsPanel, Panel):
     bl_label = "Layer"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -123,8 +124,8 @@ class RENDERLAYER_PT_layer_options(RenderLayerButtonsPanel, Panel):
 
 class RENDERLAYER_PT_layer_passes(RenderLayerButtonsPanel, Panel):
     bl_label = "Passes"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @staticmethod
     def draw_pass_type_buttons(box, rl, pass_type):
@@ -172,8 +173,8 @@ class RENDERLAYER_UL_renderviews(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         # assert(isinstance(item, bpy.types.SceneRenderView)
         view = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            if view.name in {'left', 'right'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
+            if view.name in set(['left', 'right']):
                 layout.label(view.name, icon_value=icon + (not view.use))
             else:
                 layout.prop(view, "name", text="", index=index, icon_value=icon, emboss=False)
@@ -186,8 +187,8 @@ class RENDERLAYER_UL_renderviews(UIList):
 
 class RENDERLAYER_PT_views(RenderLayerButtonsPanel, Panel):
     bl_label = "Views"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         rd = context.scene.render

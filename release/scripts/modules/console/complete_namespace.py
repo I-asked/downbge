@@ -22,6 +22,7 @@
 
 """Autocomplete with the standard library"""
 
+from __future__ import absolute_import
 import re
 import rlcompleter
 
@@ -111,7 +112,7 @@ def complete_indices(word, namespace, obj=None, base=None):
         matches = ['%s[%r]' % (base, key) for key in sorted(obj.keys())]
     else:
         # list type
-        matches = ['%s[%d]' % (base, idx) for idx in range(obj_len)]
+        matches = ['%s[%d]' % (base, idx) for idx in xrange(obj_len)]
     if word != base:
         matches = [match for match in matches if match.startswith(word)]
     return matches
@@ -186,7 +187,7 @@ def complete(word, namespace, private=True):
         except Exception:
             return []
         # ignore basic types
-        if type(obj) in {bool, float, int, str}:
+        if type(obj) in set([bool, float, int, str]):
             return []
         # an extra char '[', '(' or '.' will be added
         if hasattr(obj, '__getitem__') and not is_struct_seq(obj):

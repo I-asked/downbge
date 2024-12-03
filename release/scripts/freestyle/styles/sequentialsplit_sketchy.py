@@ -23,6 +23,7 @@
 #             predicates to specify respectively the starting and
 #             the stopping extremities for strokes 
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

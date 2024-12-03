@@ -17,14 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
 
 from bpy.types import Curve, SurfaceCurve, TextCurve
+from io import open
 
 
-class CurveButtonsPanel:
+class CurveButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -63,7 +65,7 @@ class CurveButtonsPanelActive(CurveButtonsPanel):
 
 class DATA_PT_context_curve(CurveButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -135,8 +137,8 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
 
 class DATA_PT_curve_texture_space(CurveButtonsPanel, Panel):
     bl_label = "Texture Space"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -159,7 +161,7 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
 
     @classmethod
     def poll(cls, context):
-        return (type(context.curve) in {Curve, TextCurve})
+        return (type(context.curve) in set([Curve, TextCurve]))
 
     def draw(self, context):
         layout = self.layout
@@ -421,7 +423,7 @@ class DATA_PT_text_boxes(CurveButtonsPanelText, Panel):
 
 
 class DATA_PT_custom_props_curve(CurveButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object.data"
     _property_type = bpy.types.Curve
 

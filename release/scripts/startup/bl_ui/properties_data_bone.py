@@ -18,12 +18,13 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
 
 
-class BoneButtonsPanel:
+class BoneButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "bone"
@@ -35,7 +36,7 @@ class BoneButtonsPanel:
 
 class BONE_PT_context_bone(BoneButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -105,7 +106,7 @@ class BONE_PT_transform(BoneButtonsPanel, Panel):
 
 class BONE_PT_transform_locks(BoneButtonsPanel, Panel):
     bl_label = "Transform Locks"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -137,7 +138,7 @@ class BONE_PT_transform_locks(BoneButtonsPanel, Panel):
         col = split.column()
         col.prop(pchan, "lock_scale", text="Scale")
 
-        if pchan.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+        if pchan.rotation_mode in set(['QUATERNION', 'AXIS_ANGLE']):
             row = layout.row()
             row.prop(pchan, "lock_rotations_4d", text="Lock Rotation")
 
@@ -234,7 +235,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
 
 class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):
     bl_label = "Inverse Kinematics"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -326,7 +327,7 @@ class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):
 
 class BONE_PT_deform(BoneButtonsPanel, Panel):
     bl_label = "Deform"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         bone = context.bone
@@ -371,7 +372,7 @@ class BONE_PT_deform(BoneButtonsPanel, Panel):
 
 
 class BONE_PT_custom_props(BoneButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _property_type = bpy.types.Bone, bpy.types.EditBone, bpy.types.PoseBone
 
     @property

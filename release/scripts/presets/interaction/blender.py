@@ -1,4 +1,5 @@
 # Configuration Blender
+from __future__ import absolute_import
 import bpy
 
 bpy.context.user_preferences.view.use_mouse_depth_cursor = False

@@ -18,6 +18,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel
 
@@ -43,7 +45,7 @@ class RENDER_MT_framerate_presets(Menu):
     draw = Menu.draw_preset
 
 
-class RenderButtonsPanel:
+class RenderButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -57,7 +59,7 @@ class RenderButtonsPanel:
 
 class RENDER_PT_render(RenderButtonsPanel, Panel):
     bl_label = "Render"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -79,7 +81,7 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
 class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
     bl_label = "Dimensions"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     _frame_rate_args_prev = None
     _preset_class = None
@@ -98,7 +100,7 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
             fps_rate = round(fps / fps_base, 2)
 
         # TODO: Change the following to iterate over existing presets
-        custom_framerate = (fps_rate not in {23.98, 24, 25, 29.97, 30, 50, 59.94, 60})
+        custom_framerate = (fps_rate not in set([23.98, 24, 25, 29.97, 30, 50, 59.94, 60]))
 
         if custom_framerate is True:
             fps_label_text = "Custom (%r fps)" % fps_rate
@@ -175,7 +177,7 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
 
 class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
     bl_label = "Anti-Aliasing"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -203,8 +205,8 @@ class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
 
 class RENDER_PT_motion_blur(RenderButtonsPanel, Panel):
     bl_label = "Sampled Motion Blur"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -229,8 +231,8 @@ class RENDER_PT_motion_blur(RenderButtonsPanel, Panel):
 
 class RENDER_PT_shading(RenderButtonsPanel, Panel):
     bl_label = "Shading"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -252,8 +254,8 @@ class RENDER_PT_shading(RenderButtonsPanel, Panel):
 
 class RENDER_PT_performance(RenderButtonsPanel, Panel):
     bl_label = "Performance"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -298,8 +300,8 @@ class RENDER_PT_performance(RenderButtonsPanel, Panel):
 
 class RENDER_PT_post_processing(RenderButtonsPanel, Panel):
     bl_label = "Post Processing"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -335,8 +337,8 @@ class RENDER_PT_post_processing(RenderButtonsPanel, Panel):
 
 class RENDER_PT_stamp(RenderButtonsPanel, Panel):
     bl_label = "Metadata"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -381,7 +383,7 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
 
 class RENDER_PT_output(RenderButtonsPanel, Panel):
     bl_label = "Output"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -441,13 +443,13 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
 
 class RENDER_PT_encoding(RenderButtonsPanel, Panel):
     bl_label = "Encoding"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         rd = context.scene.render
-        return rd.image_settings.file_format in {'FFMPEG', 'XVID', 'H264', 'THEORA'}
+        return rd.image_settings.file_format in set(['FFMPEG', 'XVID', 'H264', 'THEORA'])
 
     def draw(self, context):
         layout = self.layout
@@ -459,7 +461,7 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
 
         split = layout.split()
         split.prop(rd.ffmpeg, "format")
-        if ffmpeg.format in {'AVI', 'QUICKTIME', 'MKV', 'OGG', 'MPEG4'}:
+        if ffmpeg.format in set(['AVI', 'QUICKTIME', 'MKV', 'OGG', 'MPEG4']):
             split.prop(ffmpeg, "codec")
             if ffmpeg.codec == 'H264':
                 row = layout.row()
@@ -501,8 +503,8 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
 
 class RENDER_PT_bake(RenderButtonsPanel, Panel):
     bl_label = "Bake"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -521,7 +523,7 @@ class RENDER_PT_bake(RenderButtonsPanel, Panel):
         if not multires_bake:
             if rd.bake_type == 'NORMALS':
                 layout.prop(rd, "bake_normal_space")
-            elif rd.bake_type in {'DISPLACEMENT', 'AO'}:
+            elif rd.bake_type in set(['DISPLACEMENT', 'AO']):
                 layout.prop(rd, "use_bake_normalize")
 
             # col.prop(rd, "bake_aa_mode")

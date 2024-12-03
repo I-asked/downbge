@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "region_2d_to_vector_3d",
     "region_2d_to_origin_3d",

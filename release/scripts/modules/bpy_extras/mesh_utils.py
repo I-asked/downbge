@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "mesh_linked_uv_islands",
     "mesh_linked_tessfaces",
@@ -62,7 +64,7 @@ def mesh_linked_uv_islands(mesh):
 
     while True:
         poly_index = -1
-        for i in range(len(poly_loops)):
+        for i in xrange(len(poly_loops)):
             if poly_tag[i] == 0:
                 poly_index = i
                 break
@@ -102,7 +104,7 @@ def mesh_linked_tessfaces(mesh):
     """
 
     # Build vert face connectivity
-    vert_faces = [[] for i in range(len(mesh.vertices))]
+    vert_faces = [[] for i in xrange(len(mesh.vertices))]
     for f in mesh.tessfaces:
         for v in f.vertices:
             vert_faces[v].append(f)
@@ -110,7 +112,7 @@ def mesh_linked_tessfaces(mesh):
     # sort faces into connectivity groups
     face_groups = [[f] for f in mesh.tessfaces]
     # map old, new face location
-    face_mapping = list(range(len(mesh.tessfaces)))
+    face_mapping = range(len(mesh.tessfaces))
 
     # Now clump faces iteratively
     ok = True
@@ -363,13 +365,13 @@ def ngon_tessellate(from_data, indices, fix_loops=True):
         """
         Normal single concave loop filling
         """
-        if type(from_data) in {tuple, list}:
+        if type(from_data) in set([tuple, list]):
             verts = [Vector(from_data[i]) for ii, i in enumerate(indices)]
         else:
             verts = [from_data.vertices[i].co for ii, i in enumerate(indices)]
 
         # same as reversed(range(1, len(verts))):
-        for i in range(len(verts) - 1, 0, -1):
+        for i in xrange(len(verts) - 1, 0, -1):
             if verts[i][1] == verts[i - 1][0]:
                 verts.pop(i - 1)
 
@@ -381,14 +383,14 @@ def ngon_tessellate(from_data, indices, fix_loops=True):
         used twice. This is used by lightwave LWO files a lot
         """
 
-        if type(from_data) in {tuple, list}:
+        if type(from_data) in set([tuple, list]):
             verts = [vert_treplet(Vector(from_data[i]), ii)
                      for ii, i in enumerate(indices)]
         else:
             verts = [vert_treplet(from_data.vertices[i].co, ii)
                      for ii, i in enumerate(indices)]
 
-        edges = [(i, i - 1) for i in range(len(verts))]
+        edges = [(i, i - 1) for i in xrange(len(verts))]
         if edges:
             edges[0] = (0, len(verts) - 1)
 
@@ -451,10 +453,10 @@ def ngon_tessellate(from_data, indices, fix_loops=True):
             joining_segments = False
             segcount = len(loop_segments)
 
-            for j in range(segcount - 1, -1, -1):  # reversed(range(segcount)):
+            for j in xrange(segcount - 1, -1, -1):  # reversed(range(segcount)):
                 seg_j = loop_segments[j]
                 if seg_j:
-                    for k in range(j - 1, -1, -1):  # reversed(range(j)):
+                    for k in xrange(j - 1, -1, -1):  # reversed(range(j)):
                         if not seg_j:
                             break
                         seg_k = loop_segments[k]
@@ -487,8 +489,8 @@ def ngon_tessellate(from_data, indices, fix_loops=True):
         fill = [[vert_map[i] for i in reversed(f)] for f in fill]
 
     if not fill:
-        print('Warning Cannot scanfill, fallback on a triangle fan.')
-        fill = [[0, i - 1, i] for i in range(2, len(indices))]
+        print 'Warning Cannot scanfill, fallback on a triangle fan.'
+        fill = [[0, i - 1, i] for i in xrange(2, len(indices))]
     else:
         # Use real scanfill.
         # See if its flipped the wrong way.
@@ -546,7 +548,7 @@ def face_random_points(num_points, tessfaces):
     # For each face, generate the required number of random points
     sampled_points = [None] * (num_points * len(tessfaces))
     for i, tf in enumerate(tri_faces):
-        for k in range(num_points):
+        for k in xrange(num_points):
             # If this is a quad, we need to weight its 2 tris by their area
             if len(tf) != 1:
                 area1 = area_tri(*tf[0])

@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
+from io import open
 if "bpy" in locals():
     from importlib import reload
     if "anim_utils" in locals():
@@ -46,17 +48,17 @@ class ANIM_OT_keying_set_export(Operator):
     filter_folder = BoolProperty(
             name="Filter folders",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_text = BoolProperty(
             name="Filter text",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_python = BoolProperty(
             name="Filter python",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     def execute(self, context):
@@ -158,19 +160,19 @@ class ANIM_OT_keying_set_export(Operator):
         f.write("\n")
         f.close()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
 
 class BakeAction(Operator):
     """Bake object/pose loc/scale/rotation animation to a new action"""
     bl_idname = "nla.bake"
     bl_label = "Bake Action"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     frame_start = IntProperty(
             name="Start Frame",
@@ -219,11 +221,11 @@ class BakeAction(Operator):
     bake_types = EnumProperty(
             name="Bake Data",
             description="Which data's transformations to bake",
-            options={'ENUM_FLAG'},
+            options=set(['ENUM_FLAG']),
             items=(('POSE', "Pose", "Bake bones transformations"),
                    ('OBJECT', "Object", "Bake object transformations"),
                    ),
-            default={'POSE'},
+            default=set(['POSE']),
             )
 
     def execute(self, context):
@@ -250,16 +252,16 @@ class BakeAction(Operator):
                                         )
 
         if action is None:
-            self.report({'INFO'}, "Nothing to bake")
-            return {'CANCELLED'}
+            self.report(set(['INFO']), "Nothing to bake")
+            return set(['CANCELLED'])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         scene = context.scene
         self.frame_start = scene.frame_start
         self.frame_end = scene.frame_end
-        self.bake_types = {'POSE'} if context.mode == 'POSE' else {'OBJECT'}
+        self.bake_types = set(['POSE']) if context.mode == 'POSE' else set(['OBJECT'])
 
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
@@ -270,7 +272,7 @@ class ClearUselessActions(Operator):
     """file preserving \"action libraries\""""
     bl_idname = "anim.clear_useless_actions"
     bl_label = "Clear Useless Actions"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     only_unused = BoolProperty(name="Only Unused",
             description="Only unused (Fake User only) actions get considered",
@@ -296,16 +298,16 @@ class ClearUselessActions(Operator):
                     action.user_clear()
                     removed += 1
 
-        self.report({'INFO'}, "Removed %d empty and/or fake-user only Actions"
+        self.report(set(['INFO']), "Removed %d empty and/or fake-user only Actions"
                               % removed)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class UpdateAnimatedTransformConstraint(Operator):
     """Update fcurves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
     bl_idname = "anim.update_animated_transform_constraints"
     bl_label = "Update Animated Transform Constraints"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     use_convert_to_radians = BoolProperty(
             name="Convert To Radians",
@@ -318,8 +320,8 @@ class UpdateAnimatedTransformConstraint(Operator):
         from math import radians
         import io
 
-        from_paths = {"from_max_x", "from_max_y", "from_max_z", "from_min_x", "from_min_y", "from_min_z"}
-        to_paths = {"to_max_x", "to_max_y", "to_max_z", "to_min_x", "to_min_y", "to_min_z"}
+        from_paths = set(["from_max_x", "from_max_y", "from_max_z", "from_min_x", "from_min_y", "from_min_z"])
+        to_paths = set(["to_max_x", "to_max_y", "to_max_z", "to_min_x", "to_min_y", "to_min_z"])
         paths = from_paths | to_paths
 
         def update_cb(base, class_name, old_path, fcurve, options):
@@ -340,13 +342,13 @@ class UpdateAnimatedTransformConstraint(Operator):
                             mod.amplitude = radians(mod.amplitude)
                     fcurve.update()
 
-            data = ...
+            data = Ellipsis
             try:
                 data = eval("base." + old_path)
             except:
                 pass
             ret = (data, old_path)
-            if isinstance(base, bpy.types.TransformConstraint) and data is not ...:
+            if isinstance(base, bpy.types.TransformConstraint) and data is not Ellipsis:
                 new_path = None
                 map_info = base.map_from if old_path in from_paths else base.map_to
                 if map_info == 'ROTATION':
@@ -357,7 +359,7 @@ class UpdateAnimatedTransformConstraint(Operator):
                     new_path = old_path + "_scale"
 
                 if new_path is not None:
-                    data = ...
+                    data = Ellipsis
                     try:
                         data = eval("base." + new_path)
                     except:
@@ -377,8 +379,8 @@ class UpdateAnimatedTransformConstraint(Operator):
 
         log = log.getvalue()
         if log:
-            print(log)
+            print log
             text = bpy.data.texts.new("UpdateAnimatedTransformConstraint Report")
             text.from_string(log)
-            self.report({'INFO'}, "Complete report available on '%s' text datablock" % text.name)
-        return {'FINISHED'}
+            self.report(set(['INFO']), "Complete report available on '%s' text datablock" % text.name)
+        return set(['FINISHED'])

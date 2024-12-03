@@ -19,6 +19,7 @@
 #    os.path.join(os.path.dirname(__file__), "images")
 
 
+from __future__ import absolute_import
 import os
 import bpy
 
@@ -39,7 +40,7 @@ def enum_previews_from_directory_items(self, context):
     if directory == pcoll.my_previews_dir:
         return pcoll.my_previews
 
-    print("Scanning directory: %s" % directory)
+    print "Scanning directory: %s" % directory
 
     if directory and os.path.exists(directory):
         # Scan the directory for png files

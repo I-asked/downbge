@@ -17,11 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 
 
-class PHYSICS_PT_rigidbody_panel:
+class PHYSICS_PT_rigidbody_panel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -70,7 +71,7 @@ class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
 
         layout.prop(rbo, "collision_shape", text="Shape")
 
-        if rbo.collision_shape in {'MESH', 'CONVEX_HULL'}:
+        if rbo.collision_shape in set(['MESH', 'CONVEX_HULL']):
             layout.prop(rbo, "mesh_source", text="Source")
 
         if rbo.collision_shape == 'MESH' and rbo.mesh_source == 'DEFORM':
@@ -85,7 +86,7 @@ class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
 
         col = split.column()
         col.label(text="Sensitivity:")
-        if rbo.collision_shape in {'MESH', 'CONE'}:
+        if rbo.collision_shape in set(['MESH', 'CONE']):
             col.prop(rbo, "collision_margin", text="Margin")
         else:
             col.prop(rbo, "use_margin")

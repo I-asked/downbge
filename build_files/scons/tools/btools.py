@@ -1,6 +1,6 @@
 import os
 import os.path
-import SCons.Options
+import SCons.Script.SConsOptions
 
 import SCons.Variables
 try:

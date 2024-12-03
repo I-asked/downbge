@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, UIList
 
@@ -31,7 +32,7 @@ class PHYSICS_UL_dynapaint_surfaces(UIList):
         # assert(isinstance(item, bpy.types.DynamicPaintSurface)
         surf = item
         sticon = layout.enum_item_icon(surf, "surface_type", surf.surface_type)
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             row = layout.row(align=True)
             row.label(text="", icon_value=icon)
             row.prop(surf, "name", text="", emboss=False, icon_value=sticon)
@@ -47,7 +48,7 @@ class PHYSICS_UL_dynapaint_surfaces(UIList):
             row.label(text="", icon_value=sticon)
 
 
-class PhysicButtonsPanel:
+class PhysicButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -212,7 +213,7 @@ class PHYSICS_PT_dp_advanced_canvas(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Output"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -222,7 +223,7 @@ class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
             return 0
         surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
         return (surface and
-                (not (surface.surface_format == 'VERTEX' and (surface.surface_type in {'DISPLACE', 'WAVE'}))) and
+                (not (surface.surface_format == 'VERTEX' and (surface.surface_type in set(['DISPLACE', 'WAVE'])))) and
                 (not rd.use_game_engine))
 
     def draw(self, context):
@@ -305,7 +306,7 @@ class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Initial Color"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -341,7 +342,7 @@ class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_effects(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Effects"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -390,7 +391,7 @@ class PHYSICS_PT_dp_effects(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Cache"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -439,18 +440,18 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
                 col.prop(brush, "use_particle_radius", text="Use Particle's Radius")
                 col.prop(brush, "smooth_radius", text="Smooth radius")
 
-        if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE', 'POINT'}:
+        if brush.paint_source in set(['DISTANCE', 'VOLUME_DISTANCE', 'POINT']):
             col.prop(brush, "paint_distance", text="Paint Distance")
             split = layout.row().split(percentage=0.4)
             sub = split.column()
-            if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
+            if brush.paint_source in set(['DISTANCE', 'VOLUME_DISTANCE']):
                 sub.prop(brush, "use_proximity_project")
             if brush.paint_source == 'VOLUME_DISTANCE':
                 sub.prop(brush, "invert_proximity")
                 sub.prop(brush, "use_negative_volume")
 
             sub = split.column()
-            if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
+            if brush.paint_source in set(['DISTANCE', 'VOLUME_DISTANCE']):
                 column = sub.column()
                 column.active = brush.use_proximity_project
                 column.prop(brush, "ray_direction")
@@ -464,7 +465,7 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_brush_velocity(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Velocity"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -500,7 +501,7 @@ class PHYSICS_PT_dp_brush_velocity(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_dp_brush_wave(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint Waves"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):

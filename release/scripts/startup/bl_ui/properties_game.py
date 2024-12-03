@@ -17,11 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, Menu
 
 
-class PhysicsButtonsPanel:
+class PhysicsButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -29,7 +30,7 @@ class PhysicsButtonsPanel:
 
 class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
     bl_label = "Physics"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -56,7 +57,7 @@ class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
             layout.prop(game, "jump_speed")
             layout.prop(game, "fall_speed")
 
-        elif physics_type in {'DYNAMIC', 'RIGID_BODY'}:
+        elif physics_type in set(['DYNAMIC', 'RIGID_BODY']):
             split = layout.split()
 
             col = split.column()
@@ -184,7 +185,7 @@ class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
             col.prop(game, "use_actor", text="Detect Actors")
             col.prop(ob, "hide_render", text="Invisible")
 
-        elif physics_type in {'INVISIBLE', 'NO_COLLISION', 'OCCLUDER'}:
+        elif physics_type in set(['INVISIBLE', 'NO_COLLISION', 'OCCLUDER']):
             layout.prop(ob, "hide_render", text="Invisible")
 
         elif physics_type == 'NAVMESH':
@@ -199,14 +200,14 @@ class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
 
 class PHYSICS_PT_game_collision_bounds(PhysicsButtonsPanel, Panel):
     bl_label = "Collision Bounds"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         game = context.object.game
         rd = context.scene.render
         return (rd.engine in cls.COMPAT_ENGINES) \
-                and (game.physics_type in {'SENSOR', 'STATIC', 'DYNAMIC', 'RIGID_BODY', 'CHARACTER', 'SOFT_BODY'})
+                and (game.physics_type in set(['SENSOR', 'STATIC', 'DYNAMIC', 'RIGID_BODY', 'CHARACTER', 'SOFT_BODY']))
 
     def draw_header(self, context):
         game = context.active_object.game
@@ -227,7 +228,7 @@ class PHYSICS_PT_game_collision_bounds(PhysicsButtonsPanel, Panel):
         row.prop(game, "collision_margin", text="Margin", slider=True)
 
         sub = row.row()
-        sub.active = game.physics_type not in {'SOFT_BODY', 'CHARACTER'}
+        sub.active = game.physics_type not in set(['SOFT_BODY', 'CHARACTER'])
         sub.prop(game, "use_collision_compound", text="Compound")
 
         layout.separator()
@@ -240,14 +241,14 @@ class PHYSICS_PT_game_collision_bounds(PhysicsButtonsPanel, Panel):
 
 class PHYSICS_PT_game_obstacles(PhysicsButtonsPanel, Panel):
     bl_label = "Create Obstacle"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         game = context.object.game
         rd = context.scene.render
         return (rd.engine in cls.COMPAT_ENGINES) \
-                and (game.physics_type in {'SENSOR', 'STATIC', 'DYNAMIC', 'RIGID_BODY', 'SOFT_BODY', 'CHARACTER', 'NO_COLLISION'})
+                and (game.physics_type in set(['SENSOR', 'STATIC', 'DYNAMIC', 'RIGID_BODY', 'SOFT_BODY', 'CHARACTER', 'NO_COLLISION']))
 
     def draw_header(self, context):
         game = context.active_object.game
@@ -266,7 +267,7 @@ class PHYSICS_PT_game_obstacles(PhysicsButtonsPanel, Panel):
         row.label()
 
 
-class RenderButtonsPanel:
+class RenderButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -279,7 +280,7 @@ class RenderButtonsPanel:
 
 class RENDER_PT_embedded(RenderButtonsPanel, Panel):
     bl_label = "Embedded Player"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -298,7 +299,7 @@ class RENDER_PT_embedded(RenderButtonsPanel, Panel):
 
 class RENDER_PT_game_player(RenderButtonsPanel, Panel):
     bl_label = "Standalone Player"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         import sys
@@ -336,7 +337,7 @@ class RENDER_PT_game_player(RenderButtonsPanel, Panel):
 
 class RENDER_PT_game_stereo(RenderButtonsPanel, Panel):
     bl_label = "Stereo"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -360,7 +361,7 @@ class RENDER_PT_game_stereo(RenderButtonsPanel, Panel):
 
             split = layout.split()
 
-            if dome_type in {'FISHEYE', 'TRUNCATED_REAR', 'TRUNCATED_FRONT'}:
+            if dome_type in set(['FISHEYE', 'TRUNCATED_REAR', 'TRUNCATED_FRONT']):
                 col = split.column()
                 col.prop(gs, "dome_buffer_resolution", text="Resolution", slider=True)
                 col.prop(gs, "dome_angle", slider=True)
@@ -387,7 +388,7 @@ class RENDER_PT_game_stereo(RenderButtonsPanel, Panel):
 
 class RENDER_PT_game_shading(RenderButtonsPanel, Panel):
     bl_label = "Shading"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -412,7 +413,7 @@ class RENDER_PT_game_shading(RenderButtonsPanel, Panel):
 
 class RENDER_PT_game_system(RenderButtonsPanel, Panel):
     bl_label = "System"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -441,7 +442,7 @@ class RENDER_PT_game_system(RenderButtonsPanel, Panel):
 
 class RENDER_PT_game_display(RenderButtonsPanel, Panel):
     bl_label = "Display"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -464,7 +465,7 @@ class RENDER_PT_game_display(RenderButtonsPanel, Panel):
             col.prop(gs, "frame_color", text="")
 
 
-class SceneButtonsPanel:
+class SceneButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -472,8 +473,8 @@ class SceneButtonsPanel:
 
 class SCENE_PT_game_navmesh(SceneButtonsPanel, Panel):
     bl_label = "Navigation mesh"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -530,7 +531,7 @@ class SCENE_PT_game_navmesh(SceneButtonsPanel, Panel):
 
 class SCENE_PT_game_hysteresis(SceneButtonsPanel, Panel):
     bl_label = "Level of Detail"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -548,7 +549,7 @@ class SCENE_PT_game_hysteresis(SceneButtonsPanel, Panel):
         row.prop(gs, "scene_hysteresis_percentage", text="")
 
 
-class WorldButtonsPanel:
+class WorldButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "world"
@@ -556,8 +557,8 @@ class WorldButtonsPanel:
 
 class WORLD_PT_game_context_world(WorldButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -580,7 +581,7 @@ class WORLD_PT_game_context_world(WorldButtonsPanel, Panel):
 
 class WORLD_PT_game_world(WorldButtonsPanel, Panel):
     bl_label = "World"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -599,7 +600,7 @@ class WORLD_PT_game_world(WorldButtonsPanel, Panel):
 
 class WORLD_PT_game_mist(WorldButtonsPanel, Panel):
     bl_label = "Mist"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -629,7 +630,7 @@ class WORLD_PT_game_mist(WorldButtonsPanel, Panel):
 
 class WORLD_PT_game_physics(WorldButtonsPanel, Panel):
     bl_label = "Physics"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -686,7 +687,7 @@ class WORLD_PT_game_physics(WorldButtonsPanel, Panel):
 
 class WORLD_PT_game_physics_obstacles(WorldButtonsPanel, Panel):
     bl_label = "Obstacle simulation"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -704,7 +705,7 @@ class WORLD_PT_game_physics_obstacles(WorldButtonsPanel, Panel):
             layout.prop(gs, "show_obstacle_simulation")
 
 
-class DataButtonsPanel:
+class DataButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -712,11 +713,11 @@ class DataButtonsPanel:
 
 class DATA_PT_shadow_game(DataButtonsPanel, Panel):
     bl_label = "Shadow"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
-        COMPAT_LIGHTS = {'SPOT', 'SUN'}
+        COMPAT_LIGHTS = set(['SPOT', 'SUN'])
         lamp = context.lamp
         engine = context.scene.render.engine
         return (lamp and lamp.type in COMPAT_LIGHTS) and (engine in cls.COMPAT_ENGINES)
@@ -764,7 +765,7 @@ class DATA_PT_shadow_game(DataButtonsPanel, Panel):
             row.prop(lamp, "shadow_frustum_size", text="Frustum Size")
 
 
-class ObjectButtonsPanel:
+class ObjectButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "object"
@@ -783,7 +784,7 @@ class OBJECT_MT_lod_tools(Menu):
 
 class OBJECT_PT_levels_of_detail(ObjectButtonsPanel, Panel):
     bl_label = "Levels of Detail"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):

@@ -1,5 +1,6 @@
 # This example assumes we have a mesh object selected
 
+from __future__ import absolute_import
 import bpy
 import bmesh
 

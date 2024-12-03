@@ -1,4 +1,5 @@
 # Configuration Blender
+from __future__ import absolute_import
 import bpy
 
 bpy.context.user_preferences.edit.use_drag_immediately = True

@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
 
 
-class DataButtonsPanel:
+class DataButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -34,7 +35,7 @@ class DataButtonsPanel:
 
 class DATA_PT_context_lattice(DataButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -78,7 +79,7 @@ class DATA_PT_lattice(DataButtonsPanel, Panel):
 
 
 class DATA_PT_custom_props_lattice(DataButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object.data"
     _property_type = bpy.types.Lattice
 

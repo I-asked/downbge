@@ -22,6 +22,7 @@
 Give access to blender data and utility functions.
 """
 
+from __future__ import absolute_import
 __all__ = (
     "app",
     "context",

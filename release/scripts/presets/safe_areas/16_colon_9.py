@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 safe_areas = bpy.context.scene.safe_areas
 

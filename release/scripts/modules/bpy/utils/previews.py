@@ -33,6 +33,7 @@ Custom Icon Example
 .. literalinclude:: ../../../release/scripts/templates_py/ui_previews_custom_icon.py
 """
 
+from __future__ import absolute_import
 __all__ = (
     "new",
     "remove",
@@ -67,7 +68,7 @@ class ImagePreviewCollection(dict):
     # - Blender's internal 'PreviewImage' struct uses 'self._uuid' prefix.
 
     def __init__(self):
-        super().__init__()
+        super(ImagePreviewCollection, self).__init__()
         self._uuid = hex(id(self))
         _uuid_open.add(self._uuid)
 
@@ -104,7 +105,7 @@ class ImagePreviewCollection(dict):
         """Clear all previews."""
         for name in self.keys():
             _utils_previews.release(self._gen_key(name))
-        super().clear()
+        super(ImagePreviewCollection, self).clear()
 
     def close(self):
         """Close the collection and clear all previews."""
@@ -113,14 +114,14 @@ class ImagePreviewCollection(dict):
 
     def __delitem__(self, key):
         _utils_previews.release(self._gen_key(key))
-        super().__delitem__(key)
+        super(ImagePreviewCollection, self).__delitem__(key)
 
     def __repr__(self):
         return "<%s id=%s[%d], %s>" % (
                 self.__class__.__name__,
                 self._uuid,
                 len(self),
-                super().__repr__())
+                super(ImagePreviewCollection, self).__repr__())
 
 
 def new():

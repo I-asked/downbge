@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 bl_info = {
     "name": "New Object",
     "author": "Your Name Here",
@@ -42,7 +43,7 @@ class OBJECT_OT_add_object(Operator, AddObjectHelper):
     """Create a new Mesh Object"""
     bl_idname = "mesh.add_object"
     bl_label = "Add Mesh Object"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     scale = FloatVectorProperty(
             name="scale",
@@ -55,7 +56,7 @@ class OBJECT_OT_add_object(Operator, AddObjectHelper):
 
         add_object(self, context)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 # Registration

@@ -22,6 +22,7 @@
 This module contains RestrictBlend context manager.
 """
 
+from __future__ import absolute_import
 __all__ = (
     "RestrictBlend",
     )
@@ -29,7 +30,7 @@ __all__ = (
 import bpy as _bpy
 
 
-class _RestrictContext:
+class _RestrictContext(object):
     __slots__ = ()
     _real_data = _bpy.data
     # safe, the pointer never changes
@@ -44,7 +45,7 @@ class _RestrictContext:
         return self._real_pref
 
 
-class _RestrictData:
+class _RestrictData(object):
     __slots__ = ()
 
 
@@ -52,7 +53,7 @@ _context_restrict = _RestrictContext()
 _data_restrict = _RestrictData()
 
 
-class RestrictBlend:
+class RestrictBlend(object):
     __slots__ = ("context", "data")
 
     def __enter__(self):

@@ -32,6 +32,8 @@
 # } BHead;
 
 
+from __future__ import absolute_import
+from io import open
 def read_blend_rend_chunk(path):
 
     import struct
@@ -40,21 +42,21 @@ def read_blend_rend_chunk(path):
 
     head = blendfile.read(7)
 
-    if head[0:2] == b'\x1f\x8b':  # gzip magic
+    if head[0:2] == '\x1f\x8b':  # gzip magic
         import gzip
         blendfile.close()
         blendfile = gzip.open(path, "rb")
         head = blendfile.read(7)
 
-    if head != b'BLENDER':
-        print("not a blend file:", path)
+    if head != 'BLENDER':
+        print "not a blend file:", path
         blendfile.close()
         return []
 
-    is_64_bit = (blendfile.read(1) == b'-')
+    is_64_bit = (blendfile.read(1) == '-')
 
     # true for PPC, false for X86
-    is_big_endian = (blendfile.read(1) == b'V')
+    is_big_endian = (blendfile.read(1) == 'V')
 
     # Now read the bhead chunk!!!
     blendfile.read(3)  # skip the version
@@ -63,7 +65,7 @@ def read_blend_rend_chunk(path):
 
     sizeof_bhead = 24 if is_64_bit else 20
 
-    while blendfile.read(4) == b'REND':
+    while blendfile.read(4) == 'REND':
         sizeof_bhead_left = sizeof_bhead - 4
 
         struct.unpack('>i' if is_big_endian else '<i', blendfile.read(4))[0]
@@ -77,7 +79,7 @@ def read_blend_rend_chunk(path):
 
         scene_name = blendfile.read(64)
 
-        scene_name = scene_name[:scene_name.index(b'\0')]
+        scene_name = scene_name[:scene_name.index('\0')]
 
         try:
             scene_name = str(scene_name, "utf8")
@@ -96,7 +98,7 @@ def main():
     for arg in sys.argv[1:]:
         if arg.lower().endswith('.blend'):
             for value in read_blend_rend_chunk(arg):
-                print("%d %d %s" % value)
+                print "%d %d %s" % value
 
 if __name__ == '__main__':
     main()

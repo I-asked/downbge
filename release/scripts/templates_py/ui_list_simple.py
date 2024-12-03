@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 
 
@@ -19,7 +20,7 @@ class MATERIAL_UL_matslots_example(bpy.types.UIList):
         slot = item
         ma = slot.material
         # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             # You should always start your row layout by a label (icon + text), or a non-embossed text field,
             # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
             # We use icon_value of label, as our given icon is an integer value, not an enum ID.
@@ -41,7 +42,7 @@ class MATERIAL_UL_matslots_example(bpy.types.UIList):
                 else:
                     layout.label(text="")
         # 'GRID' layout type should be as compact as possible (typically a single icon!).
-        elif self.layout_type in {'GRID'}:
+        elif self.layout_type in set(['GRID']):
             layout.alignment = 'CENTER'
             layout.label(text="", icon_value=icon)
 

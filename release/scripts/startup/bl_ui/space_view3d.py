@@ -17,11 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Menu, Panel
 from bl_ui.properties_grease_pencil_common import GreasePencilDataPanel
 from bl_ui.properties_paint_common import UnifiedPaintPanel
 from bpy.app.translations import contexts as i18n_contexts
+from io import open
 
 
 class VIEW3D_HT_header(Header):
@@ -52,7 +55,7 @@ class VIEW3D_HT_header(Header):
                 row.prop(toolsettings.particle_edit, "select_mode", text="", expand=True)
 
             # Occlude geometry
-            if ((view.viewport_shade not in {'BOUNDBOX', 'WIREFRAME'} and (mode == 'PARTICLE_EDIT' or (mode == 'EDIT' and obj.type == 'MESH'))) or
+            if ((view.viewport_shade not in set(['BOUNDBOX', 'WIREFRAME']) and (mode == 'PARTICLE_EDIT' or (mode == 'EDIT' and obj.type == 'MESH'))) or
                     (mode == 'WEIGHT_PAINT')):
                 row.prop(view, "use_occlude_geometry", text="")
 
@@ -62,7 +65,7 @@ class VIEW3D_HT_header(Header):
                 row.prop(toolsettings, "proportional_edit", icon_only=True)
                 if toolsettings.proportional_edit != 'DISABLED':
                     row.prop(toolsettings, "proportional_edit_falloff", icon_only=True)
-            elif mode in {'EDIT', 'PARTICLE_EDIT'}:
+            elif mode in set(['EDIT', 'PARTICLE_EDIT']):
                 row = layout.row(align=True)
                 row.prop(toolsettings, "proportional_edit", icon_only=True)
                 if toolsettings.proportional_edit != 'DISABLED':
@@ -81,7 +84,7 @@ class VIEW3D_HT_header(Header):
                     row.prop(toolsettings, "proportional_edit_falloff", icon_only=True)
 
         # Snap
-        if not obj or mode not in {'SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT'}:
+        if not obj or mode not in set(['SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT']):
             snap_element = toolsettings.snap_element
             row = layout.row(align=True)
             row.prop(toolsettings, "use_snap", text="")
@@ -91,7 +94,7 @@ class VIEW3D_HT_header(Header):
             else:
                 row.prop(toolsettings, "snap_target", text="")
                 if obj:
-                    if mode in {'OBJECT', 'POSE'} and snap_element != 'VOLUME':
+                    if mode in set(['OBJECT', 'POSE']) and snap_element != 'VOLUME':
                         row.prop(toolsettings, "use_snap_align_rotation", text="")
                     elif mode == 'EDIT':
                         row.prop(toolsettings, "use_snap_self", text="")
@@ -135,7 +138,7 @@ class VIEW3D_MT_editor_menus(Menu):
         layout.menu("VIEW3D_MT_view")
 
         # Select Menu
-        if mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
+        if mode_string in set(['PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE']):
             mesh = obj.data
             if mesh.use_paint_mask:
                 layout.menu("VIEW3D_MT_select_paint_mask")
@@ -162,7 +165,7 @@ class VIEW3D_MT_editor_menus(Menu):
         elif obj:
             if mode_string != 'PAINT_TEXTURE':
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
-            if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE'}:
+            if mode_string in set(['SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE']):
                 layout.menu("VIEW3D_MT_brush")
             if mode_string == 'SCULPT':
                 layout.menu("VIEW3D_MT_hide_mask")
@@ -176,7 +179,7 @@ class VIEW3D_MT_editor_menus(Menu):
 # ********** Utilities **********
 
 
-class ShowHideMenu:
+class ShowHideMenu(object):
     bl_label = "Show/Hide"
     _operator_name = ""
 
@@ -281,7 +284,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
         layout.separator()
 
         obj = context.object
-        if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+        if obj.type == 'ARMATURE' and obj.mode in set(['EDIT', 'POSE']):
             if obj.data.draw_type == 'BBONE':
                 layout.operator("transform.transform", text="Scale BBone").mode = 'BONE_SIZE'
             elif obj.data.draw_type == 'ENVELOPE':
@@ -1245,7 +1248,7 @@ class VIEW3D_MT_object_specials(Menu):
                     props.header_text = "DOF Distance: %.3f"
                 del view
 
-        if obj.type in {'CURVE', 'FONT'}:
+        if obj.type in set(['CURVE', 'FONT']):
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
@@ -1300,7 +1303,7 @@ class VIEW3D_MT_object_specials(Menu):
                         props.data_path_item = "data.size_y"
                         props.header_text = "Lamp Size Y: %.3f"
 
-                elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
+                elif lamp.type in set(['SPOT', 'POINT', 'SUN']):
                     props = layout.operator("wm.context_modal_mouse", text="Size")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.shadow_soft_size"
@@ -1311,7 +1314,7 @@ class VIEW3D_MT_object_specials(Menu):
                 props.data_path_item = "data.energy"
                 props.header_text = "Lamp Energy: %.3f"
 
-                if lamp.type in {'SPOT', 'AREA', 'POINT'}:
+                if lamp.type in set(['SPOT', 'AREA', 'POINT']):
                     props = layout.operator("wm.context_modal_mouse", text="Falloff Distance")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.distance"
@@ -1560,7 +1563,7 @@ class VIEW3D_MT_brush(Menu):
             if sculpt_tool != 'GRAB':
                 layout.prop_menu_enum(brush, "stroke_method")
 
-                if sculpt_tool in {'DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY'}:
+                if sculpt_tool in set(['DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY']):
                     layout.prop_menu_enum(brush, "direction")
 
                 if sculpt_tool == 'LAYER':
@@ -2062,7 +2065,7 @@ class VIEW3D_MT_pose_specials(Menu):
         layout.operator_menu_enum("pose.autoside_names", "axis")
 
 
-class BoneOptions:
+class BoneOptions(object):
     def draw(self, context):
         layout = self.layout
 
@@ -2913,7 +2916,7 @@ class VIEW3D_PT_view3d_name(Panel):
         row.label(text="", icon='OBJECT_DATA')
         row.prop(ob, "name", text="")
 
-        if ob.type == 'ARMATURE' and ob.mode in {'EDIT', 'POSE'}:
+        if ob.type == 'ARMATURE' and ob.mode in set(['EDIT', 'POSE']):
             bone = context.active_bone
             if bone:
                 row = layout.row()
@@ -2925,7 +2928,7 @@ class VIEW3D_PT_view3d_display(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Display"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -2987,7 +2990,7 @@ class VIEW3D_PT_view3d_stereo(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Stereoscopy"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -3052,13 +3055,13 @@ class VIEW3D_PT_view3d_shading(Panel):
 
         col.prop(view, "show_backface_culling")
 
-        if view.viewport_shade not in {'BOUNDBOX', 'WIREFRAME'}:
+        if view.viewport_shade not in set(['BOUNDBOX', 'WIREFRAME']):
             if obj and obj.mode == 'EDIT':
                 col.prop(view, "show_occlude_wire")
 
         fx_settings = view.fx_settings
 
-        if view.viewport_shade not in {'BOUNDBOX', 'WIREFRAME'}:
+        if view.viewport_shade not in set(['BOUNDBOX', 'WIREFRAME']):
             sub = col.column()
             sub.active = view.region_3d.view_perspective == 'CAMERA'
             sub.prop(fx_settings, "use_dof")
@@ -3077,7 +3080,7 @@ class VIEW3D_PT_view3d_motion_tracking(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Motion Tracking"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -3243,7 +3246,7 @@ class VIEW3D_PT_background_image(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Background Images"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         view = context.space_data
@@ -3292,7 +3295,7 @@ class VIEW3D_PT_background_image(Panel):
                         box.template_image(bg, "image", bg.image_user, compact=True)
                         has_bg = True
 
-                        if use_multiview and bg.view_axis in {'CAMERA', 'ALL'}:
+                        if use_multiview and bg.view_axis in set(['CAMERA', 'ALL']):
                             box.prop(bg.image, "use_multiview")
 
                             column = box.column()
@@ -3328,7 +3331,7 @@ class VIEW3D_PT_background_image(Panel):
                     col.prop(bg, "opacity", slider=True)
                     col.row().prop(bg, "draw_depth", expand=True)
 
-                    if bg.view_axis in {'CAMERA', 'ALL'}:
+                    if bg.view_axis in set(['CAMERA', 'ALL']):
                         col.row().prop(bg, "frame_method", expand=True)
 
                     box = col.box()
@@ -3350,7 +3353,7 @@ class VIEW3D_PT_transform_orientations(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Transform Orientations"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -3377,7 +3380,7 @@ class VIEW3D_PT_etch_a_ton(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Skeleton Sketching"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -3434,7 +3437,7 @@ class VIEW3D_PT_context_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Properties"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def _active_context_member(context):
         obj = context.object

@@ -18,12 +18,18 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Operator
 from bpy.props import StringProperty, BoolProperty
+from io import open
 
 
-class AddPresetBase:
+def doexec(v):
+    exec(v)
+
+
+class AddPresetBase(object):
     """Base preset class, only for subclassing
     subclasses must define
      - preset_values
@@ -32,17 +38,17 @@ class AddPresetBase:
     # bl_label = "Add a Python Preset"
 
     # only because invoke_props_popup requires. Also do not add to search menu.
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = set(['REGISTER', 'INTERNAL'])
 
     name = StringProperty(
             name="Name",
             description="Name of the preset, used to make the path name",
             maxlen=64,
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
     remove_active = BoolProperty(
             default=False,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     # needed for mix-ins
@@ -61,7 +67,7 @@ class AddPresetBase:
 
             trans = getattr(cls, attr, None)
             if trans is None:
-                trans = str.maketrans({char: "_" for char in " !@#$%^&*(){}:\";'[]<>,.\\/?"})
+                trans = str.maketrans(dict((char, "_") for char in " !@#$%^&*(){}:\";'[]<>,.\\/?"))
                 setattr(cls, attr, trans)
             return trans
 
@@ -86,7 +92,7 @@ class AddPresetBase:
         if not self.remove_active:
             name = self.name.strip()
             if not name:
-                return {'FINISHED'}
+                return set(['FINISHED'])
 
             filename = self.as_filename(name)
 
@@ -96,15 +102,15 @@ class AddPresetBase:
                                                   create=True)
 
             if not target_path:
-                self.report({'WARNING'}, "Failed to create presets path")
-                return {'CANCELLED'}
+                self.report(set(['WARNING']), "Failed to create presets path")
+                return set(['CANCELLED'])
 
             filepath = os.path.join(target_path, filename) + ext
 
             if hasattr(self, "add"):
                 self.add(context, filepath)
             else:
-                print("Writing Preset: %r" % filepath)
+                print "Writing Preset: %r" % filepath
 
                 if is_xml:
                     import rna_xml
@@ -140,7 +146,7 @@ class AddPresetBase:
 
                     if hasattr(self, "preset_defines"):
                         for rna_path in self.preset_defines:
-                            exec(rna_path)
+                            doexec(rna_path)
                             file_preset.write("%s\n" % rna_path)
                         file_preset.write("\n")
 
@@ -167,7 +173,7 @@ class AddPresetBase:
                                                  ext=ext)
 
             if not filepath:
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
             if hasattr(self, "remove"):
                 self.remove(context, filepath)
@@ -184,7 +190,7 @@ class AddPresetBase:
         if hasattr(self, "post_cb"):
             self.post_cb(context)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def check(self, context):
         self.name = self.as_filename(self.name.strip())
@@ -204,12 +210,12 @@ class ExecutePreset(Operator):
 
     filepath = StringProperty(
             subtype='FILE_PATH',
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
     menu_idname = StringProperty(
             name="Menu ID Name",
             description="ID name of the menu this was called from",
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
 
     def execute(self, context):
@@ -231,10 +237,10 @@ class ExecutePreset(Operator):
                                  filepath,
                                  preset_class.preset_xml_map)
         else:
-            self.report({'ERROR'}, "unknown filetype: %r" % ext)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "unknown filetype: %r" % ext)
+            return set(['CANCELLED'])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class AddPresetRender(AddPresetBase, Operator):
@@ -278,7 +284,7 @@ class AddPresetCamera(AddPresetBase, Operator):
     use_focal_length = BoolProperty(
             name="Include Focal Length",
             description="Include focal length into the preset",
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
 
     @property
@@ -482,7 +488,7 @@ class AddPresetTrackingCamera(AddPresetBase, Operator):
     use_focal_length = BoolProperty(
             name="Include Focal Length",
             description="Include focal length into the preset",
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             default=True
             )
 
@@ -607,7 +613,7 @@ class AddPresetOperator(AddPresetBase, Operator):
     operator = StringProperty(
             name="Operator",
             maxlen=64,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     preset_defines = [

@@ -23,6 +23,7 @@
 #             chaining iterator (in particular each ViewEdge can be drawn 
 #             several times
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import pySketchyChainingIterator
 from freestyle.predicates import (
     AndUP1D,

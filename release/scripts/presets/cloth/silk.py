@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 bpy.context.cloth.settings.quality = 5
 bpy.context.cloth.settings.mass = 0.150

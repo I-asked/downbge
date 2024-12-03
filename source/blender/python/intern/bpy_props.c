@@ -1343,7 +1343,7 @@ static EnumPropertyItem *enum_items_from_py(PyObject *seq_fast, PyObject *def, i
 	}
 	else {
 		if (def) {
-			def_cmp = _PyUnicode_AsString(def);
+			def_cmp = PyString_AsString(def);
 			if (def_cmp == NULL) {
 				PyErr_Format(PyExc_TypeError,
 				             "EnumProperty(...): default option must be a 'str' "
@@ -1372,13 +1372,13 @@ static EnumPropertyItem *enum_items_from_py(PyObject *seq_fast, PyObject *def, i
 		if ((PyTuple_CheckExact(item)) &&
 		    (item_size = PyTuple_GET_SIZE(item)) &&
 		    (item_size >= 3 && item_size <= 5) &&
-		    (tmp.identifier =  _PyUnicode_AsStringAndSize(PyTuple_GET_ITEM(item, 0), &id_str_size)) &&
-		    (tmp.name =        _PyUnicode_AsStringAndSize(PyTuple_GET_ITEM(item, 1), &name_str_size)) &&
-		    (tmp.description = _PyUnicode_AsStringAndSize(PyTuple_GET_ITEM(item, 2), &desc_str_size)) &&
+		    !PyString_AsStringAndSize(PyTuple_GET_ITEM(item, 0), &tmp.identifier, &id_str_size) &&
+		    !PyString_AsStringAndSize(PyTuple_GET_ITEM(item, 1), &tmp.name, &name_str_size) &&
+		    !PyString_AsStringAndSize(PyTuple_GET_ITEM(item, 2), &tmp.description, &desc_str_size) &&
 		    /* TODO, number isn't ensured to be unique from the script author */
 		    (item_size != 4 || py_long_as_int(PyTuple_GET_ITEM(item, 3), &tmp.value) != -1) &&
 		    (item_size != 5 || ((py_long_as_int(PyTuple_GET_ITEM(item, 3), &tmp.icon) != -1 ||
-		                         (tmp_icon = _PyUnicode_AsString(PyTuple_GET_ITEM(item, 3)))) &&
+		                         (tmp_icon = PyString_AsString(PyTuple_GET_ITEM(item, 3)))) &&
 		                        py_long_as_int(PyTuple_GET_ITEM(item, 4), &tmp.value) != -1)))
 		{
 			if (is_enum_flag) {

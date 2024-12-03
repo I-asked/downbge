@@ -259,12 +259,14 @@ void BPY_python_start(int argc, const char **argv)
 	/* allow to use our own included python */
 	PyC_SetHomePath(py_path_bundle);
 
+#if 0
 	/* without this the sys.stdout may be set to 'ascii'
 	 * (it is on my system at least), where printing unicode values will raise
 	 * an error, this is highly annoying, another stumbling block for devs,
 	 * so use a more relaxed error handler and enforce utf-8 since the rest of
 	 * blender is utf-8 too - campbell */
 	Py_SetStandardStreamEncoding("utf-8", "surrogateescape");
+#endif
 
 	/* Update, Py3.3 resolves attempting to parse non-existing header */
 #if 0
@@ -454,15 +456,10 @@ static int python_script_exec(bContext *C, const char *fn, struct Text *text,
 
 		if (text->compiled == NULL) {   /* if it wasn't already compiled, do it now */
 			char *buf;
-			PyObject *fn_dummy_py;
-
-			fn_dummy_py = PyC_UnicodeFromByte(fn_dummy);
 
 			buf = txt_to_buf(text);
-			text->compiled = Py_CompileStringObject(buf, fn_dummy_py, Py_file_input, NULL, -1);
+			text->compiled = Py_CompileString(buf, fn_dummy, Py_file_input);
 			MEM_freeN(buf);
-
-			Py_DECREF(fn_dummy_py);
 
 			if (PyErr_Occurred()) {
 				if (do_jump) {

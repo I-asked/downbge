@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 import nodeitems_utils
 from bpy.types import (
@@ -42,7 +43,7 @@ class NodeSetting(PropertyGroup):
 
 
 # Base class for node 'Add' operators
-class NodeAddOperator:
+class NodeAddOperator(object):
 
     type = StringProperty(
             name="Node Type",
@@ -57,7 +58,7 @@ class NodeAddOperator:
             name="Settings",
             description="Settings to be applied on the newly created node",
             type=NodeSetting,
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
 
     @staticmethod
@@ -93,9 +94,9 @@ class NodeAddOperator:
 
             try:
                 setattr(node, setting.name, value)
-            except AttributeError as e:
-                self.report({'ERROR_INVALID_INPUT'}, "Node has no attribute " + setting.name)
-                print(str(e))
+            except AttributeError, e:
+                self.report(set(['ERROR_INVALID_INPUT']), "Node has no attribute " + setting.name)
+                print str(e)
                 # Continue despite invalid attribute
 
         node.select = True
@@ -113,9 +114,9 @@ class NodeAddOperator:
     def execute(self, context):
         if self.properties.is_property_set("type"):
             self.create_node(context)
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
     # Default invoke stores the mouse position to place the node correctly
     # and optionally invokes the transform operator
@@ -135,7 +136,7 @@ class NODE_OT_add_node(NodeAddOperator, Operator):
     '''Add a node to the active tree'''
     bl_idname = "node.add_node"
     bl_label = "Add Node"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
 
 # Add a node and link it to an existing socket
@@ -143,7 +144,7 @@ class NODE_OT_add_and_link_node(NodeAddOperator, Operator):
     '''Add a node to the active tree and link to an existing socket'''
     bl_idname = "node.add_and_link_node"
     bl_label = "Add and Link Node"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     link_socket_index = IntProperty(
             name="Link Socket Index",
@@ -156,7 +157,7 @@ class NODE_OT_add_and_link_node(NodeAddOperator, Operator):
 
         node = self.create_node(context)
         if not node:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         to_socket = getattr(context, "link_to_socket", None)
         if to_socket:
@@ -166,14 +167,14 @@ class NODE_OT_add_and_link_node(NodeAddOperator, Operator):
         if from_socket:
             ntree.links.new(from_socket, node.inputs[self.link_socket_index])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class NODE_OT_add_search(NodeAddOperator, Operator):
     '''Add a node to the active tree'''
     bl_idname = "node.add_search"
     bl_label = "Search and Add Node"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
     bl_property = "node_item"
 
     _enum_item_hack = []
@@ -222,22 +223,22 @@ class NODE_OT_add_search(NodeAddOperator, Operator):
             if self.use_transform:
                 bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
 
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
     def invoke(self, context, event):
         self.store_mouse_cursor(context, event)
         # Delayed execution in the search popup
         context.window_manager.invoke_search_popup(self)
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
 
 class NODE_OT_collapse_hide_unused_toggle(Operator):
     '''Toggle collapsed nodes and hide unused sockets'''
     bl_idname = "node.collapse_hide_unused_toggle"
     bl_label = "Collapse and Hide Unused Sockets"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -260,14 +261,14 @@ class NODE_OT_collapse_hide_unused_toggle(Operator):
                 for socket in node.outputs:
                     socket.hide = hide
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class NODE_OT_tree_path_parent(Operator):
     '''Go to parent node tree'''
     bl_idname = "node.tree_path_parent"
     bl_label = "Parent Node Tree"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -280,4 +281,4 @@ class NODE_OT_tree_path_parent(Operator):
 
         space.path.pop()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

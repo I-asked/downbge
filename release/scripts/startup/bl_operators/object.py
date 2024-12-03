@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import (
@@ -33,7 +35,7 @@ class SelectPattern(Operator):
     """Select objects matching a naming pattern"""
     bl_idname = "object.select_pattern"
     bl_label = "Select Pattern"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     pattern = StringProperty(
             name="Pattern",
@@ -92,7 +94,7 @@ class SelectPattern(Operator):
                         if item_parent is not None:
                             item_parent.select_tail = True
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
@@ -111,7 +113,7 @@ class SelectCamera(Operator):
     """Select the active camera"""
     bl_idname = "object.select_camera"
     bl_label = "Select Camera"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     extend = BoolProperty(
             name="Extend",
@@ -128,18 +130,18 @@ class SelectCamera(Operator):
             camera = scene.camera
 
         if camera is None:
-            self.report({'WARNING'}, "No camera found")
+            self.report(set(['WARNING']), "No camera found")
         elif camera.name not in scene.objects:
-            self.report({'WARNING'}, "Active camera is not in this scene")
+            self.report(set(['WARNING']), "Active camera is not in this scene")
         else:
             if not self.extend:
                 bpy.ops.object.select_all(action='DESELECT')
             scene.objects.active = camera
             camera.hide = False
             camera.select = True
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
 
 class SelectHierarchy(Operator):
@@ -147,7 +149,7 @@ class SelectHierarchy(Operator):
     """in the hierarchy"""
     bl_idname = "object.select_hierarchy"
     bl_label = "Select Hierarchy"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     direction = EnumProperty(
             items=(('PARENT', "Parent", ""),
@@ -205,9 +207,9 @@ class SelectHierarchy(Operator):
                 obj.select = True
 
             scene.objects.active = act_new
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
 
 class SubdivisionSet(Operator):
@@ -215,7 +217,7 @@ class SubdivisionSet(Operator):
 
     bl_idname = "object.subdivision_set"
     bl_label = "Subdivision Set"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     level = IntProperty(
             name="Level",
@@ -241,7 +243,7 @@ class SubdivisionSet(Operator):
         relative = self.relative
 
         if relative and level == 0:
-            return {'CANCELLED'}  # nothing to do
+            return set(['CANCELLED'])  # nothing to do
 
         if not relative and level < 0:
             self.level = level = 0
@@ -252,7 +254,7 @@ class SubdivisionSet(Operator):
                     if not relative:
                         if level > mod.total_levels:
                             sub = level - mod.total_levels
-                            for i in range(sub):
+                            for i in xrange(sub):
                                 bpy.ops.object.multires_subdivide(modifier="Multires")
 
                         if obj.mode == 'SCULPT':
@@ -285,19 +287,19 @@ class SubdivisionSet(Operator):
                 if obj.mode == 'SCULPT':
                     mod = obj.modifiers.new("Multires", 'MULTIRES')
                     if level > 0:
-                        for i in range(0, level):
+                        for i in xrange(0, level):
                             bpy.ops.object.multires_subdivide(modifier="Multires")
                 else:
                     mod = obj.modifiers.new("Subsurf", 'SUBSURF')
                     mod.levels = level
             except:
-                self.report({'WARNING'},
+                self.report(set(['WARNING']),
                             "Modifiers cannot be added to object: " + obj.name)
 
         for obj in context.selected_editable_objects:
             set_object_subd(obj)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class ShapeTransfer(Operator):
@@ -306,7 +308,7 @@ class ShapeTransfer(Operator):
 
     bl_idname = "object.shape_key_transfer"
     bl_label = "Transfer Shape Key"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     mode = EnumProperty(
             items=(('OFFSET',
@@ -369,13 +371,13 @@ class ShapeTransfer(Operator):
 
         for ob_other in objects:
             if ob_other.type != 'MESH':
-                self.report({'WARNING'},
+                self.report(set(['WARNING']),
                             ("Skipping '%s', "
                              "not a mesh") % ob_other.name)
                 continue
             me_other = ob_other.data
             if len(me_other.vertices) != len(me.vertices):
-                self.report({'WARNING'},
+                self.report(set(['WARNING']),
                             ("Skipping '%s', "
                              "vertex count differs") % ob_other.name)
                 continue
@@ -392,7 +394,7 @@ class ShapeTransfer(Operator):
             target_shape_coords = [v.co for v in
                                    ob_other.active_shape_key.data]
 
-            median_coords = [[] for i in range(len(me.vertices))]
+            median_coords = [[] for i in xrange(len(me.vertices))]
 
             # Method 1, edge
             if mode == 'OFFSET':
@@ -443,7 +445,6 @@ class ShapeTransfer(Operator):
                     median_coords[i2].append(pt)
 
             # apply the offsets to the new shape
-            from functools import reduce
             VectorAdd = Vector.__add__
 
             for i, vert_cos in enumerate(median_coords):
@@ -461,7 +462,7 @@ class ShapeTransfer(Operator):
 
                     target_shape_coords[i][:] = co
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     @classmethod
     def poll(cls, context):
@@ -475,20 +476,20 @@ class ShapeTransfer(Operator):
 
         if 1:  # swap from/to, means we cant copy to many at once.
             if len(objects) != 1:
-                self.report({'ERROR'},
+                self.report(set(['ERROR']),
                             ("Expected one other selected "
                              "mesh object to copy from"))
 
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
             ob_act, objects = objects[0], [ob_act]
 
         if ob_act.type != 'MESH':
-            self.report({'ERROR'}, "Other object is not a mesh")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Other object is not a mesh")
+            return set(['CANCELLED'])
 
         if ob_act.active_shape_key is None:
-            self.report({'ERROR'}, "Other object has no shape key")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Other object has no shape key")
+            return set(['CANCELLED'])
         return self._main(ob_act, objects, self.mode, self.use_clamp)
 
 
@@ -497,7 +498,7 @@ class JoinUVs(Operator):
     """(needs matching geometry)"""
     bl_idname = "object.join_uvs"
     bl_label = "Transfer UV Maps"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -514,7 +515,7 @@ class JoinUVs(Operator):
             bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
         if not mesh.uv_textures:
-            self.report({'WARNING'},
+            self.report(set(['WARNING']),
                         "Object: %s, Mesh: '%s' has no UVs"
                         % (obj.name, mesh.name))
         else:
@@ -538,7 +539,7 @@ class JoinUVs(Operator):
                             mesh_other.tag = True
 
                             if len(mesh_other.loops) != nbr_loops:
-                                self.report({'WARNING'}, "Object: %s, Mesh: "
+                                self.report(set(['WARNING']), "Object: %s, Mesh: "
                                             "'%s' has %d loops (for %d faces),"
                                             " expected %d\n"
                                             % (obj_other.name,
@@ -554,7 +555,7 @@ class JoinUVs(Operator):
                                     mesh_other.uv_textures.new()
                                     uv_other = mesh_other.uv_layers.active
                                     if not uv_other:
-                                        self.report({'ERROR'}, "Could not add "
+                                        self.report(set(['ERROR']), "Could not add "
                                                     "a new UV map tp object "
                                                     "'%s' (Mesh '%s')\n"
                                                     % (obj_other.name,
@@ -570,14 +571,14 @@ class JoinUVs(Operator):
 
     def execute(self, context):
         self._main(context)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class MakeDupliFace(Operator):
     """Convert objects into dupli-face instanced"""
     bl_idname = "object.make_dupli_face"
     bl_label = "Make Dupli-Face"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @staticmethod
     def _main(context):
@@ -611,7 +612,7 @@ class MakeDupliFace(Operator):
             nbr_verts = len(face_verts) // 3
             nbr_faces = nbr_verts // 4
 
-            faces = list(range(nbr_verts))
+            faces = range(nbr_verts)
 
             mesh = bpy.data.meshes.new(data.name + "_dupli")
 
@@ -621,7 +622,7 @@ class MakeDupliFace(Operator):
 
             mesh.vertices.foreach_set("co", face_verts)
             mesh.loops.foreach_set("vertex_index", faces)
-            mesh.polygons.foreach_set("loop_start", range(0, nbr_faces * 4, 4))
+            mesh.polygons.foreach_set("loop_start", xrange(0, nbr_faces * 4, 4))
             mesh.polygons.foreach_set("loop_total", (4,) * nbr_faces)
             mesh.update()  # generates edge data
 
@@ -649,7 +650,7 @@ class MakeDupliFace(Operator):
 
     def execute(self, context):
         self._main(context)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class IsolateTypeRender(Operator):
@@ -657,7 +658,7 @@ class IsolateTypeRender(Operator):
     """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     def execute(self, context):
         act_type = context.object.type
@@ -670,26 +671,26 @@ class IsolateTypeRender(Operator):
                 if obj.type == act_type:
                     obj.hide_render = True
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class ClearAllRestrictRender(Operator):
     """Reveal all render objects by setting the hide render flag"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     def execute(self, context):
         for obj in context.scene.objects:
             obj.hide_render = False
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class TransformsToDeltasAnim(Operator):
     """Convert object animation for normal transforms to delta transforms"""
     bl_idname = "object.anim_transforms_to_deltas"
     bl_label = "Animated Transforms to Deltas"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -711,7 +712,7 @@ class TransformsToDeltasAnim(Operator):
         for obj in context.selected_editable_objects:
             adt = obj.animation_data
             if (adt is None) or (adt.action is None):
-                self.report({'WARNING'},
+                self.report(set(['WARNING']),
                             "No animation data to convert on object: %r" %
                             obj.name)
                 continue
@@ -738,11 +739,11 @@ class TransformsToDeltasAnim(Operator):
                     # ensure that this index hasn't occurred before
                     if fcu.array_index in existingFCurves[dpath]:
                         # conflict
-                        self.report({'ERROR'},
+                        self.report(set(['ERROR']),
                                     "Object '%r' already has '%r' F-Curve(s). "
                                     "Remove these before trying again" %
                                     (obj.name, dpath))
-                        return {'CANCELLED'}
+                        return set(['CANCELLED'])
                     else:
                         # no conflict here
                         existingFCurves[dpath] += [fcu.array_index]
@@ -772,14 +773,14 @@ class TransformsToDeltasAnim(Operator):
         # hack: force animsys flush by changing frame, so that deltas get run
         context.scene.frame_set(context.scene.frame_current)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class DupliOffsetFromCursor(Operator):
     """Set offset used for DupliGroup based on cursor position"""
     bl_idname = "object.dupli_offset_from_cursor"
     bl_label = "Set Offset From Cursor"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -791,14 +792,14 @@ class DupliOffsetFromCursor(Operator):
 
         group.dupli_offset = scene.cursor_location
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class LodByName(Operator):
     """Add levels of detail to this object based on object names"""
     bl_idname = "object.lod_by_name"
     bl_label = "Setup Levels of Detail By Name"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -817,7 +818,7 @@ class LodByName(Operator):
             name = ob.name[:-4]
             suffix = ob.name[-4:]
         else:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         level = 0
         while True:
@@ -841,14 +842,14 @@ class LodByName(Operator):
 
             ob.lod_levels[level].object = lod
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class LodClearAll(Operator):
     """Remove all levels of detail from this object"""
     bl_idname = "object.lod_clear_all"
     bl_label = "Clear All Levels of Detail"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -861,14 +862,14 @@ class LodClearAll(Operator):
             while 'CANCELLED' not in bpy.ops.object.lod_remove():
                 pass
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class LodGenerate(Operator):
     """Generate levels of detail using the decimate modifier"""
     bl_idname = "object.lod_generate"
     bl_label = "Generate Levels of Detail"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     count = IntProperty(
             name="Count",
@@ -911,7 +912,7 @@ class LodGenerate(Operator):
                 bpy.ops.group.create(name=group_name)
 
         step = (1.0 - self.target) / (self.count - 1)
-        for i in range(1, self.count):
+        for i in xrange(1, self.count):
             scene.objects.active = ob
             bpy.ops.object.duplicate()
             lod = context.selected_objects[0]
@@ -948,4 +949,4 @@ class LodGenerate(Operator):
         ob.select = True
         scene.objects.active = ob
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

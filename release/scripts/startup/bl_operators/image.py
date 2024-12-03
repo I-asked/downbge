@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty
@@ -27,7 +28,7 @@ class EditExternally(Operator):
     """Edit image in an external application"""
     bl_idname = "image.external_edit"
     bl_label = "Image Edit Externally"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     filepath = StringProperty(
             subtype='FILE_PATH',
@@ -65,14 +66,14 @@ class EditExternally(Operator):
         filepath = self.filepath
 
         if not filepath:
-            self.report({'ERROR'}, "Image path not set")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Image path not set")
+            return set(['CANCELLED'])
 
         if not os.path.exists(filepath) or not os.path.isfile(filepath):
-            self.report({'ERROR'},
+            self.report(set(['ERROR']),
                         "Image path %r not found, image may be packed or "
                         "unsaved" % filepath)
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         cmd = self._editor_guess(context) + [filepath]
 
@@ -81,13 +82,13 @@ class EditExternally(Operator):
         except:
             import traceback
             traceback.print_exc()
-            self.report({'ERROR'},
+            self.report(set(['ERROR']),
                         "Image editor not found, "
                         "please specify in User Preferences > File")
 
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         import os
@@ -95,12 +96,12 @@ class EditExternally(Operator):
         try:
             image = sd.image
         except AttributeError:
-            self.report({'ERROR'}, "Context incorrect, image not found")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Context incorrect, image not found")
+            return set(['CANCELLED'])
 
         if image.packed_file:
-            self.report({'ERROR'}, "Image is packed, unpack before editing")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Image is packed, unpack before editing")
+            return set(['CANCELLED'])
 
         if sd.type == 'IMAGE_EDITOR':
             filepath = image.filepath_from_user(sd.image_user)
@@ -112,14 +113,14 @@ class EditExternally(Operator):
         self.filepath = os.path.normpath(filepath)
         self.execute(context)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class SaveDirty(Operator):
     """Save all modified textures"""
     bl_idname = "image.save_dirty"
     bl_label = "Save Dirty"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     def execute(self, context):
         unique_paths = set()
@@ -127,7 +128,7 @@ class SaveDirty(Operator):
             if image.is_dirty:
                 if image.packed_file:
                     if image.library:
-                        self.report({'WARNING'},
+                        self.report(set(['WARNING']),
                                     "Packed library image: %r from library %r"
                                     " can't be re-packed" %
                                     (image.name, image.library.filepath))
@@ -137,22 +138,22 @@ class SaveDirty(Operator):
                     filepath = bpy.path.abspath(image.filepath,
                                                 library=image.library)
                     if "\\" not in filepath and "/" not in filepath:
-                        self.report({'WARNING'}, "Invalid path: " + filepath)
+                        self.report(set(['WARNING']), "Invalid path: " + filepath)
                     elif filepath in unique_paths:
-                        self.report({'WARNING'},
+                        self.report(set(['WARNING']),
                                     "Path used by more than one image: %r" %
                                     filepath)
                     else:
                         unique_paths.add(filepath)
                         image.save()
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class ProjectEdit(Operator):
     """Edit a snapshot of the view-port in an external image editor"""
     bl_idname = "image.project_edit"
     bl_label = "Project Edit"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     _proj_hack = [""]
 
@@ -167,9 +168,9 @@ class ProjectEdit(Operator):
         # opengl buffer may fail, we can't help this, but best report it.
         try:
             bpy.ops.paint.image_from_view()
-        except RuntimeError as err:
-            self.report({'ERROR'}, str(err))
-            return {'CANCELLED'}
+        except RuntimeError, err:
+            self.report(set(['ERROR']), str(err))
+            return set(['CANCELLED'])
 
         image_new = None
         for image in bpy.data.images:
@@ -178,8 +179,8 @@ class ProjectEdit(Operator):
                 break
 
         if not image_new:
-            self.report({'ERROR'}, "Could not make new image")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Could not make new image")
+            return set(['CANCELLED'])
 
         filepath = os.path.basename(bpy.data.filepath)
         filepath = os.path.splitext(filepath)[0]
@@ -215,17 +216,17 @@ class ProjectEdit(Operator):
 
         try:
             bpy.ops.image.external_edit(filepath=filepath_final)
-        except RuntimeError as re:
-            self.report({'ERROR'}, str(re))
+        except RuntimeError, re:
+            self.report(set(['ERROR']), str(re))
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class ProjectApply(Operator):
     """Project edited image back onto the object"""
     bl_idname = "image.project_apply"
     bl_label = "Project Apply"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     def execute(self, context):
         image_name = ProjectEdit._proj_hack[0]  # TODO, deal with this nicer
@@ -235,10 +236,10 @@ class ProjectApply(Operator):
         except KeyError:
             import traceback
             traceback.print_exc()
-            self.report({'ERROR'}, "Could not find image '%s'" % image_name)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Could not find image '%s'" % image_name)
+            return set(['CANCELLED'])
 
         image.reload()
         bpy.ops.paint.project_image(image=image_name)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

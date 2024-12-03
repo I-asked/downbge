@@ -18,12 +18,15 @@
 
 # <pep8 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 import mathutils
+import sys
 
 
-class prettyface:
+class prettyface(object):
     __slots__ = (
         "uv",
         "width",
@@ -283,10 +286,10 @@ def lightmap_uvpack(meshes,
             me.uv_textures.new()
 
     for face_sel in face_groups:
-        print("\nStarting unwrap")
+        print "\nStarting unwrap"
 
         if len(face_sel) < 4:
-            print("\tWarning, less then 4 faces, skipping")
+            print "\tWarning, less then 4 faces, skipping"
             continue
 
         pretty_faces = [prettyface(f) for f in face_sel if f.loop_total >= 4]
@@ -305,7 +308,7 @@ def lightmap_uvpack(meshes,
 
                 lens_min = lens.index(min(lens))
                 lens_max = lens.index(max(lens))
-                for i in range(3):
+                for i in xrange(3):
                     if i != lens_min and i != lens_max:
                         lens_mid = i
                         break
@@ -359,7 +362,7 @@ def lightmap_uvpack(meshes,
 
         curr_len = max_len
 
-        print("\tGenerating lengths...", end="")
+        print "\tGenerating lengths...",; sys.stdout.write("")
 
         lengths = []
         while curr_len > min_len:
@@ -385,7 +388,7 @@ def lightmap_uvpack(meshes,
 
         lengths_to_ints = list(lengths_to_ints.items())
         lengths_to_ints.sort()
-        print("done")
+        print "done"
 
         # apply quantized values.
 
@@ -413,7 +416,7 @@ def lightmap_uvpack(meshes,
             if new_w > new_h:
                 pf.spin()
 
-        print("...done")
+        print "...done"
 
         # Since the boxes are sized in powers of 2, we can neatly group them into bigger squares
         # this is done hierarchically, so that we may avoid running the pack function
@@ -424,7 +427,7 @@ def lightmap_uvpack(meshes,
         #
         # After this is done an external pack func is done that packs the whole group.
 
-        print("\tConsolidating Boxes...", end="")
+        print "\tConsolidating Boxes...",; sys.stdout.write("")
         even_dict = {}  # w/h are the same, the key is an int (w)
         odd_dict = {}  # w/h are different, the key is the (w,h)
 
@@ -512,11 +515,11 @@ def lightmap_uvpack(meshes,
                     pf.spin()
                     # pass
 
-        print("Consolidated", c, "boxes, done")
+        print "Consolidated", c, "boxes, done"
         # print("done", orig, len(pretty_faces))
 
         # boxes2Pack.append([islandIdx, w,h])
-        print("\tPacking Boxes", len(pretty_faces), end="...")
+        print "\tPacking Boxes", len(pretty_faces),; sys.stdout.write("...")
         boxes2Pack = [[0.0, 0.0, pf.width, pf.height, i] for i, pf in enumerate(pretty_faces)]
         packWidth, packHeight = mathutils.geometry.box_pack_2d(boxes2Pack)
 
@@ -529,14 +532,14 @@ def lightmap_uvpack(meshes,
         margin_h = ((packHeight) / PREF_MARGIN_DIV) / packHeight
 
         # print(margin_w, margin_h)
-        print("done")
+        print "done"
 
         # Apply the boxes back to the UV coords.
-        print("\twriting back UVs", end="")
+        print "\twriting back UVs",; sys.stdout.write("")
         for i, box in enumerate(boxes2Pack):
             pretty_faces[i].place(box[0], box[1], packWidth, packHeight, margin_w, margin_h)
             # pf.place(box[1][1], box[1][2], packWidth, packHeight, margin_w, margin_h)
-        print("done")
+        print "done"
 
         if PREF_APPLY_IMAGE:
             if not PREF_PACK_IN_ONE:
@@ -552,7 +555,7 @@ def lightmap_uvpack(meshes,
     for me in meshes:
         me.update()
 
-    print("finished all %.2f " % (time.time() - t))
+    print "finished all %.2f " % (time.time() - t)
 
 
 def unwrap(operator, context, **kwargs):
@@ -569,18 +572,18 @@ def unwrap(operator, context, **kwargs):
         if obj and obj.type == 'MESH':
             meshes = [obj.data]
     else:
-        meshes = list({me for obj in context.selected_objects if obj.type == 'MESH' for me in (obj.data,) if me.polygons and me.library is None})
+        meshes = list(set([me for obj in context.selected_objects if obj.type == 'MESH' for me in (obj.data,) if me.polygons and me.library is None]))
 
     if not meshes:
-        operator.report({'ERROR'}, "No mesh object")
-        return {'CANCELLED'}
+        operator.report(set(['ERROR']), "No mesh object")
+        return set(['CANCELLED'])
 
     lightmap_uvpack(meshes, **kwargs)
 
     if is_editmode:
         bpy.ops.object.mode_set(mode='EDIT', toggle=False)
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 from bpy.props import BoolProperty, FloatProperty, IntProperty
 
@@ -598,7 +601,7 @@ class LightMapPack(Operator):
     # but for now just disable redo. Keep undo here so unwanted changes to uv
     # coords might be undone.
     # This fixes infinite image creation reported there [#30968] (sergey)
-    bl_options = {'UNDO'}
+    bl_options = set(['UNDO'])
 
     PREF_CONTEXT = bpy.props.EnumProperty(
             name="Selection",

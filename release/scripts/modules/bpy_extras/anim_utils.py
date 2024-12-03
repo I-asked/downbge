@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
+from itertools import izip
 __all__ = (
     "bake_action",
     )
@@ -126,9 +128,9 @@ def bake_action(frame_start,
     pose_info = []
     obj_info = []
 
-    options = {'INSERTKEY_NEEDED'}
+    options = set(['INSERTKEY_NEEDED'])
 
-    frame_range = range(frame_start, frame_end + 1, frame_step)
+    frame_range = xrange(frame_start, frame_end + 1, frame_step)
 
     # -------------------------------------------------------------------------
     # Collect transformations
@@ -144,7 +146,7 @@ def bake_action(frame_start,
     # -------------------------------------------------------------------------
     # Clean (store initial data)
     if do_clean and action is not None:
-        clean_orig_data = {fcu: {p.co[1] for p in fcu.keyframe_points} for fcu in action.fcurves}
+        clean_orig_data = dict((fcu, set(p.co[1] for p in fcu.keyframe_points)) for fcu in action.fcurves)
     else:
         clean_orig_data = {}
 
@@ -173,7 +175,7 @@ def bake_action(frame_start,
             # create compatible eulers
             euler_prev = None
 
-            for (f, matrix) in zip(frame_range, pose_info):
+            for (f, matrix) in izip(frame_range, pose_info):
                 pbone.matrix_basis = matrix[name].copy()
 
                 pbone.keyframe_insert("location", -1, f, name, options)
@@ -205,7 +207,7 @@ def bake_action(frame_start,
         # create compatible eulers
         euler_prev = None
 
-        for (f, matrix) in zip(frame_range, obj_info):
+        for (f, matrix) in izip(frame_range, obj_info):
             name = "Action Bake"  # XXX: placeholder
             obj.matrix_basis = matrix
 

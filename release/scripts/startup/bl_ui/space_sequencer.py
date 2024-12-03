@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Menu, Panel
 from rna_prop_ui import PropertyPanel
@@ -74,7 +76,7 @@ class SEQUENCER_HT_header(Header):
 
         layout.prop(st, "view_type", expand=True, text="")
 
-        if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
+        if st.view_type in set(['PREVIEW', 'SEQUENCER_PREVIEW']):
             layout.prop(st, "display_mode", expand=True, text="")
 
         if st.view_type == 'SEQUENCER':
@@ -104,7 +106,7 @@ class SEQUENCER_HT_header(Header):
                     row = layout.row()
                     row.prop(st, "overlay_type", text="")
 
-        if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
+        if st.view_type in set(['PREVIEW', 'SEQUENCER_PREVIEW']):
             gpd = context.gpencil_data
             toolsettings = context.tool_settings
 
@@ -137,7 +139,7 @@ class SEQUENCER_MT_editor_menus(Menu):
 
         layout.menu("SEQUENCER_MT_view")
 
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+        if st.view_type in set(['SEQUENCER', 'SEQUENCER_PREVIEW']):
             layout.menu("SEQUENCER_MT_select")
             layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
@@ -163,8 +165,8 @@ class SEQUENCER_MT_view(Menu):
         layout = self.layout
 
         st = context.space_data
-        is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
-        is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+        is_preview = st.view_type in set(['PREVIEW', 'SEQUENCER_PREVIEW'])
+        is_sequencer_view = st.view_type in set(['SEQUENCER', 'SEQUENCER_PREVIEW'])
 
         if st.view_type == 'PREVIEW':
             # Specifying the REGION_PREVIEW context is needed in preview-only
@@ -434,27 +436,27 @@ class SEQUENCER_MT_strip(Menu):
         layout.menu("SEQUENCER_MT_change")
 
 
-class SequencerButtonsPanel:
+class SequencerButtonsPanel(object):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
 
     @staticmethod
     def has_sequencer(context):
-        return (context.space_data.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'})
+        return (context.space_data.view_type in set(['SEQUENCER', 'SEQUENCER_PREVIEW']))
 
     @classmethod
     def poll(cls, context):
         return cls.has_sequencer(context) and (act_strip(context) is not None)
 
 
-class SequencerButtonsPanel_Output:
+class SequencerButtonsPanel_Output(object):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
 
     @staticmethod
     def has_preview(context):
         st = context.space_data
-        return (st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}) or st.show_backdrop
+        return (st.view_type in set(['PREVIEW', 'SEQUENCER_PREVIEW'])) or st.show_backdrop
 
     @classmethod
     def poll(cls, context):
@@ -539,10 +541,10 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         if not strip:
             return False
 
-        return strip.type in {'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
+        return strip.type in set(['ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
                               'CROSS', 'GAMMA_CROSS', 'MULTIPLY', 'OVER_DROP',
                               'WIPE', 'GLOW', 'TRANSFORM', 'COLOR', 'SPEED',
-                              'MULTICAM', 'GAUSSIAN_BLUR', 'TEXT'}
+                              'MULTICAM', 'GAUSSIAN_BLUR', 'TEXT'])
 
     def draw(self, context):
         layout = self.layout
@@ -567,7 +569,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
 
             col = layout.column()
             col.prop(strip, "blur_width", slider=True)
-            if strip.transition_type in {'SINGLE', 'DOUBLE'}:
+            if strip.transition_type in set(['SINGLE', 'DOUBLE']):
                 col.prop(strip, "angle")
 
         elif strip.type == 'GLOW':
@@ -631,7 +633,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             sub.operator("screen.animation_play", text="", icon='PAUSE' if context.screen.is_animation_playing else 'PLAY')
 
             row.label("Cut To")
-            for i in range(1, strip.channel):
+            for i in xrange(1, strip.channel):
                 row.operator("sequencer.cut_multicam", text="%d" % i).camera = i
 
         elif strip.type == 'TEXT':
@@ -646,7 +648,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         col = layout.column(align=True)
         if strip.type == 'SPEED':
             col.prop(strip, "multiply_speed")
-        elif strip.type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
+        elif strip.type in set(['CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP']):
             col.prop(strip, "use_default_fade", "Default fade")
             if not strip.use_default_fade:
                 col.prop(strip, "effect_fader", text="Effect fader")
@@ -667,11 +669,11 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
         if not strip:
             return False
 
-        return strip.type in {'MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'META',
+        return strip.type in set(['MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'META',
                               'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
                               'CROSS', 'GAMMA_CROSS', 'MULTIPLY', 'OVER_DROP',
                               'WIPE', 'GLOW', 'TRANSFORM', 'COLOR',
-                              'MULTICAM', 'SPEED', 'ADJUSTMENT'}
+                              'MULTICAM', 'SPEED', 'ADJUSTMENT'])
 
     def draw(self, context):
         layout = self.layout
@@ -735,7 +737,7 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
         col.prop(strip, "frame_offset_start", text="Start")
         col.prop(strip, "frame_offset_end", text="End")
 
-        if scene.render.use_multiview and seq_type in {'IMAGE', 'MOVIE'}:
+        if scene.render.use_multiview and seq_type in set(['IMAGE', 'MOVIE']):
             layout.prop(strip, "use_multiview")
 
             col = layout.column()
@@ -880,11 +882,11 @@ class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
         if not strip:
             return False
 
-        return strip.type in {'MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'MASK',
+        return strip.type in set(['MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'MASK',
                               'META', 'ADD', 'SUBTRACT', 'ALPHA_OVER',
                               'ALPHA_UNDER', 'CROSS', 'GAMMA_CROSS', 'MULTIPLY',
                               'OVER_DROP', 'WIPE', 'GLOW', 'TRANSFORM', 'COLOR',
-                              'MULTICAM', 'SPEED', 'ADJUSTMENT'}
+                              'MULTICAM', 'SPEED', 'ADJUSTMENT'])
 
     def draw(self, context):
         layout = self.layout
@@ -934,7 +936,7 @@ class SEQUENCER_PT_proxy(SequencerButtonsPanel, Panel):
         if not strip:
             return False
 
-        return strip.type in {'MOVIE', 'IMAGE', 'SCENE', 'META', 'MULTICAM'}
+        return strip.type in set(['MOVIE', 'IMAGE', 'SCENE', 'META', 'MULTICAM'])
 
     def draw_header(self, context):
         strip = act_strip(context)
@@ -1031,12 +1033,12 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
 
 class SEQUENCER_PT_view_safe_areas(SequencerButtonsPanel_Output, Panel):
     bl_label = "Safe Areas"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
         st = context.space_data
-        is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
+        is_preview = st.view_type in set(['PREVIEW', 'SEQUENCER_PREVIEW'])
         return is_preview and (st.display_mode == 'IMAGE')
 
     def draw_header(self, context):
@@ -1130,7 +1132,7 @@ class SEQUENCER_PT_grease_pencil_tools(GreasePencilToolsPanel, SequencerButtonsP
 
 
 class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "scene.sequence_editor.active_strip"
     _property_type = (bpy.types.Sequence,)
 

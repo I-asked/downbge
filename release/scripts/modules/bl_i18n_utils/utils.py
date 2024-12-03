@@ -20,6 +20,9 @@
 
 # Some misc utilities...
 
+from __future__ import division
+from __future__ import with_statement
+from __future__ import absolute_import
 import collections
 import concurrent.futures
 import copy
@@ -41,6 +44,8 @@ import bpy
 
 ##### Misc Utils #####
 from bpy.app.translations import locale_explode
+from itertools import izip
+from io import open
 
 
 _valid_po_path_re = re.compile(r"^\S+:[0-9]+$")
@@ -96,8 +101,10 @@ def locale_match(loc1, loc2):
     """
     if loc1 == loc2:
         return 0
-    l1, c1, v1, *_1 = locale_explode(loc1)
-    l2, c2, v2, *_2 = locale_explode(loc2)
+    _3to2list = list(locale_explode(loc1))
+l1, c1, v1, _1, = _3to2list[:3] + [_3to2list[3:]]
+    _3to2list1 = list(locale_explode(loc2))
+    l2, c2, v2, _2, = _3to2list1[:3] + [_3to2list1[3:]]
 
     if l1 == l2:
         if c1 == c2:
@@ -141,7 +148,7 @@ def get_po_files_from_dir(root_dir, langs=set()):
     for p in os.listdir(root_dir):
         uid = None
         po_file = os.path.join(root_dir, p)
-        print(p)
+        print p
         if p.endswith(".po") and os.path.isfile(po_file):
             uid = p[:-3]
             if langs and uid not in langs:
@@ -176,7 +183,7 @@ def enable_addons(addons=None, support=None, disable=False, check_only=False):
         support = {}
 
     userpref = bpy.context.user_preferences
-    used_ext = {ext.module for ext in userpref.addons}
+    used_ext = set(ext.module for ext in userpref.addons)
 
     ret = [mod for mod in addon_utils.modules()
                if ((addons and mod.__name__ in addons) or
@@ -188,12 +195,12 @@ def enable_addons(addons=None, support=None, disable=False, check_only=False):
             if disable:
                 if module_name not in used_ext:
                     continue
-                print("    Disabling module ", module_name)
+                print "    Disabling module ", module_name
                 bpy.ops.wm.addon_disable(module=module_name)
             else:
                 if module_name in used_ext:
                     continue
-                print("    Enabling module ", module_name)
+                print "    Enabling module ", module_name
                 bpy.ops.wm.addon_enable(module=module_name)
 
         # XXX There are currently some problems with bpy/rna...
@@ -210,7 +217,7 @@ def enable_addons(addons=None, support=None, disable=False, check_only=False):
 
 ##### Main Classes #####
 
-class I18nMessage:
+class I18nMessage(object):
     """
     Internal representation of a message.
     """
@@ -376,7 +383,7 @@ class I18nMessage:
             setattr(self, name, [self.do_unescape(l) for l in getattr(self, name)])
 
 
-class I18nMessages:
+class I18nMessages(object):
     """
     Internal representation of messages for one language (iso code), with additional stats info.
     """
@@ -493,7 +500,7 @@ class I18nMessages:
             keys.append(k)
             trans.append(m.msgstr)
         trans = utils_rtl.log2vis(trans, self.settings)
-        for k, t in zip(keys, trans):
+        for k, t in izip(keys, trans):
             self.msgs[k].msgstr = t
 
     def merge(self, msgs, replace=False):
@@ -706,7 +713,7 @@ class I18nMessages:
 
         # Build RNA key.
         src, src_rna, src_enum = bpy.utils.make_rna_paths(rna_struct_name, rna_prop_name, rna_enum_name)
-        print("src: ", src_rna, src_enum)
+        print "src: ", src_rna, src_enum
 
         # Labels.
         elbl = getattr(msgs, msgmap["enum_label"]["msgstr"])
@@ -742,7 +749,7 @@ class I18nMessages:
         if blbl.endswith(self.settings.NUM_BUTTON_SUFFIX):
             # Num buttons report their label with a trailing ': '...
             blbls.append(blbl[:-len(self.settings.NUM_BUTTON_SUFFIX)])
-        print("button label: " + blbl)
+        print "button label: " + blbl
         if blbl and elbl not in blbls and (rlbl not in blbls or rna_ctxt != self.settings.DEFAULT_CONTEXT):
             # Always Default context for button label :/
             k = ctxt_to_msg[self.settings.DEFAULT_CONTEXT].copy()
@@ -794,7 +801,7 @@ class I18nMessages:
             #print(k)
         btip = getattr(msgs, msgmap["but_tip"]["msgstr"])
         #print("button tip: " + btip)
-        if btip and btip not in {rtip, etip}:
+        if btip and btip not in set([rtip, etip]):
             k = ctxt_to_msg[self.settings.DEFAULT_CONTEXT].copy()
             if btip in msgid_to_msg:
                 k &= msgid_to_msg[btip]
@@ -809,9 +816,9 @@ class I18nMessages:
         del self.parsing_errors[:]
         self.parsers[kind](self, src, key)
         if self.parsing_errors:
-            print("{} ({}):".format(key, src))
+            print "{} ({}):".format(key, src)
             self.print_info(print_stats=False)
-            print("The parser solved them as well as it could...")
+            print "The parser solved them as well as it could..."
         self.update_info()
 
     def parse_messages_from_po(self, src, key=None):
@@ -862,7 +869,7 @@ class I18nMessages:
         if os.path.isfile(src):
             if os.stat(src).st_size > self.settings.PARSER_MAX_FILE_SIZE:
                 # Security, else we could read arbitrary huge files!
-                print("WARNING: skipping file {}, too huge!".format(src))
+                print "WARNING: skipping file {}, too huge!".format(src)
                 return
             if not key:
                 key = src
@@ -1057,9 +1064,9 @@ class I18nMessages:
                    "-o",
                    fname,
                   )
-            print("Running ", " ".join(cmd))
+            print "Running ", " ".join(cmd)
             ret = subprocess.call(cmd)
-            print("Finished.")
+            print "Finished."
             return
         # XXX Code below is currently broken (generates corrupted mo files it seems :( )!
         # Using http://www.gnu.org/software/gettext/manual/html_node/MO-Files.html notation.
@@ -1078,7 +1085,7 @@ class I18nMessages:
         H = T + N * 8
         # Prepare our data! we need key (optional context and msgid), translation, and offset and length of both.
         # Offset are relative to start of their own list.
-        EOT = b"0x04"  # Used to concatenate context and msgid
+        EOT = "0x04"  # Used to concatenate context and msgid
         _msgid_offset = 0
         _msgstr_offset = 0
         def _gen(v):
@@ -1098,21 +1105,21 @@ class I18nMessages:
         msgs = tuple(_gen(v) for v in msgs)
         msgid_start = H
         msgstr_start = msgid_start + _msgid_offset
-        print(N, msgstr_start + _msgstr_offset)
-        print(msgs)
+        print N, msgstr_start + _msgstr_offset
+        print msgs
 
         with open(fname, 'wb') as f:
             # Header...
             f.write(struct.pack("=8I", magic_nbr, format_rev, N, O, T, S, H, 0))
             # Msgid's length and offset.
-            f.write(b"".join(struct.pack("=2I", length, msgid_start + offset) for (_1, length, offset), _2 in msgs))
+            f.write("".join(struct.pack("=2I", length, msgid_start + offset) for (_1, length, offset), _2 in msgs))
             # Msgstr's length and offset.
-            f.write(b"".join(struct.pack("=2I", length, msgstr_start + offset) for _1, (_2, length, offset) in msgs))
+            f.write("".join(struct.pack("=2I", length, msgstr_start + offset) for _1, (_2, length, offset) in msgs))
             # No hash table!
             # Msgid's.
-            f.write(b"\0".join(msgid for (msgid, _1, _2), _3 in msgs) + b"\0")
+            f.write("\0".join(msgid for (msgid, _1, _2), _3 in msgs) + "\0")
             # Msgstr's.
-            f.write(b"\0".join(msgstr for _1, (msgstr, _2, _3) in msgs) + b"\0")
+            f.write("\0".join(msgstr for _1, (msgstr, _2, _3) in msgs) + "\0")
 
     parsers = {
         "PO": parse_messages_from_po,
@@ -1125,7 +1132,7 @@ class I18nMessages:
     }
 
 
-class I18n:
+class I18n(object):
     """
     Internal representation of a whole translation set.
     """
@@ -1136,7 +1143,7 @@ class I18n:
                            _end_marker=settings.PARSER_PY_MARKER_END):
         if os.stat(path).st_size > maxsize:
             # Security, else we could read arbitrary huge files!
-            print("WARNING: skipping file {}, too huge!".format(path))
+            print "WARNING: skipping file {}, too huge!".format(path)
             return None, None, None, False
         txt = ""
         with open(path) as f:
@@ -1241,11 +1248,11 @@ class I18n:
             for key, msgs in self.trans.items():
                 if key == self.settings.PARSER_TEMPLATE_ID:
                     continue
-                print(prefix + key + ":")
+                print prefix + key + ":"
                 msgs.print_stats(prefix=msgs_prefix)
-                print(prefix)
+                print prefix
 
-        nbr_contexts = len(self.contexts - {bpy.app.translations.contexts.default})
+        nbr_contexts = len(self.contexts - set([bpy.app.translations.contexts.default]))
         if nbr_contexts != 1:
             if nbr_contexts == 0:
                 nbr_contexts = "No"
@@ -1262,10 +1269,10 @@ class I18n:
             "    The org msgids are currently made of {} signs.\n".format(self.nbr_signs),
             "    All processed translations are currently made of {} signs.\n".format(self.nbr_trans_signs),
             "    {} specific context{} present:\n".format(self.nbr_contexts, _ctx_txt)) +
-            tuple("            " + c + "\n" for c in self.contexts - {bpy.app.translations.contexts.default}) +
+            tuple("            " + c + "\n" for c in self.contexts - set([bpy.app.translations.contexts.default])) +
             ("\n",)
         )
-        print(prefix.join(lines))
+        print prefix.join(lines)
 
     @classmethod
     def check_py_module_has_translations(clss, src, settings=settings):
@@ -1326,13 +1333,15 @@ class I18n:
         if msgs is None:
             self.src[self.settings.PARSER_PY_ID] = src
             msgs = ()
-        for key, (sources, gen_comments), *translations in msgs:
+        for _3to2iter4 in msgs:
+            _3to2list3 = list(_3to2iter4)
+            key, translations, = _3to2list3[:1] + [_3to2list3[1:]]
             if self.settings.PARSER_TEMPLATE_ID not in self.trans:
                 self.trans[self.settings.PARSER_TEMPLATE_ID] = I18nMessages(self.settings.PARSER_TEMPLATE_ID,
                                                                             settings=self.settings)
                 self.src[self.settings.PARSER_TEMPLATE_ID] = self.src[self.settings.PARSER_PY_ID]
             if key in self.trans[self.settings.PARSER_TEMPLATE_ID].msgs:
-                print("ERROR! key {} is defined more than once! Skipping re-definitions!")
+                print "ERROR! key {} is defined more than once! Skipping re-definitions!"
                 continue
             custom_src = [c for c in sources if c.startswith("bpy.")]
             src = [c for c in sources if not c.startswith("bpy.")]
@@ -1405,7 +1414,7 @@ class I18n:
             # Ref translation will be used to generate sources "comments"
             ref = self.trans.get(self.settings.PARSER_TEMPLATE_ID) or self.trans[list(self.trans.keys())[0]]
             # Get all languages (uids) and sort them (PARSER_TEMPLATE_ID and PARSER_PY_ID excluded!)
-            translations = self.trans.keys() - {self.settings.PARSER_TEMPLATE_ID, self.settings.PARSER_PY_ID}
+            translations = self.trans.keys() - set([self.settings.PARSER_TEMPLATE_ID, self.settings.PARSER_PY_ID])
             if langs:
                 translations &= langs
             translations = [('"' + lng + '"', " " * (len(lng) + 6), self.trans[lng]) for lng in sorted(translations)]
@@ -1478,16 +1487,16 @@ class I18n:
 
         self.escape(True)
         dst = self.dst(self, self.src.get(self.settings.PARSER_PY_ID, ""), self.settings.PARSER_PY_ID, 'PY')
-        print(dst)
+        print dst
         prev = txt = nxt = ""
         if os.path.exists(dst):
             if not os.path.isfile(dst):
-                print("WARNING: trying to write as python code into {}, which is not a file! Aborting.".format(dst))
+                print "WARNING: trying to write as python code into {}, which is not a file! Aborting.".format(dst)
                 return
             prev, txt, nxt, has_trans = self._parser_check_file(dst)
             if prev is None and nxt is None:
-                print("WARNING: Looks like given python file {} has no auto-generated translations yet, will be added "
-                      "at the end of the file, you can move that section later if needed...".format(dst))
+                print "WARNING: Looks like given python file {} has no auto-generated translations yet, will be added "
+                      "at the end of the file, you can move that section later if needed...".format(dst)
                 txt = ([txt, "", self.settings.PARSER_PY_MARKER_BEGIN] +
                        _gen_py(self, langs) +
                        ["", self.settings.PARSER_PY_MARKER_END])

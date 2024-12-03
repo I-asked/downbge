@@ -22,6 +22,7 @@
 #  Purpose  : The stroke points are colored in gray levels and depending
 #             on the 2d curvature value
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

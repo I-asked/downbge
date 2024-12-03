@@ -267,7 +267,7 @@ void PyC_FileAndNum(const char **filename, int *lineno)
 
 	/* when executing a script */
 	if (filename) {
-		*filename = _PyUnicode_AsString(frame->f_code->co_filename);
+		*filename = PyString_AsString(frame->f_code->co_filename);
 	}
 
 	/* when executing a module */
@@ -283,13 +283,13 @@ void PyC_FileAndNum(const char **filename, int *lineno)
 
 			/* unlikely, fallback */
 			if (*filename == NULL) {
-				*filename = _PyUnicode_AsString(mod_name);
+				*filename = PyString_AsString(mod_name);
 			}
 		}
 	}
 
 	if (lineno) {
-		*lineno = PyFrame_GetLineNumber(frame);
+		*lineno = ((PyFrameObject *)frame)->f_lineno;
 	}
 }
 
@@ -336,7 +336,7 @@ PyObject *PyC_FrozenSetFromStrings(const char **strings)
 	ret = PyFrozenSet_New(NULL);
 
 	for (str = strings; *str; str++) {
-		PyObject *py_str = PyUnicode_FromString(*str);
+		PyObject *py_str = PyString_FromString(*str);
 		PySet_Add(ret, py_str);
 		Py_DECREF(py_str);
 	}
@@ -357,7 +357,7 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
 	va_list args;
 
 	va_start(args, format);
-	error_value_prefix = PyUnicode_FromFormatV(format, args); /* can fail and be NULL */
+	error_value_prefix = PyString_FromFormatV(format, args); /* can fail and be NULL */
 	va_end(args);
 
 	if (PyErr_Occurred()) {
@@ -383,7 +383,7 @@ PyObject *PyC_Err_Format_Prefix(PyObject *exception_type_prefix, const char *for
 }
 
 
-/* returns the exception string as a new PyUnicode object, depends on external traceback module */
+/* returns the exception string as a new PyString object, depends on external traceback module */
 #if 0
 
 /* this version uses traceback module but somehow fails on UI errors */
@@ -505,7 +505,7 @@ PyObject *PyC_ExceptionBuffer_Simple(void)
 	string_io_buf = PyObject_Str(error_value);
 	/* Python does this too */
 	if (UNLIKELY(string_io_buf == NULL)) {
-		string_io_buf = PyUnicode_FromFormat(
+		string_io_buf = PyString_FromFormat(
 		        "<unprintable %s object>", Py_TYPE(error_value)->tp_name);
 	}
 
@@ -517,11 +517,11 @@ PyObject *PyC_ExceptionBuffer_Simple(void)
 }
 
 /* string conversion, escape non-unicode chars, coerce must be set to NULL */
-const char *PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce)
+const char *PyC_StringAsByte(PyObject *py_str, PyObject **coerce)
 {
 	const char *result;
 
-	result = _PyUnicode_AsString(py_str);
+	result = PyString_AsString(py_str);
 
 	if (result) {
 		/* 99% of the time this is enough but we better support non unicode
@@ -538,40 +538,28 @@ const char *PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce)
 		/* bug [#31856] oddly enough, Python3.2 --> 3.3 on Windows will throw an
 		 * exception here this needs to be fixed in python:
 		 * see: bugs.python.org/issue15859 */
-		else if (!PyUnicode_Check(py_str)) {
+		else if (!PyString_Check(py_str)) {
 			PyErr_BadArgument();
 			return NULL;
 		}
 #endif
-		else if ((*coerce = PyUnicode_EncodeFSDefault(py_str))) {
-			return PyBytes_AS_STRING(*coerce);
-		}
 		else {
 			/* leave error raised from EncodeFS */
 			return NULL;
 		}
 	}
+	return NULL;
 }
 
-PyObject *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size)
+PyObject *PyC_StringFromByteAndSize(const char *str, Py_ssize_t size)
 {
-	PyObject *result = PyUnicode_FromStringAndSize(str, size);
-	if (result) {
-		/* 99% of the time this is enough but we better support non unicode
-		 * chars since blender doesnt limit this */
-		return result;
-	}
-	else {
-		PyErr_Clear();
-		/* this means paths will always be accessible once converted, on all OS's */
-		result = PyUnicode_DecodeFSDefaultAndSize(str, size);
-		return result;
-	}
+	PyObject *result = PyString_FromStringAndSize(str, size);
+	return result;
 }
 
-PyObject *PyC_UnicodeFromByte(const char *str)
+PyObject *PyC_StringFromByte(const char *str)
 {
-	return PyC_UnicodeFromByteAndSize(str, strlen(str));
+	return PyC_StringFromByteAndSize(str, strlen(str));
 }
 
 /*****************************************************************************
@@ -596,7 +584,7 @@ PyObject *PyC_DefaultNameSpace(const char *filename)
 	if (filename) {
 		/* __file__ mainly for nice UI'ness
 		 * note: this wont map to a real file when executing text-blocks and buttons. */
-		PyModule_AddObject(mod_main, "__file__", PyC_UnicodeFromByte(filename));
+		PyModule_AddObject(mod_main, "__file__", PyC_StringFromByte(filename));
 	}
 	PyModule_AddObject(mod_main, "__builtins__", interp->builtins);
 	Py_INCREF(interp->builtins); /* AddObject steals a reference */
@@ -771,7 +759,7 @@ void PyC_RunQuicky(const char *filepath, int n, ...)
 							Py_INCREF(member);
 						}
 
-						PyTuple_SET_ITEM(item_new, 0, PyUnicode_FromString(format));
+						PyTuple_SET_ITEM(item_new, 0, PyString_FromString(format));
 					}
 					else {
 						item_new = Py_BuildValue("sO", format, item);
@@ -920,7 +908,7 @@ int PyC_FlagSet_ToBitfield(PyC_FlagSet *items, PyObject *value, int *r_value, co
 	*r_value = 0;
 
 	while (_PySet_NextEntry(value, &pos, &key, &hash)) {
-		const char *param = _PyUnicode_AsString(key);
+		const char *param = PyString_AsString(key);
 
 		if (param == NULL) {
 			PyErr_Format(PyExc_TypeError,
@@ -947,7 +935,7 @@ PyObject *PyC_FlagSet_FromBitfield(PyC_FlagSet *items, int flag)
 
 	for ( ; items->identifier; items++) {
 		if (items->value & flag) {
-			pystr = PyUnicode_FromString(items->identifier);
+			pystr = PyString_FromString(items->identifier);
 			PySet_Add(ret, pystr);
 			Py_DECREF(pystr);
 		}

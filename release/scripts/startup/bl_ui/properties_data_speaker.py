@@ -17,12 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
+from io import open
 
 
-class DataButtonsPanel:
+class DataButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -35,8 +37,8 @@ class DataButtonsPanel:
 
 class DATA_PT_context_speaker(DataButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         layout = self.layout
@@ -55,7 +57,7 @@ class DATA_PT_context_speaker(DataButtonsPanel, Panel):
 
 class DATA_PT_speaker(DataButtonsPanel, Panel):
     bl_label = "Sound"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -74,7 +76,7 @@ class DATA_PT_speaker(DataButtonsPanel, Panel):
 
 class DATA_PT_distance(DataButtonsPanel, Panel):
     bl_label = "Distance"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -97,7 +99,7 @@ class DATA_PT_distance(DataButtonsPanel, Panel):
 
 class DATA_PT_cone(DataButtonsPanel, Panel):
     bl_label = "Cone"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -117,7 +119,7 @@ class DATA_PT_cone(DataButtonsPanel, Panel):
 
 
 class DATA_PT_custom_props_speaker(DataButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object.data"
     _property_type = bpy.types.Speaker
 

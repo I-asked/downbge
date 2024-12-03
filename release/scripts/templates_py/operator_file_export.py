@@ -1,13 +1,15 @@
+from __future__ import absolute_import
 import bpy
+from io import open
 
 
 def write_some_data(context, filepath, use_some_setting):
-    print("running write_some_data...")
+    print "running write_some_data..."
     f = open(filepath, 'w', encoding='utf-8')
     f.write("Hello World %s" % use_some_setting)
     f.close()
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 # ExportHelper is a helper class, defines filename and
@@ -27,7 +29,7 @@ class ExportSomeData(Operator, ExportHelper):
 
     filter_glob = StringProperty(
             default="*.txt",
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     # List of operator properties, the attributes will be assigned

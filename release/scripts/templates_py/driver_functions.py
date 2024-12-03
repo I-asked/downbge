@@ -6,6 +6,7 @@
 
 
 # two sample functions
+from __future__ import absolute_import
 def invert(f):
     """ Simple function call:
 

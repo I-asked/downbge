@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 from _bpy import types as bpy_types
 import _bpy
 
@@ -151,7 +153,7 @@ class WindowManager(bpy_types.ID):
                 self.piemenu_end__internal(pie)
 
 
-class _GenericBone:
+class _GenericBone(object):
     """
     functions for bones, common between Armature/Pose/Edit bones.
     internal subclassing use only.
@@ -290,9 +292,7 @@ class _GenericBone:
                 chain.append(child)
             else:
                 if children_basename:
-                    print("multiple basenames found, "
-                          "this is probably not what you want!",
-                          self.name, children_basename)
+                    print "multiple basenames found, this is probably not what you want!", self.name, children_basename
 
                 break
 
@@ -313,7 +313,8 @@ class _GenericBone:
         return bones
 
 
-class PoseBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
+class PoseBone(StructRNA, _GenericBone):
+    __metaclass__ = StructMetaPropGroup
     __slots__ = ()
 
     @property
@@ -326,11 +327,13 @@ class PoseBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
                      if bone.parent == self_bone)
 
 
-class Bone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
+class Bone(StructRNA, _GenericBone):
+    __metaclass__ = StructMetaPropGroup
     __slots__ = ()
 
 
-class EditBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
+class EditBone(StructRNA, _GenericBone):
+    __metaclass__ = StructMetaPropGroup
     __slots__ = ()
 
     def align_orientation(self, other):
@@ -488,13 +491,13 @@ class MeshPolygon(StructRNA):
     def edge_keys(self):
         verts = self.vertices[:]
         vlen = len(self.vertices)
-        return [ord_ind(verts[i], verts[(i + 1) % vlen]) for i in range(vlen)]
+        return [ord_ind(verts[i], verts[(i + 1) % vlen]) for i in xrange(vlen)]
 
     @property
     def loop_indices(self):
         start = self.loop_start
         end = start + self.loop_total
-        return range(start, end)
+        return xrange(start, end)
 
 
 class Text(bpy_types.ID):
@@ -583,7 +586,8 @@ class OrderedMeta(RNAMeta):
 
 # Only defined so operators members can be used by accessing self.order
 # with doc generation 'self.properties.bl_rna.properties' can fail
-class Operator(StructRNA, metaclass=OrderedMeta):
+class Operator(StructRNA):
+    __metaclass__ = OrderedMeta
     __slots__ = ()
 
     def __getattribute__(self, attr):
@@ -591,33 +595,34 @@ class Operator(StructRNA, metaclass=OrderedMeta):
         bl_rna = getattr(properties, "bl_rna", None)
         if (bl_rna is not None) and (attr in bl_rna.properties):
             return getattr(properties, attr)
-        return super().__getattribute__(attr)
+        return super(Operator, self).__getattribute__(attr)
 
     def __setattr__(self, attr, value):
         properties = StructRNA.path_resolve(self, "properties")
         bl_rna = getattr(properties, "bl_rna", None)
         if (bl_rna is not None) and (attr in bl_rna.properties):
             return setattr(properties, attr, value)
-        return super().__setattr__(attr, value)
+        return super(Operator, self).__setattr__(attr, value)
 
     def __delattr__(self, attr):
         properties = StructRNA.path_resolve(self, "properties")
         bl_rna = getattr(properties, "bl_rna", None)
         if (bl_rna is not None) and (attr in bl_rna.properties):
             return delattr(properties, attr)
-        return super().__delattr__(attr)
+        return super(Operator, self).__delattr__(attr)
 
     def as_keywords(self, ignore=()):
         """Return a copy of the properties as a dictionary"""
         ignore = ignore + ("rna_type",)
-        return {attr: getattr(self, attr)
+        return dict((attr, getattr(self, attr))
                 for attr in self.properties.rna_type.properties.keys()
-                if attr not in ignore}
+                if attr not in ignore)
 
 
-class Macro(StructRNA, metaclass=OrderedMeta):
+class Macro(StructRNA):
     # bpy_types is imported before ops is defined
     # so we have to do a local import on each run
+    __metaclass__ = OrderedMeta
     __slots__ = ()
 
     @classmethod
@@ -626,23 +631,27 @@ class Macro(StructRNA, metaclass=OrderedMeta):
         return ops.macro_define(self, opname)
 
 
-class PropertyGroup(StructRNA, metaclass=RNAMetaPropGroup):
+class PropertyGroup(StructRNA):
+        __metaclass__ = RNAMetaPropGroup
         __slots__ = ()
 
 
-class RenderEngine(StructRNA, metaclass=RNAMeta):
+class RenderEngine(StructRNA):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class KeyingSetInfo(StructRNA, metaclass=RNAMeta):
+class KeyingSetInfo(StructRNA):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class AddonPreferences(StructRNA, metaclass=RNAMeta):
+class AddonPreferences(StructRNA):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class _GenericUI:
+class _GenericUI(object):
     __slots__ = ()
 
     @classmethod
@@ -699,19 +708,23 @@ class _GenericUI:
             pass
 
 
-class Panel(StructRNA, _GenericUI, metaclass=RNAMeta):
+class Panel(StructRNA, _GenericUI):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class UIList(StructRNA, _GenericUI, metaclass=RNAMeta):
+class UIList(StructRNA, _GenericUI):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class Header(StructRNA, _GenericUI, metaclass=RNAMeta):
+class Header(StructRNA, _GenericUI):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
 
-class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
+class Menu(StructRNA, _GenericUI):
+    __metaclass__ = RNAMeta
     __slots__ = ()
 
     def path_menu(self, searchpaths, operator,
@@ -764,7 +777,7 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         - preset_operator_defaults (dict of keyword args)
         """
         import bpy
-        ext_valid = getattr(self, "preset_extensions", {".py", ".xml"})
+        ext_valid = getattr(self, "preset_extensions", set([".py", ".xml"]))
         props_default = getattr(self, "preset_operator_defaults", None)
         self.path_menu(bpy.utils.preset_paths(self.preset_subdir),
                        self.preset_operator,
@@ -781,11 +794,13 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
             layout.menu(cls.__name__, icon='COLLAPSEMENU')
 
 
-class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
+class NodeTree(bpy_types.ID):
+    __metaclass__ = RNAMetaPropGroup
     __slots__ = ()
 
 
-class Node(StructRNA, metaclass=RNAMetaPropGroup):
+class Node(StructRNA):
+    __metaclass__ = RNAMetaPropGroup
     __slots__ = ()
 
     @classmethod
@@ -797,7 +812,8 @@ class NodeInternal(Node):
     __slots__ = ()
 
 
-class NodeSocket(StructRNA, metaclass=RNAMetaPropGroup):
+class NodeSocket(StructRNA):
+    __metaclass__ = RNAMetaPropGroup
     __slots__ = ()
 
     @property
@@ -808,7 +824,8 @@ class NodeSocket(StructRNA, metaclass=RNAMetaPropGroup):
                          link.to_socket == self))
 
 
-class NodeSocketInterface(StructRNA, metaclass=RNAMetaPropGroup):
+class NodeSocketInterface(StructRNA):
+    __metaclass__ = RNAMetaPropGroup
     __slots__ = ()
 
 

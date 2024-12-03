@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Draws only the lines that are occluded by a given object
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     AndUP1D,

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 from bpy_extras import view3d_utils
 
@@ -76,24 +77,24 @@ class ViewOperatorRayCast(bpy.types.Operator):
     bl_label = "RayCast View Operator"
 
     def modal(self, context, event):
-        if event.type in {'MIDDLEMOUSE', 'WHEELUPMOUSE', 'WHEELDOWNMOUSE'}:
+        if event.type in set(['MIDDLEMOUSE', 'WHEELUPMOUSE', 'WHEELDOWNMOUSE']):
             # allow navigation
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
         elif event.type == 'LEFTMOUSE':
             main(context, event)
-            return {'RUNNING_MODAL'}
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            return {'CANCELLED'}
+            return set(['RUNNING_MODAL'])
+        elif event.type in set(['RIGHTMOUSE', 'ESC']):
+            return set(['CANCELLED'])
 
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def invoke(self, context, event):
         if context.space_data.type == 'VIEW_3D':
             context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
+            return set(['RUNNING_MODAL'])
         else:
-            self.report({'WARNING'}, "Active space must be a View3d")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "Active space must be a View3d")
+            return set(['CANCELLED'])
 
 
 def register():

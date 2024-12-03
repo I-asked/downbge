@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 
 
@@ -11,18 +12,18 @@ def main(operator, context):
     if node_active in node_selected:
         node_selected.remove(node_active)
     if len(node_selected) != 1:
-        operator.report({'ERROR'}, "2 nodes must be selected")
+        operator.report(set(['ERROR']), "2 nodes must be selected")
         return
 
     node_other, = node_selected
 
     # now we have 2 nodes to operate on
     if not node_active.inputs:
-        operator.report({'ERROR'}, "Active node has no inputs")
+        operator.report(set(['ERROR']), "Active node has no inputs")
         return
 
     if not node_other.outputs:
-        operator.report({'ERROR'}, "Selected node has no outputs")
+        operator.report(set(['ERROR']), "Selected node has no outputs")
         return
 
     socket_in = node_active.inputs[0]
@@ -44,7 +45,7 @@ class NodeOperator(bpy.types.Operator):
 
     def execute(self, context):
         main(self, context)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 def register():

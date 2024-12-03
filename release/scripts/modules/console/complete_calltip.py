@@ -20,6 +20,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import inspect
 import re
 
@@ -105,7 +106,7 @@ def get_argspec(func, strip_self=True, doc=None, source=None):
     """
     # get the function object of the class
     try:
-        func = func.__func__
+        func = func.im_func
     except AttributeError:
         try:
             # py 2.X
@@ -138,7 +139,7 @@ def get_argspec(func, strip_self=True, doc=None, source=None):
     else:
         # try with the inspect.getarg* functions
         try:
-            argspec = inspect.formatargspec(*inspect.getfullargspec(func))
+            argspec = inspect.formatargspec(*inspect.getargspec(func))
         except:
             try:
                 # py 2.X

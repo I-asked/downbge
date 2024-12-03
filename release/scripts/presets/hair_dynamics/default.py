@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 psys = bpy.context.particle_system
 cloth = bpy.context.particle_system.cloth

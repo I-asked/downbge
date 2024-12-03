@@ -18,12 +18,13 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from bpy.app.translations import contexts as i18n_contexts
 
 
-class PhysicButtonsPanel:
+class PhysicButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -56,7 +57,7 @@ def physics_add_special(self, layout, data, name, addop, removeop, typeicon):
 
 class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         obj = context.object
@@ -78,7 +79,7 @@ class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
 
         col = split.column()
 
-        if obj.type in {'MESH', 'LATTICE', 'CURVE'}:
+        if obj.type in set(['MESH', 'LATTICE', 'CURVE']):
             physics_add(self, col, context.soft_body, "Soft Body", 'SOFT_BODY', 'MOD_SOFT', True)
 
         if obj.type == 'MESH':
@@ -113,7 +114,7 @@ def point_cache_ui(self, context, cache, enabled, cachetype):
         col.operator("ptcache.remove", icon='ZOOMOUT', text="")
 
     row = layout.row()
-    if cachetype in {'PSYS', 'HAIR', 'SMOKE'}:
+    if cachetype in set(['PSYS', 'HAIR', 'SMOKE']):
         row.prop(cache, "use_external")
 
         if cachetype == 'SMOKE':
@@ -133,7 +134,7 @@ def point_cache_ui(self, context, cache, enabled, cachetype):
         if cache_info:
             layout.label(text=cache_info)
     else:
-        if cachetype in {'SMOKE', 'DYNAMIC_PAINT'}:
+        if cachetype in set(['SMOKE', 'DYNAMIC_PAINT']):
             if not bpy.data.is_saved:
                 layout.label(text="Cache is disabled until the file is saved")
                 layout.enabled = False
@@ -141,11 +142,11 @@ def point_cache_ui(self, context, cache, enabled, cachetype):
     if not cache.use_external or cachetype == 'SMOKE':
         row = layout.row(align=True)
 
-        if cachetype not in {'PSYS', 'DYNAMIC_PAINT'}:
+        if cachetype not in set(['PSYS', 'DYNAMIC_PAINT']):
             row.enabled = enabled
             row.prop(cache, "frame_start")
             row.prop(cache, "frame_end")
-        if cachetype not in {'SMOKE', 'CLOTH', 'DYNAMIC_PAINT', 'RIGID_BODY'}:
+        if cachetype not in set(['SMOKE', 'CLOTH', 'DYNAMIC_PAINT', 'RIGID_BODY']):
             row.prop(cache, "frame_step")
 
         if cachetype != 'SMOKE':
@@ -153,7 +154,7 @@ def point_cache_ui(self, context, cache, enabled, cachetype):
 
         can_bake = True
 
-        if cachetype not in {'SMOKE', 'DYNAMIC_PAINT', 'RIGID_BODY'}:
+        if cachetype not in set(['SMOKE', 'DYNAMIC_PAINT', 'RIGID_BODY']):
             split = layout.split()
             split.enabled = enabled and bpy.data.is_saved
 

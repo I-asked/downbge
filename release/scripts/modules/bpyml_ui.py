@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 
+from __future__ import absolute_import
 import bpy as _bpy
 import bpyml
 from bpyml import TAG, ARGS, CHILDREN
@@ -42,13 +43,13 @@ def _parse_rna(prop, value):
     elif prop.type == 'INT':
         value = int(value)
     elif prop.type == 'BOOLEAN':
-        if value in {True, False}:
+        if value in set([True, False]):
             pass
         else:
-            if value not in {"True", "False"}:
+            if value not in set(["True", "False"]):
                 raise Exception("invalid bool value: %s" % value)
             value = bool(value == "True")
-    elif prop.type in {'STRING', 'ENUM'}:
+    elif prop.type in set(['STRING', 'ENUM']):
         pass
     elif prop.type == 'POINTER':
         value = eval("_bpy." + value)
@@ -84,7 +85,7 @@ def _call_recursive(context, base, py_node):
                 _call_recursive(context, base_new, py_node_child)
 
 
-class BPyML_BaseUI:
+class BPyML_BaseUI(object):
     """
     This is a mix-in class that defines a draw function
     which checks for draw_data

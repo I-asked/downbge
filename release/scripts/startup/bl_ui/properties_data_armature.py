@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, Menu
 from rna_prop_ui import PropertyPanel
 
 
-class ArmatureButtonsPanel:
+class ArmatureButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -34,7 +35,7 @@ class ArmatureButtonsPanel:
 
 class DATA_PT_context_arm(ArmatureButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -163,7 +164,7 @@ class DATA_PT_bone_groups(ArmatureButtonsPanel, Panel):
 
 class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
     bl_label = "Pose Library"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -232,7 +233,7 @@ class DATA_PT_ghost(ArmatureButtonsPanel, Panel):
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
     bl_label = "Inverse Kinematics"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -320,7 +321,7 @@ class DATA_PT_onion_skinning(OnionSkinButtonsPanel):  # , Panel): # inherit from
 
 
 class DATA_PT_custom_props_arm(ArmatureButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object.data"
     _property_type = bpy.types.Armature
 

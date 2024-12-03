@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Produces a blueprint using circular contour strokes
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainPredicateIterator
 from freestyle.predicates import (
     AndUP1D,

@@ -23,6 +23,7 @@
 #             subjects them to the causal density so as to avoid 
 #             cluttering
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainPredicateIterator
 from freestyle.predicates import (
     AndUP1D,

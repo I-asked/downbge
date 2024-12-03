@@ -24,6 +24,8 @@
 # Contributor(s): Keith "Wahooney" Boshoff, Campbell Barton
 
 
+from __future__ import division
+from __future__ import absolute_import
 def applyVertexDirt(me, blur_iterations, blur_strength, clamp_dirt, clamp_clean, dirt_only):
     from mathutils import Vector
     from math import acos
@@ -34,7 +36,7 @@ def applyVertexDirt(me, blur_iterations, blur_strength, clamp_dirt, clamp_clean,
     # create lookup table for each vertex's connected vertices (via edges)
     con = []
 
-    con = [[] for i in range(len(me.vertices))]
+    con = [[] for i in xrange(len(me.vertices))]
 
     # add connected verts
     for e in me.edges:
@@ -70,7 +72,7 @@ def applyVertexDirt(me, blur_iterations, blur_strength, clamp_dirt, clamp_clean,
         vert_tone[i] = ang
 
     # blur tones
-    for i in range(blur_iterations):
+    for i in xrange(blur_iterations):
         # backup the original tones
         orig_vert_tone = vert_tone[:]
 
@@ -105,7 +107,7 @@ def applyVertexDirt(me, blur_iterations, blur_strength, clamp_dirt, clamp_clean,
         active_col_layer = me.vertex_colors[0].data
 
     if not active_col_layer:
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
     use_paint_mask = me.use_paint_mask
     for i, p in enumerate(me.polygons):
@@ -124,7 +126,7 @@ def applyVertexDirt(me, blur_iterations, blur_strength, clamp_dirt, clamp_clean,
                 col[1] = tone * col[1]
                 col[2] = tone * col[2]
     me.update()
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 import bpy
@@ -136,7 +138,7 @@ from math import pi
 class VertexPaintDirt(Operator):
     bl_idname = "paint.vertex_color_dirt"
     bl_label = "Dirty Vertex Colors"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     blur_strength = FloatProperty(
             name="Blur Strength",

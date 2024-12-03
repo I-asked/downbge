@@ -25,6 +25,7 @@ rna values in fcurves and drivers.
 Currently unused, but might become useful later again.
 """
 
+from __future__ import absolute_import
 import sys
 import bpy
 
@@ -51,7 +52,7 @@ def classes_recursive(base_type, clss=None):
     return clss
 
 
-class DataPathBuilder:
+class DataPathBuilder(object):
     """Dummy class used to parse fcurve and driver data paths."""
     __slots__ = ("data_path", )
 
@@ -111,7 +112,7 @@ class DataPathBuilder:
                         pass
 
                 if base_new is Ellipsis:
-                    print("Failed to resolve data path:", self.data_path, file=log)
+                    print >>log, "Failed to resolve data path:", self.data_path
                 base = base_new
             else:
                 item_new = item
@@ -190,7 +191,7 @@ def update_data_paths(rna_update, log=sys.stdout):
                     if not IS_TESTING:
                         fcurve.data_path = data_path_new
                         fcurve.driver.is_valid = True  # reset to allow this to work again
-                    print("driver-fcurve (%s): %s -> %s" % (id_data.name, data_path, data_path_new), file=log)
+                    print >>log, "driver-fcurve (%s): %s -> %s" % (id_data.name, data_path, data_path_new)
 
                 for var in fcurve.driver.variables:
                     if var.type == 'SINGLE_PROP':
@@ -204,8 +205,7 @@ def update_data_paths(rna_update, log=sys.stdout):
                                 if data_path_new != data_path:
                                     if not IS_TESTING:
                                         tar.data_path = data_path_new
-                                    print("driver (%s): %s -> %s" % (id_data_other.name, data_path, data_path_new),
-                                          file=log)
+                                    print >>log, "driver (%s): %s -> %s" % (id_data_other.name, data_path, data_path_new)
 
             for action in anim_data_actions(anim_data):
                 for fcu in action.fcurves:
@@ -215,7 +215,7 @@ def update_data_paths(rna_update, log=sys.stdout):
                     if data_path_new != data_path:
                         if not IS_TESTING:
                             fcu.data_path = data_path_new
-                        print("fcurve (%s): %s -> %s" % (id_data.name, data_path, data_path_new), file=log)
+                        print >>log, "fcurve (%s): %s -> %s" % (id_data.name, data_path, data_path_new)
 
 
 if __name__ == "__main__":

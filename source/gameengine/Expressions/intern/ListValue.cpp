@@ -378,7 +378,7 @@ static PyObject *listvalue_mapping_subscript(PyObject *self, PyObject *key)
 	else if (PySlice_Check(key)) {
 		Py_ssize_t start, stop, step, slicelength;
 
-		if (PySlice_GetIndicesEx(key, list->GetCount(), &start, &stop, &step, &slicelength) < 0)
+		if (PySlice_GetIndicesEx((PySliceObject *)key, list->GetCount(), &start, &stop, &step, &slicelength) < 0)
 			return NULL;
 
 		if (slicelength <= 0) {

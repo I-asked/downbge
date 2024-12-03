@@ -29,6 +29,7 @@ It unifies all completion plugins and only loads them on demand.
 """
 
 # TODO: file complete if startswith quotes
+from __future__ import absolute_import
 import os
 import re
 

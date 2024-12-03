@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
 
 
-class WorldButtonsPanel:
+class WorldButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "world"
@@ -35,8 +36,8 @@ class WorldButtonsPanel:
 
 class WORLD_PT_context_world(WorldButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -64,7 +65,7 @@ class WORLD_PT_context_world(WorldButtonsPanel, Panel):
 
 class WORLD_PT_preview(WorldButtonsPanel, Panel):
     bl_label = "Preview"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -77,7 +78,7 @@ class WORLD_PT_preview(WorldButtonsPanel, Panel):
 
 class WORLD_PT_world(WorldButtonsPanel, Panel):
     bl_label = "World"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -103,7 +104,7 @@ class WORLD_PT_world(WorldButtonsPanel, Panel):
 
 class WORLD_PT_ambient_occlusion(WorldButtonsPanel, Panel):
     bl_label = "Ambient Occlusion"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         light = context.world.light_settings
@@ -123,7 +124,7 @@ class WORLD_PT_ambient_occlusion(WorldButtonsPanel, Panel):
 
 class WORLD_PT_environment_lighting(WorldButtonsPanel, Panel):
     bl_label = "Environment Lighting"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         light = context.world.light_settings
@@ -143,7 +144,7 @@ class WORLD_PT_environment_lighting(WorldButtonsPanel, Panel):
 
 class WORLD_PT_indirect_lighting(WorldButtonsPanel, Panel):
     bl_label = "Indirect Lighting"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         light = context.world.light_settings
@@ -166,7 +167,7 @@ class WORLD_PT_indirect_lighting(WorldButtonsPanel, Panel):
 
 class WORLD_PT_gather(WorldButtonsPanel, Panel):
     bl_label = "Gather"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -215,8 +216,8 @@ class WORLD_PT_gather(WorldButtonsPanel, Panel):
 
 class WORLD_PT_mist(WorldButtonsPanel, Panel):
     bl_label = "Mist"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         world = context.world
@@ -244,7 +245,7 @@ class WORLD_PT_mist(WorldButtonsPanel, Panel):
 
 
 class WORLD_PT_custom_props(WorldButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "world"
     _property_type = bpy.types.World
 

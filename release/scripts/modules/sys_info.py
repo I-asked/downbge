@@ -20,6 +20,7 @@
 
 # classes for extracting info from blenders internal classes
 
+from __future__ import absolute_import
 import bpy
 import bgl
 
@@ -210,4 +211,4 @@ def write_sysinfo(op):
 
     output.current_line_index = 0
 
-    op.report({'INFO'}, "System information generated in 'system-info.txt'")
+    op.report(set(['INFO']), "System information generated in 'system-info.txt'")

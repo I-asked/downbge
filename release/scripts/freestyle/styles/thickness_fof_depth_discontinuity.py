@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Assigns to strokes a thickness that depends on the depth discontinuity
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

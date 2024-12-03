@@ -23,6 +23,7 @@
 #             ***** The suggestive contours must be enabled
 #             in the options dialog *****
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     AndUP1D,

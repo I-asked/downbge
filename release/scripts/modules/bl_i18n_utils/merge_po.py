@@ -28,6 +28,7 @@
 # However, commented messages in dst will always remain commented, and commented messages are
 # never merged from sources.
 
+from __future__ import absolute_import
 import sys
 
 if __package__ is None:
@@ -68,10 +69,10 @@ def main():
 
     dst_msgs = utils.I18nMessages(kind='PO', src=args.dst)
     if dst_msgs.parsing_errors:
-        print("Dest po is BROKEN, aborting.")
+        print "Dest po is BROKEN, aborting."
         return 1
     if args.stats:
-        print("Dest po, before merging:")
+        print "Dest po, before merging:"
         dst_msgs.print_stats(prefix="\t")
     # If we don’t want to replace existing valid translations, pre-populate done_msgkeys and done_fuzzy_msgkeys.
     if not args.replace:
@@ -80,12 +81,12 @@ def main():
     for po in args.src:
         msgs = utils.I18nMessages(kind='PO', src=po)
         if msgs.parsing_errors:
-            print("\tSrc po {} is BROKEN, skipping.".format(po))
+            print "\tSrc po {} is BROKEN, skipping.".format(po)
             ret = 1
             continue
-        print("\tMerging {}...".format(po))
+        print "\tMerging {}...".format(po)
         if args.stats:
-            print("\t\tMerged po stats:")
+            print "\t\tMerged po stats:"
             msgs.print_stats(prefix="\t\t\t")
         for msgkey, msg in msgs.msgs.items():
             msgctxt, msgid = msgkey
@@ -132,15 +133,15 @@ def main():
 
     dst_msgs.write(kind='PO', dest=args.dst)
 
-    print("Merged completed. {} messages were merged (among which {} were replaced), {} were added, "
-          "{} were \"un-fuzzied\".".format(nbr_merged, nbr_replaced, nbr_added, nbr_unfuzzied))
+    print "Merged completed. {} messages were merged (among which {} were replaced), {} were added, "
+          "{} were \"un-fuzzied\".".format(nbr_merged, nbr_replaced, nbr_added, nbr_unfuzzied)
     if args.stats:
         dst_msgs.update_info()
-        print("Final merged po stats:")
+        print "Final merged po stats:"
         dst_msgs.print_stats(prefix="\t")
     return ret
 
 
 if __name__ == "__main__":
-    print("\n\n *** Running {} *** \n".format(__file__))
+    print "\n\n *** Running {} *** \n".format(__file__)
     sys.exit(main())

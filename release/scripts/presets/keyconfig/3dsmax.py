@@ -1,4 +1,6 @@
 # Configuration 3dsmax
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 
 wm = bpy.context.window_manager

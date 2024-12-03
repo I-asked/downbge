@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 import bmesh
 
@@ -40,7 +41,7 @@ class AddBox(bpy.types.Operator):
     """Add a simple box mesh"""
     bl_idname = "mesh.primitive_box_add"
     bl_label = "Add Box"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     width = FloatProperty(
             name="Width",
@@ -100,7 +101,7 @@ class AddBox(bpy.types.Operator):
         from bpy_extras import object_utils
         object_utils.object_data_add(context, mesh, operator=self)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 def menu_func(self, context):

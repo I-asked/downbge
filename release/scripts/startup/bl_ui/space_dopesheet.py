@@ -18,6 +18,7 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Menu
 
@@ -119,7 +120,7 @@ class DOPESHEET_HT_header(Header):
 
         layout.prop(st, "mode", text="")
 
-        if st.mode in {'ACTION', 'SHAPEKEY'}:
+        if st.mode in set(['ACTION', 'SHAPEKEY']):
             row = layout.row(align=True)
             row.operator("action.layer_prev", text="", icon='TRIA_DOWN')
             row.operator("action.layer_next", text="", icon='TRIA_UP')
@@ -267,7 +268,7 @@ class DOPESHEET_MT_marker(Menu):
 
         st = context.space_data
 
-        if st.mode in {'ACTION', 'SHAPEKEY'} and st.action:
+        if st.mode in set(['ACTION', 'SHAPEKEY']) and st.action:
             layout.separator()
             layout.prop(st, "show_pose_markers")
 

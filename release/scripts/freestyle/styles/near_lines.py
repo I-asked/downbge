@@ -22,6 +22,7 @@
 #  Purpose  : Draws the lines that are "closer" than a threshold 
 #             (between 0 and 1)
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     AndUP1D,

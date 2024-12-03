@@ -45,6 +45,8 @@ value type:
 - :class:`freestyle.types.UnaryFunction1DVoid`
 """
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "ChainingTimeStampF1D",
     "Curvature2DAngleF0D",

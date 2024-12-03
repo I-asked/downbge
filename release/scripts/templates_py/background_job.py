@@ -17,7 +17,9 @@
 #
 # See blender --help for details.
 
+from __future__ import absolute_import
 import bpy
+from io import open
 
 
 def example_function(text, save_path, render_path):
@@ -56,7 +58,7 @@ def example_function(text, save_path, render_path):
             f.close()
             ok = True
         except:
-            print("Cannot save to path %r" % save_path)
+            print "Cannot save to path %r" % save_path
 
             import traceback
             traceback.print_exc()
@@ -108,14 +110,14 @@ def main():
         return
 
     if not args.text:
-        print("Error: --text=\"some string\" argument not given, aborting.")
+        print "Error: --text=\"some string\" argument not given, aborting."
         parser.print_help()
         return
 
     # Run the example function
     example_function(args.text, args.save_path, args.render_path)
 
-    print("batch job finished, exiting")
+    print "batch job finished, exiting"
 
 
 if __name__ == "__main__":

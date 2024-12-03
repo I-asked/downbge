@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 
@@ -26,7 +27,7 @@ from bl_ui.properties_physics_common import (
         )
 
 
-class PhysicButtonsPanel:
+class PhysicButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -57,7 +58,7 @@ class PHYSICS_PT_field(PhysicButtonsPanel, Panel):
 
         split.prop(field, "type", text="")
 
-        if field.type not in {'NONE', 'GUIDE', 'TEXTURE'}:
+        if field.type not in set(['NONE', 'GUIDE', 'TEXTURE']):
             split = layout.split(percentage=0.2)
             split.label(text="Shape:")
             split.prop(field, "shape", text="")
@@ -124,7 +125,7 @@ class PHYSICS_PT_field(PhysicButtonsPanel, Panel):
         else:
             basic_force_field_settings_ui(self, context, field)
 
-        if field.type not in {'NONE', 'GUIDE'}:
+        if field.type not in set(['NONE', 'GUIDE']):
 
             layout.label(text="Falloff:")
             layout.prop(field, "falloff_type", expand=True)

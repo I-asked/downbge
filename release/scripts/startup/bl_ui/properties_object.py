@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, Menu
 from rna_prop_ui import PropertyPanel
 
 
-class ObjectButtonsPanel:
+class ObjectButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "object"
@@ -30,7 +31,7 @@ class ObjectButtonsPanel:
 
 class OBJECT_PT_context_object(ObjectButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     def draw(self, context):
         layout = self.layout
@@ -71,7 +72,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_delta_transform(ObjectButtonsPanel, Panel):
     bl_label = "Delta Transform"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -97,7 +98,7 @@ class OBJECT_PT_delta_transform(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_transform_locks(ObjectButtonsPanel, Panel):
     bl_label = "Transform Locks"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -116,7 +117,7 @@ class OBJECT_PT_transform_locks(ObjectButtonsPanel, Panel):
         split.column().prop(ob, "lock_rotation", text="Rotation")
         split.column().prop(ob, "lock_scale", text="Scale")
 
-        if ob.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+        if ob.rotation_mode in set(['QUATERNION', 'AXIS_ANGLE']):
             row = layout.row()
             row.prop(ob, "lock_rotations_4d", text="Lock Rotation")
 
@@ -211,8 +212,8 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
 
         obj = context.object
         obj_type = obj.type
-        is_geometry = (obj_type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'})
-        is_wire = (obj_type in {'CAMERA', 'EMPTY'})
+        is_geometry = (obj_type in set(['MESH', 'CURVE', 'SURFACE', 'META', 'FONT']))
+        is_wire = (obj_type in set(['CAMERA', 'EMPTY']))
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_draw_type == 'IMAGE')
         is_dupli = (obj.dupli_type != 'NONE')
 
@@ -298,7 +299,7 @@ class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_relations_extras(ObjectButtonsPanel, Panel):
     bl_label = "Relations Extras"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -362,7 +363,7 @@ class OBJECT_PT_onion_skinning(OnionSkinButtonsPanel):  # , Panel): # inherit fr
 
 
 class OBJECT_PT_custom_props(ObjectButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "object"
     _property_type = bpy.types.Object
 

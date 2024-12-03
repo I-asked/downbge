@@ -58,6 +58,7 @@ static PyMethodDef bpy_import_meth;
 static PyMethodDef bpy_reload_meth;
 static PyObject   *imp_reload_orig = NULL;
 
+
 /* 'builtins' is most likely PyEval_GetBuiltins() */
 
 /**
@@ -79,6 +80,7 @@ void bpy_import_init(PyObject *builtins)
 
 	PyDict_SetItemString(builtins, "__import__", item = PyCFunction_New(&bpy_import_meth, NULL)); Py_DECREF(item);
 
+#if 0
 	/* move reload here
 	 * XXX, use import hooks */
 	mod = PyImport_ImportModuleLevel("importlib", NULL, NULL, NULL, 0);
@@ -92,9 +94,11 @@ void bpy_import_init(PyObject *builtins)
 		PyDict_SetItemString(mod_dict, "reload", item = PyCFunction_New(&bpy_reload_meth, NULL)); Py_DECREF(item);
 		Py_DECREF(mod);
 	}
-	else {
+	else
+	{
 		BLI_assert(!"unable to load 'importlib' module.");
 	}
+#endif
 }
 
 
@@ -135,7 +139,6 @@ void bpy_text_filename_get(char *fn, size_t fn_len, Text *text)
 bool bpy_text_compile(Text *text)
 {
 	char fn_dummy[FILE_MAX];
-	PyObject *fn_dummy_py;
 	char *buf;
 
 	bpy_text_filename_get(fn_dummy, sizeof(fn_dummy), text);
@@ -143,13 +146,9 @@ bool bpy_text_compile(Text *text)
 	/* if previously compiled, free the object */
 	free_compiled_text(text);
 
-	fn_dummy_py = PyC_UnicodeFromByte(fn_dummy);
-
 	buf = txt_to_buf(text);
-	text->compiled = Py_CompileStringObject(buf, fn_dummy_py, Py_file_input, NULL, -1);
+	text->compiled = Py_CompileString(buf, fn_dummy, Py_file_input);
 	MEM_freeN(buf);
-
-	Py_DECREF(fn_dummy_py);
 
 	if (PyErr_Occurred()) {
 		PyErr_Print();

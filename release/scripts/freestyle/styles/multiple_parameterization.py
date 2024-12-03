@@ -27,6 +27,7 @@
 #             the strokes using a second parameterization that only
 #             covers the visible portions.
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     QuantitativeInvisibilityUP1D,

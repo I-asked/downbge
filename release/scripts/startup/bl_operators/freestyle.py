@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from __future__ import absolute_import
 import bpy
 
 from bpy.props import (
@@ -30,7 +31,7 @@ class SCENE_OT_freestyle_fill_range_by_selection(bpy.types.Operator):
     """(either a user-specified object or the active camera)"""
     bl_idname = "scene.freestyle_fill_range_by_selection"
     bl_label = "Fill Range by Selection"
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     type = EnumProperty(
             name="Type", description="Type of the modifier to work on",
@@ -67,12 +68,12 @@ class SCENE_OT_freestyle_fill_range_by_selection(bpy.types.Operator):
             source = scene.camera
         elif m.type == 'DISTANCE_FROM_OBJECT':
             if m.target is None:
-                self.report({'ERROR'}, "Target object not specified")
-                return {'CANCELLED'}
+                self.report(set(['ERROR']), "Target object not specified")
+                return set(['CANCELLED'])
             source = m.target
         else:
-            self.report({'ERROR'}, "Unexpected modifier type: " + m.type)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Unexpected modifier type: " + m.type)
+            return set(['CANCELLED'])
         # Find selected mesh objects
         selection = [ob for ob in scene.objects if ob.select and ob.type == 'MESH' and ob.name != source.name]
         if selection:
@@ -87,14 +88,14 @@ class SCENE_OT_freestyle_fill_range_by_selection(bpy.types.Operator):
             # Fill the Range Min/Max entries with the computed distances
             m.range_min = min_dist
             m.range_max = max_dist
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class SCENE_OT_freestyle_add_edge_marks_to_keying_set(bpy.types.Operator):
     '''Add the data paths to the Freestyle Edge Mark property of selected edges to the active keying set'''
     bl_idname = "scene.freestyle_add_edge_marks_to_keying_set"
     bl_label = "Add Edge Marks to Keying Set"
-    bl_options = {'UNDO'}
+    bl_options = set(['UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -118,14 +119,14 @@ class SCENE_OT_freestyle_add_edge_marks_to_keying_set(bpy.types.Operator):
                 path = 'edges[%d].use_freestyle_mark' % i
                 ks.paths.add(mesh, path, index=0)
         bpy.ops.object.mode_set(mode=ob_mode, toggle=False)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class SCENE_OT_freestyle_add_face_marks_to_keying_set(bpy.types.Operator):
     '''Add the data paths to the Freestyle Face Mark property of selected polygons to the active keying set'''
     bl_idname = "scene.freestyle_add_face_marks_to_keying_set"
     bl_label = "Add Face Marks to Keying Set"
-    bl_options = {'UNDO'}
+    bl_options = set(['UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -149,14 +150,14 @@ class SCENE_OT_freestyle_add_face_marks_to_keying_set(bpy.types.Operator):
                 path = 'polygons[%d].use_freestyle_mark' % i
                 ks.paths.add(mesh, path, index=0)
         bpy.ops.object.mode_set(mode=ob_mode, toggle=False)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class SCENE_OT_freestyle_module_open(bpy.types.Operator):
     """Open a style module file"""
     bl_idname = "scene.freestyle_module_open"
     bl_label = "Open Style Module File"
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     filepath = StringProperty(subtype='FILE_PATH')
 
@@ -174,9 +175,9 @@ class SCENE_OT_freestyle_module_open(bpy.types.Operator):
         self.freestyle_module = context.freestyle_module
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def execute(self, context):
         text = bpy.data.texts.load(self.filepath, self.make_internal)
         self.freestyle_module.script = text
-        return {'FINISHED'}
+        return set(['FINISHED'])

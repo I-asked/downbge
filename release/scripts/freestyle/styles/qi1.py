@@ -23,6 +23,7 @@
 #             *** Quantitative Invisibility must have been 
 #             enabled in the options dialog to use this style module ****
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

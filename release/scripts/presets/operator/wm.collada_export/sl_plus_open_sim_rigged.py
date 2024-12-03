@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 op = bpy.context.active_operator
 

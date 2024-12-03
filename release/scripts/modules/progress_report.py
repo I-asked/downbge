@@ -18,10 +18,14 @@
 
 # <pep8 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import time
+from itertools import izip
+import sys
 
 
-class ProgressReport:
+class ProgressReport(object):
     """
     A basic 'progress report' using either simple prints in console, or WindowManager's 'progress' API.
 
@@ -71,7 +75,7 @@ class ProgressReport:
         if self.wm:
             self.wm.progress_end()
             self.wm = None
-        print("\n")
+        print "\n"
         self.steps = [100000]
         self.curr_step = [0]
         self.start_time = [time.time()]
@@ -83,7 +87,7 @@ class ProgressReport:
         self.__exit__()
 
     def update(self, msg=""):
-        steps = sum(s * cs for (s, cs) in zip(self.steps, self.curr_step))
+        steps = sum(s * cs for (s, cs) in izip(self.steps, self.curr_step))
         steps_percent = steps / self.steps[0] * 100.0
         tm = time.time()
         loc_tm = tm - self.start_time[-1]
@@ -92,9 +96,9 @@ class ProgressReport:
             self.wm.progress_update(steps)
         if msg:
             prefix = "  " * (len(self.steps) - 1)
-            print(prefix + "(%8.4f sec | %8.4f sec) %s\nProgress: %6.2f%%\r" % (tm, loc_tm, msg, steps_percent), end='')
+            print prefix + "(%8.4f sec | %8.4f sec) %s\nProgress: %6.2f%%\r" % (tm, loc_tm, msg, steps_percent),; sys.stdout.write('')
         else:
-            print("Progress: %6.2f%%\r" % (steps_percent,), end='')
+            print "Progress: %6.2f%%\r" % (steps_percent,),; sys.stdout.write('')
 
     def enter_substeps(self, nbr, msg=""):
         if msg:
@@ -117,7 +121,7 @@ class ProgressReport:
         self.step()
 
 
-class ProgressReportSubstep:
+class ProgressReportSubstep(object):
     """
     A sub-step context manager for ProgressReport.
 

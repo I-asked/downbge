@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 
 import bpy
 from bpy.types import Operator
@@ -29,6 +30,10 @@ from bpy.props import (
         )
 
 from bpy.app.translations import pgettext_tip as tip_
+
+
+def doexec(v):
+    exec(v)
 
 
 rna_path_prop = StringProperty(
@@ -53,7 +58,7 @@ rna_relative_prop = BoolProperty(
 def context_path_validate(context, data_path):
     try:
         value = eval("context.%s" % data_path) if data_path else Ellipsis
-    except AttributeError as e:
+    except AttributeError, e:
         if str(e).startswith("'NoneType'"):
             # One of the items in the rna path is None, just ignore this
             value = Ellipsis
@@ -65,7 +70,7 @@ def context_path_validate(context, data_path):
 
 
 def operator_value_is_undo(value):
-    if value in {None, Ellipsis}:
+    if value in set([None, Ellipsis]):
         return False
 
     # typical properties or objects
@@ -104,17 +109,17 @@ def operator_path_is_undo(context, data_path):
 
 
 def operator_path_undo_return(context, data_path):
-    return {'FINISHED'} if operator_path_is_undo(context, data_path) else {'CANCELLED'}
+    return set(['FINISHED']) if operator_path_is_undo(context, data_path) else set(['CANCELLED'])
 
 
 def operator_value_undo_return(value):
-    return {'FINISHED'} if operator_value_is_undo(value) else {'CANCELLED'}
+    return set(['FINISHED']) if operator_value_is_undo(value) else set(['CANCELLED'])
 
 
 def execute_context_assign(self, context):
     data_path = self.data_path
     if context_path_validate(context, data_path) is Ellipsis:
-        return {'PASS_THROUGH'}
+        return set(['PASS_THROUGH'])
 
     if getattr(self, "relative", False):
         exec("context.%s += self.value" % data_path)
@@ -148,22 +153,22 @@ class BRUSH_OT_active_index_set(Operator):
     def execute(self, context):
         attr = self._attr_dict.get(self.mode)
         if attr is None:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         toolsettings = context.tool_settings
         for i, brush in enumerate((cur for cur in bpy.data.brushes if getattr(cur, attr))):
             if i == self.index:
                 getattr(toolsettings, self.mode).brush = brush
-                return {'FINISHED'}
+                return set(['FINISHED'])
 
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
 
 class WM_OT_context_set_boolean(Operator):
     """Set a context value"""
     bl_idname = "wm.context_set_boolean"
     bl_label = "Context Set Boolean"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = BoolProperty(
@@ -179,7 +184,7 @@ class WM_OT_context_set_int(Operator):  # same as enum
     """Set a context value"""
     bl_idname = "wm.context_set_int"
     bl_label = "Context Set"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = IntProperty(
@@ -196,7 +201,7 @@ class WM_OT_context_scale_float(Operator):
     """Scale a float context value"""
     bl_idname = "wm.context_scale_float"
     bl_label = "Context Scale Float"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = FloatProperty(
@@ -208,12 +213,12 @@ class WM_OT_context_scale_float(Operator):
     def execute(self, context):
         data_path = self.data_path
         if context_path_validate(context, data_path) is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         value = self.value
 
         if value == 1.0:  # nothing to do
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         exec("context.%s *= value" % data_path)
 
@@ -224,7 +229,7 @@ class WM_OT_context_scale_int(Operator):
     """Scale an int context value"""
     bl_idname = "wm.context_scale_int"
     bl_label = "Context Scale Int"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = FloatProperty(
@@ -241,12 +246,12 @@ class WM_OT_context_scale_int(Operator):
     def execute(self, context):
         data_path = self.data_path
         if context_path_validate(context, data_path) is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         value = self.value
 
         if value == 1.0:  # nothing to do
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         if getattr(self, "always_step", False):
             if value > 1.0:
@@ -267,7 +272,7 @@ class WM_OT_context_set_float(Operator):  # same as enum
     """Set a context value"""
     bl_idname = "wm.context_set_float"
     bl_label = "Context Set Float"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = FloatProperty(
@@ -284,7 +289,7 @@ class WM_OT_context_set_string(Operator):  # same as enum
     """Set a context value"""
     bl_idname = "wm.context_set_string"
     bl_label = "Context Set String"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = StringProperty(
@@ -300,7 +305,7 @@ class WM_OT_context_set_enum(Operator):
     """Set a context value"""
     bl_idname = "wm.context_set_enum"
     bl_label = "Context Set Enum"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = StringProperty(
@@ -316,7 +321,7 @@ class WM_OT_context_set_value(Operator):
     """Set a context value"""
     bl_idname = "wm.context_set_value"
     bl_label = "Context Set Value"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = StringProperty(
@@ -328,7 +333,7 @@ class WM_OT_context_set_value(Operator):
     def execute(self, context):
         data_path = self.data_path
         if context_path_validate(context, data_path) is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
         exec("context.%s = %s" % (data_path, self.value))
         return operator_path_undo_return(context, data_path)
 
@@ -337,7 +342,7 @@ class WM_OT_context_toggle(Operator):
     """Toggle a context value"""
     bl_idname = "wm.context_toggle"
     bl_label = "Context Toggle"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
 
@@ -345,7 +350,7 @@ class WM_OT_context_toggle(Operator):
         data_path = self.data_path
 
         if context_path_validate(context, data_path) is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         exec("context.%s = not (context.%s)" % (data_path, data_path))
 
@@ -356,7 +361,7 @@ class WM_OT_context_toggle_enum(Operator):
     """Toggle a context value"""
     bl_idname = "wm.context_toggle_enum"
     bl_label = "Context Toggle Values"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value_1 = StringProperty(
@@ -374,7 +379,7 @@ class WM_OT_context_toggle_enum(Operator):
         data_path = self.data_path
 
         if context_path_validate(context, data_path) is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         # failing silently is not ideal, but we don't want errors for shortcut
         # keys that some values that are only available in a particular context
@@ -385,7 +390,7 @@ class WM_OT_context_toggle_enum(Operator):
                   self.value_2,
                   ))
         except:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         return operator_path_undo_return(context, data_path)
 
@@ -395,7 +400,7 @@ class WM_OT_context_cycle_int(Operator):
     """vertex keys, groups, etc.)"""
     bl_idname = "wm.context_cycle_int"
     bl_label = "Context Int Cycle"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     reverse = rna_reverse_prop
@@ -404,7 +409,7 @@ class WM_OT_context_cycle_int(Operator):
         data_path = self.data_path
         value = context_path_validate(context, data_path)
         if value is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         if self.reverse:
             value -= 1
@@ -429,7 +434,7 @@ class WM_OT_context_cycle_enum(Operator):
     """Toggle a context value"""
     bl_idname = "wm.context_cycle_enum"
     bl_label = "Context Enum Cycle"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     reverse = rna_reverse_prop
@@ -438,7 +443,7 @@ class WM_OT_context_cycle_enum(Operator):
         data_path = self.data_path
         value = context_path_validate(context, data_path)
         if value is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         orig_value = value
 
@@ -482,7 +487,7 @@ class WM_OT_context_cycle_array(Operator):
     """(useful for cycling the active mesh edit mode)"""
     bl_idname = "wm.context_cycle_array"
     bl_label = "Context Array Cycle"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     reverse = rna_reverse_prop
@@ -491,7 +496,7 @@ class WM_OT_context_cycle_array(Operator):
         data_path = self.data_path
         value = context_path_validate(context, data_path)
         if value is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         def cycle(array):
             if self.reverse:
@@ -500,7 +505,7 @@ class WM_OT_context_cycle_array(Operator):
                 array.append(array.pop(0))
             return array
 
-        exec("context.%s = cycle(context.%s[:])" % (data_path, data_path))
+        doexec("context.%s = cycle(context.%s[:])" % (data_path, data_path))
 
         return operator_path_undo_return(context, data_path)
 
@@ -508,7 +513,7 @@ class WM_OT_context_cycle_array(Operator):
 class WM_OT_context_menu_enum(Operator):
     bl_idname = "wm.context_menu_enum"
     bl_label = "Context Enum Menu"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
     data_path = rna_path_prop
 
     def execute(self, context):
@@ -516,7 +521,7 @@ class WM_OT_context_menu_enum(Operator):
         value = context_path_validate(context, data_path)
 
         if value is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         base_path, prop_string = data_path.rsplit(".", 1)
         value_base = context_path_validate(context, base_path)
@@ -528,13 +533,13 @@ class WM_OT_context_menu_enum(Operator):
 
         context.window_manager.popup_menu(draw_func=draw_cb, title=prop.name, icon=prop.icon)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_context_pie_enum(Operator):
     bl_idname = "wm.context_pie_enum"
     bl_label = "Context Enum Pie"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
     data_path = rna_path_prop
 
     def invoke(self, context, event):
@@ -543,7 +548,7 @@ class WM_OT_context_pie_enum(Operator):
         value = context_path_validate(context, data_path)
 
         if value is Ellipsis:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         base_path, prop_string = data_path.rsplit(".", 1)
         value_base = context_path_validate(context, base_path)
@@ -555,13 +560,13 @@ class WM_OT_context_pie_enum(Operator):
 
         wm.popup_menu_pie(draw_func=draw_cb, title=prop.name, icon=prop.icon, event=event)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_operator_pie_enum(Operator):
     bl_idname = "wm.operator_pie_enum"
     bl_label = "Operator Enum Pie"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
     data_path = StringProperty(
             name="Operator",
             description="Operator name (in python as string)",
@@ -587,8 +592,8 @@ class WM_OT_operator_pie_enum(Operator):
         try:
             op_rna = op.get_rna()
         except KeyError:
-            self.report({'ERROR'}, "Operator not found: bpy.ops.%s" % data_path)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Operator not found: bpy.ops.%s" % data_path)
+            return set(['CANCELLED'])
 
         def draw_cb(self, context):
             layout = self.layout
@@ -597,14 +602,14 @@ class WM_OT_operator_pie_enum(Operator):
 
         wm.popup_menu_pie(draw_func=draw_cb, title=op_rna.bl_rna.name, event=event)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_context_set_id(Operator):
     """Set a context value to an ID data-block"""
     bl_idname = "wm.context_set_id"
     bl_label = "Set Library ID"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path_prop
     value = StringProperty(
@@ -641,7 +646,7 @@ class WM_OT_context_set_id(Operator):
 doc_id = StringProperty(
         name="Doc ID",
         maxlen=1024,
-        options={'HIDDEN'},
+        options=set(['HIDDEN']),
         )
 
 doc_new = StringProperty(
@@ -660,7 +665,7 @@ class WM_OT_context_collection_boolean_set(Operator):
     """Set boolean values for a collection of items"""
     bl_idname = "wm.context_collection_boolean_set"
     bl_label = "Context Collection Boolean Set"
-    bl_options = {'UNDO', 'REGISTER', 'INTERNAL'}
+    bl_options = set(['UNDO', 'REGISTER', 'INTERNAL'])
 
     data_path_iter = data_path_iter
     data_path_item = data_path_item
@@ -691,15 +696,15 @@ class WM_OT_context_collection_boolean_set(Operator):
             elif value_orig is False:
                 pass
             else:
-                self.report({'WARNING'}, "Non boolean value found: %s[ ].%s" %
+                self.report(set(['WARNING']), "Non boolean value found: %s[ ].%s" %
                             (data_path_iter, data_path_item))
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
             items_ok.append(item)
 
         # avoid undo push when nothing to do
         if not items_ok:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         if self.type == 'ENABLE':
             is_set = True
@@ -719,7 +724,7 @@ class WM_OT_context_modal_mouse(Operator):
     """Adjust arbitrary values with mouse input"""
     bl_idname = "wm.context_modal_mouse"
     bl_label = "Context Modal Mouse"
-    bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
+    bl_options = set(['GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'])
 
     data_path_iter = data_path_iter
     data_path_item = data_path_item
@@ -736,7 +741,7 @@ class WM_OT_context_modal_mouse(Operator):
             description="Invert the mouse input",
             default=False,
             )
-    initial_x = IntProperty(options={'HIDDEN'})
+    initial_x = IntProperty(options=set(['HIDDEN']))
 
     def _values_store(self, context):
         data_path_iter = self.data_path_iter
@@ -796,38 +801,38 @@ class WM_OT_context_modal_mouse(Operator):
                 context.area.header_text_set(header_text)
 
         elif 'LEFTMOUSE' == event_type:
-            item = next(iter(self._values.keys()))
+            item = iter(self._values.keys()).next()
             self._values_clear()
             context.area.header_text_set()
             return operator_value_undo_return(item)
 
-        elif event_type in {'RIGHTMOUSE', 'ESC'}:
+        elif event_type in set(['RIGHTMOUSE', 'ESC']):
             self._values_restore()
             context.area.header_text_set()
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def invoke(self, context, event):
         self._values_store(context)
 
         if not self._values:
-            self.report({'WARNING'}, "Nothing to operate on: %s[ ].%s" %
+            self.report(set(['WARNING']), "Nothing to operate on: %s[ ].%s" %
                         (self.data_path_iter, self.data_path_item))
 
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
         else:
             self.initial_x = event.mouse_x
 
             context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
+            return set(['RUNNING_MODAL'])
 
 
 class WM_OT_url_open(Operator):
     "Open a website in the web-browser"
     bl_idname = "wm.url_open"
     bl_label = ""
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     url = StringProperty(
             name="URL",
@@ -837,18 +842,18 @@ class WM_OT_url_open(Operator):
     def execute(self, context):
         import webbrowser
         webbrowser.open(self.url)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_path_open(Operator):
     "Open a path in a file browser"
     bl_idname = "wm.path_open"
     bl_label = ""
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     filepath = StringProperty(
             subtype='FILE_PATH',
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
 
     def execute(self, context):
@@ -859,15 +864,15 @@ class WM_OT_path_open(Operator):
         filepath = self.filepath
 
         if not filepath:
-            self.report({'ERROR'}, "File path was not set")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "File path was not set")
+            return set(['CANCELLED'])
 
         filepath = bpy.path.abspath(filepath)
         filepath = os.path.normpath(filepath)
 
         if not os.path.exists(filepath):
-            self.report({'ERROR'}, "File '%s' not found" % filepath)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "File '%s' not found" % filepath)
+            return set(['CANCELLED'])
 
         if sys.platform[:3] == "win":
             os.startfile(filepath)
@@ -881,7 +886,7 @@ class WM_OT_path_open(Operator):
                 import traceback
                 traceback.print_exc()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 def _wm_doc_get_id(doc_id, do_url=True, url_prefix=""):
@@ -947,15 +952,15 @@ class WM_OT_doc_view_manual(Operator):
     @staticmethod
     def _find_reference(rna_id, url_mapping, verbose=True):
         if verbose:
-            print("online manual check for: '%s'... " % rna_id)
+            print "online manual check for: '%s'... " % rna_id
         from fnmatch import fnmatch
         for pattern, url_suffix in url_mapping:
             if fnmatch(rna_id, pattern):
                 if verbose:
-                    print("            match found: '%s' --> '%s'" % (pattern, url_suffix))
+                    print "            match found: '%s' --> '%s'" % (pattern, url_suffix)
                 return url_suffix
         if verbose:
-            print("match not found")
+            print "match not found"
         return None
 
     @staticmethod
@@ -969,22 +974,22 @@ class WM_OT_doc_view_manual(Operator):
     def execute(self, context):
         rna_id = _wm_doc_get_id(self.doc_id, do_url=False)
         if rna_id is None:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         url = self._lookup_rna_url(rna_id)
 
         if url is None:
             self.report(
-                    {'WARNING'},
+                    set(['WARNING']),
                     "No reference available %r, "
                     "Update info in 'rna_manual_reference.py' "
                     "or callback to bpy.utils.manual_map()" %
                     self.doc_id)
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
         else:
             import webbrowser
             webbrowser.open(url)
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
 
 class WM_OT_doc_view(Operator):
@@ -1003,12 +1008,12 @@ class WM_OT_doc_view(Operator):
     def execute(self, context):
         url = _wm_doc_get_id(self.doc_id, do_url=True, url_prefix=self._prefix)
         if url is None:
-            return {'PASS_THROUGH'}
+            return set(['PASS_THROUGH'])
 
         import webbrowser
         webbrowser.open(url)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 '''
@@ -1088,7 +1093,7 @@ rna_path = StringProperty(
         name="Property Edit",
         description="Property data_path edit",
         maxlen=1024,
-        options={'HIDDEN'},
+        options=set(['HIDDEN']),
         )
 
 rna_value = StringProperty(
@@ -1120,7 +1125,7 @@ class WM_OT_properties_edit(Operator):
     bl_idname = "wm.properties_edit"
     bl_label = "Edit Property"
     # register only because invoke_props_popup requires.
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = set(['REGISTER', 'INTERNAL'])
 
     data_path = rna_path
     property = rna_property
@@ -1145,13 +1150,13 @@ class WM_OT_properties_edit(Operator):
         prop_old = getattr(self, "_last_prop", [None])[0]
 
         if prop_old is None:
-            self.report({'ERROR'}, "Direct execution not supported")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Direct execution not supported")
+            return set(['CANCELLED'])
 
         try:
             value_eval = eval(value)
             # assert else None -> None, not "None", see [#33431]
-            assert(type(value_eval) in {str, float, int, bool, tuple, list})
+            assert(type(value_eval) in set([str, float, int, bool, tuple, list]))
         except:
             value_eval = value
 
@@ -1162,12 +1167,12 @@ class WM_OT_properties_edit(Operator):
         rna_idprop_ui_prop_clear(item, prop_old)
         exec_str = "del item[%r]" % prop_old
         # print(exec_str)
-        exec(exec_str)
+        doexec(exec_str)
 
         # Reassign
         exec_str = "item[%r] = %s" % (prop, repr(value_eval))
         # print(exec_str)
-        exec(exec_str)
+        doexec(exec_str)
 
         rna_idprop_ui_prop_update(item, prop)
 
@@ -1177,7 +1182,7 @@ class WM_OT_properties_edit(Operator):
 
         prop_ui = rna_idprop_ui_prop_get(item, prop)
 
-        if prop_type in {float, int}:
+        if prop_type in set([float, int]):
             prop_ui["soft_min"] = prop_ui["min"] = prop_type(self.min)
             prop_ui["soft_max"] = prop_ui["max"] = prop_type(self.max)
 
@@ -1218,7 +1223,7 @@ class WM_OT_properties_edit(Operator):
             for area in win.screen.areas:
                 area.tag_redraw()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         from rna_prop_ui import rna_idprop_ui_prop_get
@@ -1226,8 +1231,8 @@ class WM_OT_properties_edit(Operator):
         data_path = self.data_path
 
         if not data_path:
-            self.report({'ERROR'}, "Data path not set")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Data path not set")
+            return set(['CANCELLED'])
 
         self._last_prop = [self.property]
 
@@ -1247,7 +1252,7 @@ class WM_OT_properties_edit(Operator):
 class WM_OT_properties_add(Operator):
     bl_idname = "wm.properties_add"
     bl_label = "Add Property"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path
 
@@ -1280,14 +1285,14 @@ class WM_OT_properties_add(Operator):
         prop_ui["soft_min"] = prop_ui["min"] = 0.0
         prop_ui["soft_max"] = prop_ui["max"] = 1.0
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_properties_context_change(Operator):
     "Jump to a different tab inside the properties editor"
     bl_idname = "wm.properties_context_change"
     bl_label = ""
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     context = StringProperty(
             name="Context",
@@ -1296,14 +1301,14 @@ class WM_OT_properties_context_change(Operator):
 
     def execute(self, context):
         context.space_data.context = self.context
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_properties_remove(Operator):
     """Internal use (edit a property data_path)"""
     bl_idname = "wm.properties_remove"
     bl_label = "Remove Property"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = set(['UNDO', 'INTERNAL'])
 
     data_path = rna_path
     property = rna_property
@@ -1320,7 +1325,7 @@ class WM_OT_properties_remove(Operator):
         del item[prop]
         rna_idprop_ui_prop_clear(item, prop)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyconfig_activate(Operator):
@@ -1333,9 +1338,9 @@ class WM_OT_keyconfig_activate(Operator):
 
     def execute(self, context):
         if bpy.utils.keyconfig_set(self.filepath, report=self.report):
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
 
 class WM_OT_appconfig_default(Operator):
@@ -1352,7 +1357,7 @@ class WM_OT_appconfig_default(Operator):
         if os.path.exists(filepath):
             bpy.ops.script.execute_preset(filepath=filepath, menu_idname="USERPREF_MT_interaction_presets")
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_appconfig_activate(Operator):
@@ -1372,7 +1377,7 @@ class WM_OT_appconfig_activate(Operator):
         if os.path.exists(filepath):
             bpy.ops.script.execute_preset(filepath=filepath, menu_idname="USERPREF_MT_interaction_presets")
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_sysinfo(Operator):
@@ -1383,7 +1388,7 @@ class WM_OT_sysinfo(Operator):
     def execute(self, context):
         import sys_info
         sys_info.write_sysinfo(self)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_copy_prev_settings(Operator):
@@ -1400,9 +1405,9 @@ class WM_OT_copy_prev_settings(Operator):
         path_dst = bpy.utils.resource_path('USER')
 
         if os.path.isdir(path_dst):
-            self.report({'ERROR'}, "Target path %r exists" % path_dst)
+            self.report(set(['ERROR']), "Target path %r exists" % path_dst)
         elif not os.path.isdir(path_src):
-            self.report({'ERROR'}, "Source path %r exists" % path_src)
+            self.report(set(['ERROR']), "Source path %r exists" % path_src)
         else:
             shutil.copytree(path_src, path_dst, symlinks=True)
 
@@ -1413,11 +1418,11 @@ class WM_OT_copy_prev_settings(Operator):
             if bpy.data.is_saved is bpy.data.is_dirty is False:
                 bpy.ops.wm.read_homefile()
             else:
-                self.report({'INFO'}, "Reload Start-Up file to restore settings")
+                self.report(set(['INFO']), "Reload Start-Up file to restore settings")
 
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        return {'CANCELLED'}
+        return set(['CANCELLED'])
 
 
 class WM_OT_blenderplayer_start(Operator):
@@ -1443,8 +1448,8 @@ class WM_OT_blenderplayer_start(Operator):
             player_path = os.path.join(blender_bin_dir, "../../../blenderplayer.app/Contents/MacOS/blenderplayer")
 
         if not os.path.exists(player_path):
-            self.report({'ERROR'}, "Player path: %r not found" % player_path)
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Player path: %r not found" % player_path)
+            return set(['CANCELLED'])
 
         filepath = bpy.data.filepath + '~' if bpy.data.is_saved else os.path.join(bpy.app.tempdir, "game.blend")
         bpy.ops.wm.save_as_mainfile('EXEC_DEFAULT', filepath=filepath, copy=True)
@@ -1460,12 +1465,14 @@ class WM_OT_blenderplayer_start(Operator):
             "-g", "ignore_deprecation_warnings", "=", "%d" % (not gs.use_deprecation_warnings),
             ])
 
+        print args
+
         # finish the call with the path to the blend file
         args.append(filepath)
 
         subprocess.call(args)
         os.remove(filepath)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyconfig_test(Operator):
@@ -1480,9 +1487,9 @@ class WM_OT_keyconfig_test(Operator):
         kc = wm.keyconfigs.default
 
         if keyconfig_utils.keyconfig_test(kc):
-            print("CONFLICT")
+            print "CONFLICT"
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyconfig_import(Operator):
@@ -1497,17 +1504,17 @@ class WM_OT_keyconfig_import(Operator):
     filter_folder = BoolProperty(
             name="Filter folders",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_text = BoolProperty(
             name="Filter text",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_python = BoolProperty(
             name="Filter python",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     keep_original = BoolProperty(
             name="Keep original",
@@ -1521,8 +1528,8 @@ class WM_OT_keyconfig_import(Operator):
         import shutil
 
         if not self.filepath:
-            self.report({'ERROR'}, "Filepath not set")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Filepath not set")
+            return set(['CANCELLED'])
 
         config_name = basename(self.filepath)
 
@@ -1534,20 +1541,20 @@ class WM_OT_keyconfig_import(Operator):
                 shutil.copy(self.filepath, path)
             else:
                 shutil.move(self.filepath, path)
-        except Exception as e:
-            self.report({'ERROR'}, "Installing keymap failed: %s" % e)
-            return {'CANCELLED'}
+        except Exception, e:
+            self.report(set(['ERROR']), "Installing keymap failed: %s" % e)
+            return set(['CANCELLED'])
 
         # sneaky way to check we're actually running the code.
         if bpy.utils.keyconfig_set(path, report=self.report):
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
 # This operator is also used by interaction presets saving - AddPresetBase
 
@@ -1564,17 +1571,17 @@ class WM_OT_keyconfig_export(Operator):
     filter_folder = BoolProperty(
             name="Filter folders",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_text = BoolProperty(
             name="Filter text",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_python = BoolProperty(
             name="Filter python",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     def execute(self, context):
@@ -1593,12 +1600,12 @@ class WM_OT_keyconfig_export(Operator):
                                          self.filepath,
                                          )
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
 
 class WM_OT_keymap_restore(Operator):
@@ -1621,7 +1628,7 @@ class WM_OT_keymap_restore(Operator):
             km = context.keymap
             km.restore_to_default()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyitem_restore(Operator):
@@ -1646,7 +1653,7 @@ class WM_OT_keyitem_restore(Operator):
         if (not kmi.is_user_defined) and kmi.is_user_modified:
             km.restore_item_to_default(kmi)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyitem_add(Operator):
@@ -1668,7 +1675,7 @@ class WM_OT_keyitem_add(Operator):
             km.show_expanded_items = True
             km.show_expanded_children = True
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyitem_remove(Operator):
@@ -1689,7 +1696,7 @@ class WM_OT_keyitem_remove(Operator):
         km = context.keymap
         kmi = km.keymap_items.from_id(self.item_id)
         km.keymap_items.remove(kmi)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_keyconfig_remove(Operator):
@@ -1707,7 +1714,7 @@ class WM_OT_keyconfig_remove(Operator):
         wm = context.window_manager
         keyconfig = wm.keyconfigs.active
         wm.keyconfigs.remove(keyconfig)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_operator_cheat_sheet(Operator):
@@ -1731,8 +1738,8 @@ class WM_OT_operator_cheat_sheet(Operator):
         textblock = bpy.data.texts.new("OperatorList.txt")
         textblock.write('# %d Operators\n\n' % tot)
         textblock.write('\n'.join(op_strings))
-        self.report({'INFO'}, "See OperatorList.txt textblock")
-        return {'FINISHED'}
+        self.report(set(['INFO']), "See OperatorList.txt textblock")
+        return set(['FINISHED'])
 
 
 # -----------------------------------------------------------------------------
@@ -1751,13 +1758,13 @@ class WM_OT_addon_enable(Operator):
     def execute(self, context):
         import addon_utils
 
-        err_str = ""
+        class ct:
+            err_str = ""
 
         def err_cb():
             import traceback
-            nonlocal err_str
-            err_str = traceback.format_exc()
-            print(err_str)
+            ct.err_str = traceback.format_exc()
+            print ct.err_str
 
         mod = addon_utils.enable(self.module, default_set=True, handle_error=err_cb)
 
@@ -1767,19 +1774,19 @@ class WM_OT_addon_enable(Operator):
             info_ver = info.get("blender", (0, 0, 0))
 
             if info_ver > bpy.app.version:
-                self.report({'WARNING'},
+                self.report(set(['WARNING']),
                             ("This script was written Blender "
                              "version %d.%d.%d and might not "
                              "function (correctly), "
                              "though it is enabled" %
                              info_ver))
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
 
-            if err_str:
-                self.report({'ERROR'}, err_str)
+            if ct.err_str:
+                self.report(set(['ERROR']), ct.err_str)
 
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
 
 class WM_OT_addon_disable(Operator):
@@ -1795,20 +1802,20 @@ class WM_OT_addon_disable(Operator):
     def execute(self, context):
         import addon_utils
 
-        err_str = ""
+        class ct:
+            err_str = ""
 
         def err_cb():
             import traceback
-            nonlocal err_str
-            err_str = traceback.format_exc()
-            print(err_str)
+            ct.err_str = traceback.format_exc()
+            print ct.err_str
 
         addon_utils.disable(self.module, default_set=True, handle_error=err_cb)
 
-        if err_str:
-            self.report({'ERROR'}, err_str)
+        if ct.err_str:
+            self.report(set(['ERROR']), ct.err_str)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_theme_install(Operator):
@@ -1827,11 +1834,11 @@ class WM_OT_theme_install(Operator):
     filter_folder = BoolProperty(
             name="Filter folders",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_glob = StringProperty(
             default="*.xml",
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     def execute(self, context):
@@ -1844,15 +1851,15 @@ class WM_OT_theme_install(Operator):
         path_themes = bpy.utils.user_resource('SCRIPTS', "presets/interface_theme", create=True)
 
         if not path_themes:
-            self.report({'ERROR'}, "Failed to get themes path")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Failed to get themes path")
+            return set(['CANCELLED'])
 
         path_dest = os.path.join(path_themes, os.path.basename(xmlfile))
 
         if not self.overwrite:
             if os.path.exists(path_dest):
-                self.report({'WARNING'}, "File already installed to %r\n" % path_dest)
-                return {'CANCELLED'}
+                self.report(set(['WARNING']), "File already installed to %r\n" % path_dest)
+                return set(['CANCELLED'])
 
         try:
             shutil.copyfile(xmlfile, path_dest)
@@ -1860,14 +1867,14 @@ class WM_OT_theme_install(Operator):
 
         except:
             traceback.print_exc()
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
 
 class WM_OT_addon_refresh(Operator):
@@ -1880,7 +1887,7 @@ class WM_OT_addon_refresh(Operator):
 
         addon_utils.modules_refresh()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_addon_install(Operator):
@@ -1905,16 +1912,16 @@ class WM_OT_addon_install(Operator):
     filter_folder = BoolProperty(
             name="Filter folders",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_python = BoolProperty(
             name="Filter python",
             default=True,
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
     filter_glob = StringProperty(
             default="*.py;*.zip",
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     @staticmethod
@@ -1949,8 +1956,8 @@ class WM_OT_addon_install(Operator):
                 path_addons = os.path.join(path_addons, "addons")
 
         if not path_addons:
-            self.report({'ERROR'}, "Failed to get addons path")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Failed to get addons path")
+            return set(['CANCELLED'])
 
         if not os.path.isdir(path_addons):
             try:
@@ -1965,13 +1972,13 @@ class WM_OT_addon_install(Operator):
         pyfile_dir = os.path.dirname(pyfile)
         for addon_path in addon_utils.paths():
             if os.path.samefile(pyfile_dir, addon_path):
-                self.report({'ERROR'}, "Source file is in the addon search path: %r" % addon_path)
-                return {'CANCELLED'}
+                self.report(set(['ERROR']), "Source file is in the addon search path: %r" % addon_path)
+                return set(['CANCELLED'])
         del addon_path
         del pyfile_dir
         # done checking for exceptional case
 
-        addons_old = {mod.__name__ for mod in addon_utils.modules()}
+        addons_old = set(mod.__name__ for mod in addon_utils.modules())
 
         # check to see if the file is in compressed format (.zip)
         if zipfile.is_zipfile(pyfile):
@@ -1979,7 +1986,7 @@ class WM_OT_addon_install(Operator):
                 file_to_extract = zipfile.ZipFile(pyfile, 'r')
             except:
                 traceback.print_exc()
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
             if self.overwrite:
                 for f in file_to_extract.namelist():
@@ -1988,14 +1995,14 @@ class WM_OT_addon_install(Operator):
                 for f in file_to_extract.namelist():
                     path_dest = os.path.join(path_addons, os.path.basename(f))
                     if os.path.exists(path_dest):
-                        self.report({'WARNING'}, "File already installed to %r\n" % path_dest)
-                        return {'CANCELLED'}
+                        self.report(set(['WARNING']), "File already installed to %r\n" % path_dest)
+                        return set(['CANCELLED'])
 
             try:  # extract the file to "addons"
                 file_to_extract.extractall(path_addons)
             except:
                 traceback.print_exc()
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
         else:
             path_dest = os.path.join(path_addons, os.path.basename(pyfile))
@@ -2003,17 +2010,17 @@ class WM_OT_addon_install(Operator):
             if self.overwrite:
                 WM_OT_addon_install._module_remove(path_addons, os.path.basename(pyfile))
             elif os.path.exists(path_dest):
-                self.report({'WARNING'}, "File already installed to %r\n" % path_dest)
-                return {'CANCELLED'}
+                self.report(set(['WARNING']), "File already installed to %r\n" % path_dest)
+                return set(['CANCELLED'])
 
             # if not compressed file just copy into the addon path
             try:
                 shutil.copyfile(pyfile, path_dest)
             except:
                 traceback.print_exc()
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
-        addons_new = {mod.__name__ for mod in addon_utils.modules()} - addons_old
+        addons_new = set(mod.__name__ for mod in addon_utils.modules()) - addons_old
         addons_new.discard("modules")
 
         # disable any addons we may have enabled previously and removed.
@@ -2037,15 +2044,15 @@ class WM_OT_addon_install(Operator):
 
         # print message
         msg = tip_("Modules Installed from %r into %r (%s)") % (pyfile, path_addons, ", ".join(sorted(addons_new)))
-        print(msg)
-        self.report({'INFO'}, msg)
+        print msg
+        self.report(set(['INFO']), msg)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
 
 class WM_OT_addon_remove(Operator):
@@ -2079,8 +2086,8 @@ class WM_OT_addon_remove(Operator):
 
         path, isdir = WM_OT_addon_remove.path_from_addon(self.module)
         if path is None:
-            self.report({'WARNING'}, "Addon path %r could not be found" % path)
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "Addon path %r could not be found" % path)
+            return set(['CANCELLED'])
 
         # in case its enabled
         addon_utils.disable(self.module, default_set=True)
@@ -2094,7 +2101,7 @@ class WM_OT_addon_remove(Operator):
         addon_utils.modules_refresh()
 
         context.area.tag_redraw()
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     # lame confirmation check
     def draw(self, context):
@@ -2111,7 +2118,7 @@ class WM_OT_addon_expand(Operator):
     "Display more information on this addon"
     bl_idname = "wm.addon_expand"
     bl_label = ""
-    bl_options = {'INTERNAL'}
+    bl_options = set(['INTERNAL'])
 
     module = StringProperty(
             name="Module",
@@ -2128,4 +2135,4 @@ class WM_OT_addon_expand(Operator):
             info = addon_utils.module_bl_info(mod)
             info["show_expanded"] = not info["show_expanded"]
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

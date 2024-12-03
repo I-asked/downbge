@@ -23,6 +23,7 @@
 # for polling, iterator callbacks, and also generate callbacks.
 # All of these can be used in conjunction with the others.
 
+from __future__ import absolute_import
 __all__ = (
     "path_add_property",
     "RKS_POLL_selected_objects",

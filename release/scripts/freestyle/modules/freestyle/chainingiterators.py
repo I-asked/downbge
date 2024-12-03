@@ -23,6 +23,7 @@ according to selected chaining rules.  The module is also intended to
 be a collection of examples for defining chaining iterators in Python.
 """
 
+from __future__ import absolute_import
 __all__ = (
     "ChainPredicateIterator",
     "ChainSilhouetteIterator",
@@ -187,7 +188,7 @@ class pyExternalContourChainingIterator(ChainingIterator):
         result = any(self.ExternalContour(ave) for ave in it)
         # report if there is no result (that's bad)
         if not result and bpy.app.debug_freestyle:
-            print("pyExternalContourChainingIterator : didn't find next edge")
+            print "pyExternalContourChainingIterator : didn't find next edge"
 
         return result
 
@@ -302,7 +303,7 @@ class pySketchyChainingIterator(ChainingIterator):
             # This is a fatal error condition: self.current_edge must be found
             # among the edges seen by the AdjacencyIterator [bug #35695].
             if bpy.app.debug_freestyle:
-                print('pySketchyChainingIterator: current edge not found')
+                print 'pySketchyChainingIterator: current edge not found'
             return None
 
         if winner is None:

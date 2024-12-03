@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 from mathutils import Vector
 from bpy.props import FloatVectorProperty
@@ -30,14 +31,14 @@ class ViewOperator(bpy.types.Operator):
 
         elif event.type == 'LEFTMOUSE':
             context.area.header_text_set()
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+        elif event.type in set(['RIGHTMOUSE', 'ESC']):
             rv3d.view_location = self._initial_location
             context.area.header_text_set()
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def invoke(self, context, event):
 
@@ -52,10 +53,10 @@ class ViewOperator(bpy.types.Operator):
             self._initial_location = rv3d.view_location.copy()
 
             context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
+            return set(['RUNNING_MODAL'])
         else:
-            self.report({'WARNING'}, "Active space must be a View3d")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "Active space must be a View3d")
+            return set(['CANCELLED'])
 
 
 def register():

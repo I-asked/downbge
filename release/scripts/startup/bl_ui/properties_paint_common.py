@@ -17,10 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 from bpy.types import Menu
 
 
-class UnifiedPaintPanel:
+class UnifiedPaintPanel(object):
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     # bl_region_type = 'UI'
@@ -107,8 +108,8 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
     col = layout.column()
 
-    if brush.image_tool in {'DRAW', 'FILL'}:
-        if brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
+    if brush.image_tool in set(['DRAW', 'FILL']):
+        if brush.blend not in set(['ERASE_ALPHA', 'ADD_ALPHA']):
             if not brush.use_gradient:
                 panel.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
 
@@ -126,7 +127,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
                 if brush.image_tool == 'DRAW':
                     col.prop(brush, "gradient_stroke_mode", text="Mode")
-                    if brush.gradient_stroke_mode in {'SPACING_REPEAT', 'SPACING_CLAMP'}:
+                    if brush.gradient_stroke_mode in set(['SPACING_REPEAT', 'SPACING_CLAMP']):
                         col.prop(brush, "grad_spacing")
                 elif brush.image_tool == 'FILL':
                     col.prop(brush, "gradient_fill_mode")
@@ -205,7 +206,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
     panel.prop_unified_strength(row, context, brush, "strength", text="Strength")
     panel.prop_unified_strength(row, context, brush, "use_pressure_strength")
 
-    if brush.image_tool in {'DRAW', 'FILL'}:
+    if brush.image_tool in set(['DRAW', 'FILL']):
         col.separator()
         col.prop(brush, "blend", text="Blend")
 

@@ -22,6 +22,7 @@
 #  Purpose  : Draws all lines whose Quantitative Invisibility 
 #             is different from 0
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

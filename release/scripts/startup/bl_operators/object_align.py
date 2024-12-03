@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from mathutils import Vector
@@ -35,7 +37,7 @@ def GlobalBB_LQ(bb_world):
                                           )
 
     # Test against the other 7 verts
-    for i in range(7):
+    for i in xrange(7):
 
         # X Range
         val = bb_world[i][0]
@@ -84,7 +86,7 @@ def GlobalBB_HQ(obj):
                                           )
 
     # Test against all other verts
-    for i in range(len(verts) - 1):
+    for i in xrange(len(verts) - 1):
 
         vco = matrix_world * verts[i].co
 
@@ -351,7 +353,7 @@ class AlignObjects(Operator):
     """Align Objects"""
     bl_idname = "object.align"
     bl_label = "Align Objects"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     bb_quality = BoolProperty(
             name="High Quality",
@@ -384,7 +386,7 @@ class AlignObjects(Operator):
                    ('Y', "Y", ""),
                    ('Z', "Z", ""),
                    ),
-            options={'ENUM_FLAG'},
+            options=set(['ENUM_FLAG']),
             )
 
     @classmethod
@@ -402,7 +404,7 @@ class AlignObjects(Operator):
                             self.bb_quality)
 
         if not ret:
-            self.report({'WARNING'}, "No objects with bound-box selected")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "No objects with bound-box selected")
+            return set(['CANCELLED'])
         else:
-            return {'FINISHED'}
+            return set(['FINISHED'])

@@ -32,6 +32,7 @@
 #        \", %s, %x12, %.4f, etc.), protecting them from ugly (evil) fribidi,
 #        which seems completely unaware of such things (as unicode is...).
 
+from __future__ import absolute_import
 import sys
 import ctypes
 import re
@@ -89,7 +90,7 @@ def protect_format_seq(msg):
     PDF = "\u202C"
     LRO = "\u202D"
     RLO = "\u202E"
-    uctrl = {LRE, RLE, PDF, LRO, RLO}
+    uctrl = set([LRE, RLE, PDF, LRO, RLO])
     # Most likely incomplete, but seems to cover current needs.
     format_codes = set("tslfd")
     digits = set(".0123456789")
@@ -98,7 +99,7 @@ def protect_format_seq(msg):
         return msg
     elif MENU_DETECT_REGEX.search(msg):
         # An ugly "menu" message, just force it whole LRE if not yet done.
-        if msg[0] not in {LRE, LRO}:
+        if msg[0] not in set([LRE, LRO]):
             msg = LRE + msg
 
     idx = 0

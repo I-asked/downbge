@@ -496,7 +496,9 @@ if env['WITH_BF_CPP11']:
         # Nothing special is needed, C++11 features are available by default.
         pass
     else:
-        env['CXXFLAGS'].append('-std=c++11')
+        env['CXXFLAGS'].append('-std=gnu++11')
+
+env.Append(CPPFLAGS=['-ffunction-sections', '-fdata-sections', '-fno-inline'])
 
 #check for additional debug libnames
 

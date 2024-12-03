@@ -27,7 +27,7 @@
 #ifndef __BPY_UTIL_H__
 #define __BPY_UTIL_H__
 
-#if PY_VERSION_HEX <  0x03040000
+#if 0 && PY_VERSION_HEX <  0x03040000
 #  error "Python 3.4 or greater is required, you'll need to update your python."
 #endif
 

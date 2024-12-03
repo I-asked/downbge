@@ -19,6 +19,7 @@
 # <pep8-80 compliant>
 
 # for slightly faster access
+from __future__ import absolute_import
 from _bpy import ops as ops_module
 
 # op_add = ops_module.add
@@ -30,7 +31,7 @@ op_get_rna = ops_module.get_rna
 op_get_instance = ops_module.get_instance
 
 
-class BPyOps:
+class BPyOps(object):
     """
     Fake module like class.
 
@@ -69,7 +70,7 @@ class BPyOps:
         return "<module like class 'bpy.ops'>"
 
 
-class BPyOpsSubMod:
+class BPyOpsSubMod(object):
     """
     Utility class to fake submodules.
 
@@ -105,7 +106,7 @@ class BPyOpsSubMod:
         return "<module like class 'bpy.ops.%s'>" % self._module
 
 
-class BPyOpsSubModOp:
+class BPyOpsSubModOp(object):
     """
     Utility class to fake submodule operators.
 

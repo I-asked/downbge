@@ -18,6 +18,7 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import (
@@ -33,29 +34,29 @@ class WM_OT_previews_batch_generate(Operator):
     """Generate selected .blend file's previews"""
     bl_idname = "wm.previews_batch_generate"
     bl_label = "Batch-Generate Previews"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     # -----------
     # File props.
     files = CollectionProperty(
             type=bpy.types.OperatorFileListElement,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     directory = StringProperty(
             maxlen=1024,
             subtype='FILE_PATH',
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     # Show only images/videos, and directories!
     filter_blender = BoolProperty(
             default=True,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
     filter_folder = BoolProperty(
             default=True,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     # -----------
@@ -89,7 +90,7 @@ class WM_OT_previews_batch_generate(Operator):
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def execute(self, context):
         if "subprocess" in locals():
@@ -127,42 +128,42 @@ class WM_OT_previews_batch_generate(Operator):
             if not self.use_intern_data:
                 cmd.append('--no_data_intern')
             if subprocess.call(cmd):
-                self.report({'ERROR'}, "Previews generation process failed for file '%s'!" % blen_path)
+                self.report(set(['ERROR']), "Previews generation process failed for file '%s'!" % blen_path)
                 context.window_manager.progress_end()
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
             context.window_manager.progress_update(i + 1)
         context.window_manager.progress_end()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class WM_OT_previews_batch_clear(Operator):
     """Clear selected .blend file's previews"""
     bl_idname = "wm.previews_batch_clear"
     bl_label = "Batch-Clear Previews"
-    bl_options = {'REGISTER'}
+    bl_options = set(['REGISTER'])
 
     # -----------
     # File props.
     files = CollectionProperty(
             type=bpy.types.OperatorFileListElement,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     directory = StringProperty(
             maxlen=1024,
             subtype='FILE_PATH',
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     # Show only images/videos, and directories!
     filter_blender = BoolProperty(
             default=True,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
     filter_folder = BoolProperty(
             default=True,
-            options={'HIDDEN', 'SKIP_SAVE'},
+            options=set(['HIDDEN', 'SKIP_SAVE']),
             )
 
     # -----------
@@ -195,7 +196,7 @@ class WM_OT_previews_batch_clear(Operator):
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def execute(self, context):
         if "subprocess" in locals():
@@ -234,11 +235,11 @@ class WM_OT_previews_batch_clear(Operator):
             if not self.use_intern_data:
                 cmd.append('--no_data_intern')
             if subprocess.call(cmd):
-                self.report({'ERROR'}, "Previews clear process failed for file '%s'!" % blen_path)
+                self.report(set(['ERROR']), "Previews clear process failed for file '%s'!" % blen_path)
                 context.window_manager.progress_end()
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
             context.window_manager.progress_update(i + 1)
         context.window_manager.progress_end()
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 

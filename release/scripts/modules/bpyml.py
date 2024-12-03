@@ -36,7 +36,8 @@ or simple python blender/ui function calls.
 
 """
 
-TAG, ARGS, CHILDREN = range(3)
+from __future__ import absolute_import
+TAG, ARGS, CHILDREN = xrange(3)
 
 
 class ReturnStore(tuple):
@@ -57,13 +58,13 @@ class ReturnStore(tuple):
             return tuple.__getitem__(self, key)
 
 
-class FunctionStore:
+class FunctionStore(object):
     def __call__(self, **kwargs):
         return ReturnStore((self.__class__.__name__, kwargs, []))
 
 
 def tag_vars(tags, module=__name__):
-    return {tag: type(tag, (FunctionStore, ), {"__module__": module})() for tag in tags}
+    return dict((tag, type(tag, (FunctionStore, ), {"__module__": module})()) for tag in tags)
 
 
 def tag_module(mod_name, tags):
@@ -120,7 +121,7 @@ def fromxml(data):
         py_item = (xml_node.tagName, _fromxml_kwargs(xml_node), [])
         #_fromxml_iter(py_item, xml_node.childNodes)
         for xml_node_child in xml_node.childNodes:
-            if xml_node_child.nodeType not in {xml_node_child.TEXT_NODE, xml_node_child.COMMENT_NODE}:
+            if xml_node_child.nodeType not in set([xml_node_child.TEXT_NODE, xml_node_child.COMMENT_NODE]):
                 py_item[CHILDREN].append(_fromxml(xml_node_child))
         return py_item
 
@@ -192,13 +193,13 @@ if __name__ == "__main__":
     ]
 
     xml_data = toxml(draw)
-    print(xml_data)  # xml version
+    print xml_data  # xml version
 
     py_data = fromxml(xml_data)
-    print(py_data)  # converted back to py
+    print py_data  # converted back to py
 
     xml_data = toxml(py_data)
-    print(xml_data)  # again back to xml
+    print xml_data  # again back to xml
 
     py_data = fromxml(xml_data)  # pretty python version
-    print(topretty_py(py_data))
+    print topretty_py(py_data)

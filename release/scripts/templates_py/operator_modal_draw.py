@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 import bpy
 import bgl
 import blf
 
 
 def draw_callback_px(self, context):
-    print("mouse points", len(self.mouse_path))
+    print "mouse points", len(self.mouse_path)
 
     font_id = 0  # XXX, need to find out how best to get this.
 
@@ -43,13 +44,13 @@ class ModalDrawOperator(bpy.types.Operator):
 
         elif event.type == 'LEFTMOUSE':
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+        elif event.type in set(['RIGHTMOUSE', 'ESC']):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
@@ -62,10 +63,10 @@ class ModalDrawOperator(bpy.types.Operator):
             self.mouse_path = []
 
             context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
+            return set(['RUNNING_MODAL'])
         else:
-            self.report({'WARNING'}, "View3D not found, cannot run operator")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "View3D not found, cannot run operator")
+            return set(['CANCELLED'])
 
 
 def register():

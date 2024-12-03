@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Simulates a big brush fr oriental painting
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.functions import pyInverseCurvature2DAngleF0D
 from freestyle.predicates import (

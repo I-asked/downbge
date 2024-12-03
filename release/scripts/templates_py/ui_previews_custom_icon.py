@@ -14,6 +14,7 @@
 # For the above use cases, see the template 'ui_previews_dynamic_enum.py"
 
 
+from __future__ import absolute_import
 import os
 import bpy
 

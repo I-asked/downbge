@@ -23,6 +23,7 @@ This module has a similar scope to os.path, containing utility
 functions for dealing with paths in Blender.
 """
 
+from __future__ import absolute_import
 __all__ = (
     "abspath",
     "basename",
@@ -66,8 +67,8 @@ def abspath(path, start=None, library=None):
        convenience, when the library is not None its path replaces *start*.
     :type library: :class:`bpy.types.Library`
     """
-    if isinstance(path, bytes):
-        if path.startswith(b"//"):
+    if isinstance(path, str):
+        if path.startswith("//"):
             if library:
                 start = _os.path.dirname(abspath(_getattr_bytes(library, "filepath")))
             return _os.path.join(_os.path.dirname(_getattr_bytes(_bpy.data, "filepath"))
@@ -96,11 +97,11 @@ def relpath(path, start=None):
        when not set the current filename is used.
     :type start: string or bytes
     """
-    if isinstance(path, bytes):
-        if not path.startswith(b"//"):
+    if isinstance(path, str):
+        if not path.startswith("//"):
             if start is None:
                 start = _os.path.dirname(_getattr_bytes(_bpy.data, "filepath"))
-            return b"//" + _os.path.relpath(path, start)
+            return "//" + _os.path.relpath(path, start)
     else:
         if not path.startswith("//"):
             if start is None:
@@ -123,7 +124,7 @@ def is_subdir(path, directory):
     directory = normpath(normcase(directory))
     if len(path) > len(directory):
         if path.startswith(directory):
-            sep = ord(_os.sep) if isinstance(directory, bytes) else _os.sep
+            sep = ord(_os.sep) if isinstance(directory, str) else _os.sep
             return (path[len(directory)] == sep)
     return False
 
@@ -171,7 +172,7 @@ def clean_name(name, replace="_"):
                 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7,
                 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe,
                 )
-            trans = str.maketrans({char: replace for char in bad_chars})
+            trans = str.maketrans(dict((char, replace) for char in bad_chars))
             trans_cache[replace] = trans
         return trans
 
@@ -182,7 +183,7 @@ clean_name._trans_cache = {}
 
 def _clean_utf8(name):
     name = _os.path.splitext(basename(name))[0]
-    if type(name) == bytes:
+    if type(name) == str:
         return name.decode("utf8", "replace")
     else:
         return name.encode("utf8", "replace").decode("utf8")
@@ -342,7 +343,7 @@ def basename(path):
 
     Use for Windows compatibility.
     """
-    return _os.path.basename(path[2:] if path[:2] in {"//", b"//"} else path)
+    return _os.path.basename(path[2:] if path[:2] in set(["//", "//"]) else path)
 
 
 def reduce_dirs(dirs):
@@ -356,11 +357,11 @@ def reduce_dirs(dirs):
     :return: A unique list of paths.
     :rtype: list
     """
-    dirs = list({_os.path.normpath(_os.path.abspath(d)) for d in dirs})
+    dirs = list(set(_os.path.normpath(_os.path.abspath(d)) for d in dirs))
     dirs.sort(key=lambda d: len(d))
-    for i in range(len(dirs) - 1, -1, -1):
-        for j in range(i):
-            print(i, j)
+    for i in xrange(len(dirs) - 1, -1, -1):
+        for j in xrange(i):
+            print i, j
             if len(dirs[i]) == len(dirs[j]):
                 break
             elif is_subdir(dirs[i], dirs[j]):

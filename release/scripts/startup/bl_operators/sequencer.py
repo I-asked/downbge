@@ -18,6 +18,7 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 
@@ -29,7 +30,7 @@ class SequencerCrossfadeSounds(Operator):
 
     bl_idname = "sequencer.crossfade_sounds"
     bl_label = "Crossfade sounds"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -51,8 +52,8 @@ class SequencerCrossfadeSounds(Operator):
                     seq2 = None
                     break
         if seq2 is None:
-            self.report({'ERROR'}, "Select 2 sound strips")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Select 2 sound strips")
+            return set(['CANCELLED'])
         if seq1.frame_final_start > seq2.frame_final_start:
             s = seq1
             seq1 = seq2
@@ -69,10 +70,10 @@ class SequencerCrossfadeSounds(Operator):
             seq2.volume = 0
             seq2.keyframe_insert("volume")
             context.scene.frame_current = tempcfra
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            self.report({'ERROR'}, "The selected strips don't overlap")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "The selected strips don't overlap")
+            return set(['CANCELLED'])
 
 
 class SequencerCutMulticam(Operator):
@@ -80,7 +81,7 @@ class SequencerCutMulticam(Operator):
 
     bl_idname = "sequencer.cut_multicam"
     bl_label = "Cut multicam"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     camera = IntProperty(
             name="Camera",
@@ -102,7 +103,7 @@ class SequencerCutMulticam(Operator):
         s = context.scene.sequence_editor.active_strip
 
         if s.multicam_source == camera or camera >= s.channel:
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
         if not s.select:
             s.select = True
@@ -114,7 +115,7 @@ class SequencerCutMulticam(Operator):
                 context.scene.sequence_editor.active_strip = s
 
         context.scene.sequence_editor.active_strip.multicam_source = camera
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class SequencerDeinterlaceSelectedMovies(Operator):
@@ -122,7 +123,7 @@ class SequencerDeinterlaceSelectedMovies(Operator):
 
     bl_idname = "sequencer.deinterlace_selected_movies"
     bl_label = "Deinterlace Movies"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     @classmethod
     def poll(cls, context):
@@ -133,4 +134,4 @@ class SequencerDeinterlaceSelectedMovies(Operator):
             if s.select and s.type == 'MOVIE':
                 s.use_deinterlace = True
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

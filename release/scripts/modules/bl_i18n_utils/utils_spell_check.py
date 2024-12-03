@@ -18,19 +18,22 @@
 
 # <pep8 compliant>
 
+from __future__ import with_statement
+from __future__ import absolute_import
 import enchant
 import os
 import pickle
 import re
+from io import open
 
 
-class SpellChecker:
+class SpellChecker(object):
     """
     A basic spell checker.
     """
 
     # These must be all lower case for comparisons
-    uimsgs = {
+    uimsgs = set([
         # OK words
         "aren",  # aren't
         "betweens",  # yuck! in-betweens!
@@ -620,8 +623,7 @@ class SpellChecker:
         "xiph",
         "xml",
         "xna",
-        "xvid",
-    }
+        "xvid",])
 
     _valid_before = "(?<=[\\s*'\"`])|(?<=[a-zA-Z][/-])|(?<=^)"
     _valid_after = "(?=[\\s'\"`.!?,;:])|(?=[/-]\\s*[a-zA-Z])|(?=$)"

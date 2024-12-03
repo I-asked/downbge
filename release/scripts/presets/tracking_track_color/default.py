@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 track = bpy.context.edit_movieclip.tracking.tracks.active
 

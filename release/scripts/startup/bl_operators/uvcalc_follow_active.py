@@ -21,6 +21,8 @@
 #for full docs see...
 # http://mediawiki.blender.org/index.php/Scripts/Manual/UV_Calculate/Follow_active_quads
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 
@@ -39,13 +41,13 @@ def extend(obj, operator, EXTEND_MODE):
     uv_act = bm.loops.layers.uv.active
 
     if f_act is None:
-        operator.report({'ERROR'}, "No active face")
+        operator.report(set(['ERROR']), "No active face")
         return
     if not f_act.select:
-        operator.report({'ERROR'}, "No active face is not selected")
+        operator.report(set(['ERROR']), "No active face is not selected")
         return
     elif len(f_act.verts) != 4:
-        operator.report({'ERROR'}, "Active face must be a quad")
+        operator.report(set(['ERROR']), "Active face must be a quad")
         return
 
     faces = [f for f in bm.faces if f.select and len(f.verts) == 4]
@@ -224,7 +226,7 @@ class FollowActiveQuads(Operator):
     """Follow UVs from active quads along continuous face loops"""
     bl_idname = "uv.follow_active_quads"
     bl_label = "Follow Active Quads"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     mode = bpy.props.EnumProperty(
             name="Edge Length Mode",
@@ -243,7 +245,7 @@ class FollowActiveQuads(Operator):
 
     def execute(self, context):
         main(context, self)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager

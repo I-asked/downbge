@@ -18,6 +18,7 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
 
 
@@ -128,7 +129,7 @@ def draw(layout, context, context_member, property_type, use_edit=True):
         props.data_path = context_member
         del row
 
-    rna_properties = {prop.identifier for prop in rna_item.bl_rna.properties if prop.is_runtime} if items else None
+    rna_properties = set(prop.identifier for prop in rna_item.bl_rna.properties if prop.is_runtime) if items else None
 
     for key, val in items:
 
@@ -182,13 +183,13 @@ def draw(layout, context, context_member, property_type, use_edit=True):
             assign_props(props, val_draw, key)
 
 
-class PropertyPanel:
+class PropertyPanel(object):
     """
     The subclass should have its own poll function
     and the variable '_context_path' MUST be set.
     """
     bl_label = "Custom Properties"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):

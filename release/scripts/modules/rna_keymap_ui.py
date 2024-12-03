@@ -18,6 +18,8 @@
 
 # <pep8 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "draw_entry",
     "draw_km",
@@ -178,14 +180,14 @@ def draw_kmi(display_keymaps, kc, km, kmi, layout, level):
             #~ sub.prop_search(kmi, "idname", bpy.context.window_manager, "operators_all", text="")
             sub.prop(kmi, "idname", text="")
 
-        if map_type not in {'TEXTINPUT', 'TIMER'}:
+        if map_type not in set(['TEXTINPUT', 'TIMER']):
             sub = split.column()
             subrow = sub.row(align=True)
 
             if map_type == 'KEYBOARD':
                 subrow.prop(kmi, "type", text="", event=True)
                 subrow.prop(kmi, "value", text="")
-            elif map_type in {'MOUSE', 'NDOF'}:
+            elif map_type in set(['MOUSE', 'NDOF']):
                 subrow.prop(kmi, "type", text="")
                 subrow.prop(kmi, "value", text="")
 
@@ -223,8 +225,8 @@ def draw_filtered(display_keymaps, filter_type, filter_text, layout):
         if not _EVENT_TYPES:
             enum = bpy.types.Event.bl_rna.properties["type"].enum_items
             _EVENT_TYPES.update(enum.keys())
-            _EVENT_TYPE_MAP.update({item.name.replace(" ", "_").upper(): key
-                                    for key, item in enum.items()})
+            _EVENT_TYPE_MAP.update(dict((item.name.replace(" ", "_").upper(), key)
+                                    for key, item in enum.items()))
 
             del enum
             _EVENT_TYPE_MAP_EXTRA.update({
@@ -235,9 +237,8 @@ def draw_filtered(display_keymaps, filter_type, filter_text, layout):
                 "LMB": 'LEFTMOUSE',
                 "MMB": 'MIDDLEMOUSE',
                 })
-            _EVENT_TYPE_MAP_EXTRA.update({
-                "%d" % i: "NUMPAD_%d" % i for i in range(10)
-                })
+            _EVENT_TYPE_MAP_EXTRA.update(dict((
+                "%d" % i, "NUMPAD_%d" % i) for i in xrange(10)))
         # done with once off init
 
         filter_text_split = filter_text.strip()
@@ -267,7 +268,7 @@ def draw_filtered(display_keymaps, filter_type, filter_text, layout):
         for kk, kv in key_mod.items():
             if kk in filter_text_split:
                 filter_text_split.remove(kk)
-                kmi_test_dict[kv] = {True}
+                kmi_test_dict[kv] = set([True])
 
         # whats left should be the event type
         def kmi_type_set_from_string(kmi_type):

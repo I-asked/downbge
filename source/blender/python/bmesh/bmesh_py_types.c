@@ -3201,11 +3201,11 @@ static PyObject *bpy_bmesh_repr(BPy_BMesh *self)
 	BMesh *bm = self->bm;
 
 	if (bm) {
-		return PyUnicode_FromFormat("<BMesh(%p), totvert=%d, totedge=%d, totface=%d, totloop=%d>",
+		return PyString_FromFormat("<BMesh(%p), totvert=%d, totedge=%d, totface=%d, totloop=%d>",
 		                            bm, bm->totvert, bm->totedge, bm->totface, bm->totloop);
 	}
 	else {
-		return PyUnicode_FromFormat("<BMesh dead at %p>", self);
+		return PyString_FromFormat("<BMesh dead at %p>", self);
 	}
 }
 
@@ -3215,11 +3215,11 @@ static PyObject *bpy_bmvert_repr(BPy_BMVert *self)
 
 	if (bm) {
 		BMVert *v = self->v;
-		return PyUnicode_FromFormat("<BMVert(%p), index=%d>",
+		return PyString_FromFormat("<BMVert(%p), index=%d>",
 		                            v, BM_elem_index_get(v));
 	}
 	else {
-		return PyUnicode_FromFormat("<BMVert dead at %p>", self);
+		return PyString_FromFormat("<BMVert dead at %p>", self);
 	}
 }
 
@@ -3229,13 +3229,13 @@ static PyObject *bpy_bmedge_repr(BPy_BMEdge *self)
 
 	if (bm) {
 		BMEdge *e = self->e;
-		return PyUnicode_FromFormat("<BMEdge(%p), index=%d, verts=(%p/%d, %p/%d)>",
+		return PyString_FromFormat("<BMEdge(%p), index=%d, verts=(%p/%d, %p/%d)>",
 		                            e, BM_elem_index_get(e),
 		                            e->v1, BM_elem_index_get(e->v1),
 		                            e->v2, BM_elem_index_get(e->v2));
 	}
 	else {
-		return PyUnicode_FromFormat("<BMEdge dead at %p>", self);
+		return PyString_FromFormat("<BMEdge dead at %p>", self);
 	}
 }
 
@@ -3245,12 +3245,12 @@ static PyObject *bpy_bmface_repr(BPy_BMFace *self)
 
 	if (bm) {
 		BMFace *f = self->f;
-		return PyUnicode_FromFormat("<BMFace(%p), index=%d, totverts=%d>",
+		return PyString_FromFormat("<BMFace(%p), index=%d, totverts=%d>",
 		                            f, BM_elem_index_get(f),
 		                            f->len);
 	}
 	else {
-		return PyUnicode_FromFormat("<BMFace dead at %p>", self);
+		return PyString_FromFormat("<BMFace dead at %p>", self);
 	}
 }
 
@@ -3260,14 +3260,14 @@ static PyObject *bpy_bmloop_repr(BPy_BMLoop *self)
 
 	if (bm) {
 		BMLoop *l = self->l;
-		return PyUnicode_FromFormat("<BMLoop(%p), index=%d, vert=%p/%d, edge=%p/%d, face=%p/%d>",
+		return PyString_FromFormat("<BMLoop(%p), index=%d, vert=%p/%d, edge=%p/%d, face=%p/%d>",
 		                            l, BM_elem_index_get(l),
 		                            l->v, BM_elem_index_get(l->v),
 		                            l->e, BM_elem_index_get(l->e),
 		                            l->f, BM_elem_index_get(l->f));
 	}
 	else {
-		return PyUnicode_FromFormat("<BMLoop dead at %p>", self);
+		return PyString_FromFormat("<BMLoop dead at %p>", self);
 	}
 }
 

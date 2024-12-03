@@ -21,6 +21,7 @@
 #  Date     : 04/08/2005
 #  Purpose  : Draws strokes that starts and stops at Tvertices (visible or not)
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainSilhouetteIterator
 from freestyle.predicates import (
     NotUP1D,

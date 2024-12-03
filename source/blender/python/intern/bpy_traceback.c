@@ -42,35 +42,27 @@ static const char *traceback_filepath(PyTracebackObject *tb, PyObject **coerce)
 	return PyBytes_AS_STRING((*coerce = PyUnicode_EncodeFSDefault(tb->tb_frame->f_code->co_filename)));
 }
 
-/* copied from pythonrun.c, 3.4.0 */
-_Py_static_string(PyId_string, "<string>");
-
 static int
 parse_syntax_error(PyObject *err, PyObject **message, PyObject **filename,
                    int *lineno, int *offset, PyObject **text)
 {
 	long hold;
 	PyObject *v;
-	_Py_IDENTIFIER(msg);
-	_Py_IDENTIFIER(filename);
-	_Py_IDENTIFIER(lineno);
-	_Py_IDENTIFIER(offset);
-	_Py_IDENTIFIER(text);
 
 	*message = NULL;
 	*filename = NULL;
 
 	/* new style errors.  `err' is an instance */
-	*message = _PyObject_GetAttrId(err, &PyId_msg);
+	*message = PyObject_GetAttr(err, "msg");
 	if (!*message)
 		goto finally;
 
-	v = _PyObject_GetAttrId(err, &PyId_filename);
+	v = PyObject_GetAttr(err, "filename");
 	if (!v)
 		goto finally;
 	if (v == Py_None) {
 		Py_DECREF(v);
-		*filename = _PyUnicode_FromId(&PyId_string);
+		*filename = PyUnicode_FromString("string");
 		if (*filename == NULL)
 			goto finally;
 		Py_INCREF(*filename);
@@ -79,7 +71,7 @@ parse_syntax_error(PyObject *err, PyObject **message, PyObject **filename,
 		*filename = v;
 	}
 
-	v = _PyObject_GetAttrId(err, &PyId_lineno);
+	v = PyObject_GetAttr(err, "lineno");
 	if (!v)
 		goto finally;
 	hold = PyLong_AsLong(v);
@@ -88,7 +80,7 @@ parse_syntax_error(PyObject *err, PyObject **message, PyObject **filename,
 		goto finally;
 	*lineno = (int)hold;
 
-	v = _PyObject_GetAttrId(err, &PyId_offset);
+	v = PyObject_GetAttr(err, "offset");
 	if (!v)
 		goto finally;
 	if (v == Py_None) {
@@ -102,7 +94,7 @@ parse_syntax_error(PyObject *err, PyObject **message, PyObject **filename,
 		*offset = (int)hold;
 	}
 
-	v = _PyObject_GetAttrId(err, &PyId_text);
+	v = PyObject_GetAttr(err, "text");
 	if (!v)
 		goto finally;
 	if (v == Py_None) {

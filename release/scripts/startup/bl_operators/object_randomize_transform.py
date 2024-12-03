@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from mathutils import Vector
@@ -48,7 +49,7 @@ def randomize_selected(context, seed, delta,
             vec = rand_vec(rot)
 
             rotation_mode = obj.rotation_mode
-            if rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+            if rotation_mode in set(['QUATERNION', 'AXIS_ANGLE']):
                 obj.rotation_mode = 'XYZ'
 
             if delta:
@@ -99,7 +100,7 @@ class RandomizeLocRotSize(Operator):
     """Randomize objects loc/rot/scale"""
     bl_idname = "object.randomize_transform"
     bl_label = "Randomize Transform"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     random_seed = IntProperty(
             name="Random Seed",
@@ -184,4 +185,4 @@ class RandomizeLocRotSize(Operator):
         randomize_selected(context, seed, delta,
                            loc, rot, scale, scale_even, scale_min)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

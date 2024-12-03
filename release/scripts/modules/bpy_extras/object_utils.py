@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 __all__ = (
     "add_object_align_init",
     "object_data_add",
@@ -142,7 +144,7 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
             base.layers[scene.active_layer] = True
         else:
             base.layers = [True if i == scene.active_layer
-                           else False for i in range(len(scene.layers))]
+                           else False for i in xrange(len(scene.layers))]
     else:
         if v3d:
             base.layers_from_view(context.space_data)
@@ -191,7 +193,7 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
     return base
 
 
-class AddObjectHelper:
+class AddObjectHelper(object):
     def view_align_update_callback(self, context):
         if not self.view_align:
             self.rotation.zero()

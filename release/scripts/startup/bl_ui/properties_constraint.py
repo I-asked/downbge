@@ -17,11 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel
 
 
-class ConstraintButtonsPanel:
+class ConstraintButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "constraint"
@@ -35,7 +36,7 @@ class ConstraintButtonsPanel:
             # match enum type to our functions, avoids a lookup table.
             getattr(self, con.type)(context, box, con)
 
-            if con.type not in {'RIGID_BODY_JOINT', 'NULL'}:
+            if con.type not in set(['RIGID_BODY_JOINT', 'NULL']):
                 box.prop(con, "influence")
 
     @staticmethod
@@ -68,7 +69,7 @@ class ConstraintButtonsPanel:
                     row = layout.row()
                     row.label(text="Head/Tail:")
                     row.prop(con, "head_tail", text="")
-            elif con.target.type in {'MESH', 'LATTICE'}:
+            elif con.target.type in set(['MESH', 'LATTICE']):
                 layout.prop_search(con, "subtarget", con.target, "vertex_groups", text="Vertex Group")
 
     @staticmethod
@@ -886,7 +887,7 @@ class ConstraintButtonsPanel:
 class OBJECT_PT_constraints(ConstraintButtonsPanel, Panel):
     bl_label = "Object Constraints"
     bl_context = "constraint"
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):
@@ -913,7 +914,7 @@ class OBJECT_PT_constraints(ConstraintButtonsPanel, Panel):
 class BONE_PT_constraints(ConstraintButtonsPanel, Panel):
     bl_label = "Bone Constraints"
     bl_context = "bone_constraint"
-    bl_options = {'HIDE_HEADER'}
+    bl_options = set(['HIDE_HEADER'])
 
     @classmethod
     def poll(cls, context):

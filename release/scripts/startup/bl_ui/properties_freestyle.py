@@ -17,13 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel, UIList
 
 
 # Render properties
 
-class RenderFreestyleButtonsPanel:
+class RenderFreestyleButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render"
@@ -38,8 +39,8 @@ class RenderFreestyleButtonsPanel:
 
 class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
     bl_label = "Freestyle"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_header(self, context):
         rd = context.scene.render
@@ -62,7 +63,7 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
 
 # Render layer properties
 
-class RenderLayerFreestyleButtonsPanel:
+class RenderLayerFreestyleButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "render_layer"
@@ -83,7 +84,7 @@ class RenderLayerFreestyleEditorButtonsPanel(RenderLayerFreestyleButtonsPanel):
 
     @classmethod
     def poll(cls, context):
-        if not super().poll(context):
+        if not super(RenderLayerFreestyleEditorButtonsPanel, cls).poll(context):
             return False
         rl = context.scene.render.layers.active
         return rl and rl.freestyle_settings.mode == 'EDITOR'
@@ -92,7 +93,7 @@ class RenderLayerFreestyleEditorButtonsPanel(RenderLayerFreestyleButtonsPanel):
 class RENDERLAYER_UL_linesets(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         lineset = item
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             layout.prop(lineset, "name", text="", emboss=False, icon_value=icon)
             layout.prop(lineset, "show_render", text="", index=index)
         elif self.layout_type == 'GRID':
@@ -111,7 +112,7 @@ class RENDER_MT_lineset_specials(Menu):
 
 class RENDERLAYER_PT_freestyle(RenderLayerFreestyleButtonsPanel, Panel):
     bl_label = "Freestyle"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -167,7 +168,7 @@ class RENDERLAYER_PT_freestyle(RenderLayerFreestyleButtonsPanel, Panel):
 
 class RENDERLAYER_PT_freestyle_lineset(RenderLayerFreestyleEditorButtonsPanel, Panel):
     bl_label = "Freestyle Line Set"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_edge_type_buttons(self, box, lineset, edge_type):
         # property names
@@ -258,8 +259,8 @@ class RENDERLAYER_PT_freestyle_lineset(RenderLayerFreestyleEditorButtonsPanel, P
 
 class RENDERLAYER_PT_freestyle_linestyle(RenderLayerFreestyleEditorButtonsPanel, Panel):
     bl_label = "Freestyle Line Style"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw_modifier_box_header(self, box, modifier):
         row = box.row()
@@ -346,7 +347,7 @@ class RENDERLAYER_PT_freestyle_linestyle(RenderLayerFreestyleEditorButtonsPanel,
                 row.prop(modifier, "material_attribute", text="")
                 sub = row.column()
                 sub.prop(modifier, "use_ramp")
-                if modifier.material_attribute in {'LINE', 'DIFF', 'SPEC'}:
+                if modifier.material_attribute in set(['LINE', 'DIFF', 'SPEC']):
                     sub.active = True
                     show_ramp = modifier.use_ramp
                 else:
@@ -577,7 +578,7 @@ class RENDERLAYER_PT_freestyle_linestyle(RenderLayerFreestyleEditorButtonsPanel,
                 row.prop(modifier, "shape", expand=True)
                 box.prop(modifier, "rounds")
                 row = box.row()
-                if modifier.shape in {'CIRCLES', 'ELLIPSES'}:
+                if modifier.shape in set(['CIRCLES', 'ELLIPSES']):
                     row.prop(modifier, "random_radius")
                     row.prop(modifier, "random_center")
                 elif modifier.shape == 'SQUARES':
@@ -684,9 +685,9 @@ class RENDERLAYER_PT_freestyle_linestyle(RenderLayerFreestyleEditorButtonsPanel,
             row = col.row(align=True)
             row.prop(linestyle, "sort_key", text="")
             sub = row.row()
-            sub.active = linestyle.sort_key in {'DISTANCE_FROM_CAMERA',
+            sub.active = linestyle.sort_key in set(['DISTANCE_FROM_CAMERA',
                                                 'PROJECTED_X',
-                                                'PROJECTED_Y'}
+                                                'PROJECTED_Y'])
             sub.prop(linestyle, "integration_type", text="")
             row = col.row(align=True)
             row.prop(linestyle, "sort_order", expand=True)
@@ -798,7 +799,7 @@ class RENDERLAYER_PT_freestyle_linestyle(RenderLayerFreestyleEditorButtonsPanel,
 
 # Material properties
 
-class MaterialFreestyleButtonsPanel:
+class MaterialFreestyleButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "material"
@@ -815,8 +816,8 @@ class MaterialFreestyleButtonsPanel:
 
 class MATERIAL_PT_freestyle_line(MaterialFreestyleButtonsPanel, Panel):
     bl_label = "Freestyle Line"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout

@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import bpy
 
 
 def main(context):
     for ob in context.scene.objects:
-        print(ob)
+        print ob
 
 
 class SimpleOperator(bpy.types.Operator):
@@ -17,7 +18,7 @@ class SimpleOperator(bpy.types.Operator):
 
     def execute(self, context):
         main(context)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 def register():

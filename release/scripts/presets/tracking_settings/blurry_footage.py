@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 settings = bpy.context.edit_movieclip.tracking.settings
 

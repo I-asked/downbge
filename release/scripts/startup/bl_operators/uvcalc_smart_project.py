@@ -17,10 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # TODO <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 
 from mathutils import Matrix, Vector, geometry
 import bpy
 from bpy.types import Operator
+from itertools import imap
 
 DEG_TO_RAD = 0.017453292519943295 # pi/180.0
 SMALL_NUM = 0.00000001  # see bug [#31598] why we dont have smaller values
@@ -128,7 +131,7 @@ def island2Edge(island):
     unique_points= {}
 
     for f in island:
-        f_uvkey= map(tuple, f.uv)
+        f_uvkey= imap(tuple, f.uv)
 
 
         for vIdx, edkey in enumerate(f.edge_keys):
@@ -543,7 +546,7 @@ def getUvIslands(faceGroups, me):
             ok = True
             while ok:
                 ok= False
-                for i in range(len(faces)):
+                for i in xrange(len(faces)):
                     if face_modes[i] == 1: # search
                         for ed_key in faces[i].edge_keys:
                             for ii in edge_users[ed_key]:
@@ -557,7 +560,7 @@ def getUvIslands(faceGroups, me):
             islandList.append(newIsland)
 
             ok = False
-            for i in range(len(faces)):
+            for i in xrange(len(faces)):
                 if face_modes[i] == 0:
                     newIsland = []
                     newIsland.append(faces[i])
@@ -670,7 +673,7 @@ def VectoQuat(vec):
     return vec.to_track_quat('Z', 'X' if abs(vec.x) > 0.5 else 'Y').inverted()
 
 
-class thickface:
+class thickface(object):
     __slost__= "v", "uv", "no", "area", "edge_keys"
     def __init__(self, face, uv_layer, mesh_verts):
         self.v = [mesh_verts[i] for i in face.vertices]
@@ -865,7 +868,7 @@ def main(context,
             # If theres none there then start with the largest face
 
             # add all the faces that are close.
-            for fIdx in range(len(tempMeshFaces)-1, -1, -1):
+            for fIdx in xrange(len(tempMeshFaces)-1, -1, -1):
                 # Use half the angle limit so we don't overweight faces towards this
                 # normal and hog all the faces.
                 if newProjectVec.dot(tempMeshFaces[fIdx].no) > USER_PROJECTION_LIMIT_HALF_CONVERTED:
@@ -892,7 +895,7 @@ def main(context,
             mostUniqueAngle = 1.0 # 1.0 is 0d. no difference.
             mostUniqueIndex = 0 # dummy
 
-            for fIdx in range(len(tempMeshFaces)-1, -1, -1):
+            for fIdx in xrange(len(tempMeshFaces)-1, -1, -1):
                 angleDifference = -1.0 # 180d difference.
 
                 # Get the closest vec angle we are to.
@@ -927,11 +930,11 @@ def main(context,
             Draw.PupMenu('error, no projection vecs where generated, 0 area faces can cause this.')
             return
 
-        faceProjectionGroupList =[[] for i in range(len(projectVecs)) ]
+        faceProjectionGroupList =[[] for i in xrange(len(projectVecs)) ]
 
         # MAP and Arrange # We know there are 3 or 4 faces here
 
-        for fIdx in range(len(meshFaces)-1, -1, -1):
+        for fIdx in xrange(len(meshFaces)-1, -1, -1):
             fvec = meshFaces[fIdx].no
             i = len(projectVecs)
 
@@ -955,7 +958,7 @@ def main(context,
 
 
         # Now faceProjectionGroupList is full of faces that face match the project Vecs list
-        for i in range(len(projectVecs)):
+        for i in xrange(len(projectVecs)):
             # Account for projectVecs having no faces.
             if not faceProjectionGroupList[i]:
                 continue
@@ -989,7 +992,7 @@ def main(context,
 #XXX        Window.DrawProgressBar(0.9, "Box Packing for all objects...")
         packIslands(collected_islandList)
 
-    print("Smart Projection time: %.2f" % (time.time() - time1))
+    print "Smart Projection time: %.2f" % (time.time() - time1)
     # Window.DrawProgressBar(0.9, "Smart Projections done, time: %.2f sec" % (time.time() - time1))
 
     # aspect correction is only done in edit mode - and only smart unwrap supports currently
@@ -1048,7 +1051,7 @@ class SmartProject(Operator):
     """to unwrap selected faces, or all faces)"""
     bl_idname = "uv.smart_project"
     bl_label = "Smart UV Project"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     angle_limit = FloatProperty(
             name="Angle Limit",
@@ -1085,7 +1088,7 @@ class SmartProject(Operator):
              self.user_area_weight,
              self.use_aspect
              )
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         wm = context.window_manager

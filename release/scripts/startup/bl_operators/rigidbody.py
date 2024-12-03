@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import IntProperty
@@ -28,7 +30,7 @@ class CopyRigidbodySettings(Operator):
     '''Copy Rigid Body settings from active object to selected'''
     bl_idname = "rigidbody.object_settings_copy"
     bl_label = "Copy Rigid Body Settings"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     _attrs = (
         "type",
@@ -81,14 +83,14 @@ class CopyRigidbodySettings(Operator):
                 for attr in self._attrs:
                     setattr(rb_to, attr, getattr(rb_from, attr))
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class BakeToKeyframes(Operator):
     '''Bake rigid body transformations of selected objects to keyframes'''
     bl_idname = "rigidbody.bake_to_keyframes"
     bl_label = "Bake To Keyframes"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     frame_start = IntProperty(
             name="Start Frame",
@@ -119,8 +121,8 @@ class BakeToKeyframes(Operator):
         objects = []
         scene = context.scene
         frame_orig = scene.frame_current
-        frames_step = range(self.frame_start, self.frame_end + 1, self.step)
-        frames_full = range(self.frame_start, self.frame_end + 1)
+        frames_step = xrange(self.frame_start, self.frame_end + 1, self.step)
+        frames_full = xrange(self.frame_start, self.frame_end + 1)
 
         # filter objects selection
         for obj in context.selected_objects:
@@ -197,7 +199,7 @@ class BakeToKeyframes(Operator):
             # return to the frame we started on
             scene.frame_set(frame_orig)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         scene = context.scene
@@ -212,7 +214,7 @@ class ConnectRigidBodies(Operator):
     '''Create rigid body constraints between selected rigid bodies'''
     bl_idname = "rigidbody.connect"
     bl_label = "Connect Rigid Bodies"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     con_type = EnumProperty(
             name="Type",
@@ -290,7 +292,7 @@ class ConnectRigidBodies(Operator):
                 last_obj = objects_tmp.pop(0)
                 objs_sorted.append(last_obj)
 
-            for i in range(1, len(objs_sorted)):
+            for i in xrange(1, len(objs_sorted)):
                 self._add_constraint(context, objs_sorted[i - 1], objs_sorted[i])
                 change = True
 
@@ -305,7 +307,7 @@ class ConnectRigidBodies(Operator):
             for obj in objects:
                 obj.select = True
             scene.objects.active = obj_act
-            return {'FINISHED'}
+            return set(['FINISHED'])
         else:
-            self.report({'WARNING'}, "No other objects selected")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "No other objects selected")
+            return set(['CANCELLED'])

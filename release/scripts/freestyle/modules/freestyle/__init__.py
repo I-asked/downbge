@@ -34,4 +34,5 @@ Submodules:
 
 
 # module members
+from __future__ import absolute_import
 from . import chainingiterators, functions, predicates, shaders, types, utils

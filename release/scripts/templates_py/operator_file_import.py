@@ -1,16 +1,18 @@
+from __future__ import absolute_import
 import bpy
+from io import open
 
 
 def read_some_data(context, filepath, use_some_setting):
-    print("running read_some_data...")
+    print "running read_some_data..."
     f = open(filepath, 'r', encoding='utf-8')
     data = f.read()
     f.close()
 
     # would normally load the data here
-    print(data)
+    print data
 
-    return {'FINISHED'}
+    return set(['FINISHED'])
 
 
 # ImportHelper is a helper class, defines filename and
@@ -30,7 +32,7 @@ class ImportSomeData(Operator, ImportHelper):
 
     filter_glob = StringProperty(
             default="*.txt",
-            options={'HIDDEN'},
+            options=set(['HIDDEN']),
             )
 
     # List of operator properties, the attributes will be assigned

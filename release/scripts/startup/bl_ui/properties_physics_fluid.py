@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Panel, Menu
 from bpy.app.translations import pgettext_iface as iface_
@@ -29,7 +30,7 @@ class FLUID_MT_presets(Menu):
     draw = Menu.draw_preset
 
 
-class PhysicButtonsPanel:
+class PhysicButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -56,11 +57,11 @@ class PHYSICS_PT_fluid(PhysicButtonsPanel, Panel):
             return
 
         col.prop(fluid, "type")
-        if fluid.type not in {'NONE', 'DOMAIN', 'PARTICLE', 'FLUID', 'OBSTACLE'}:
+        if fluid.type not in set(['NONE', 'DOMAIN', 'PARTICLE', 'FLUID', 'OBSTACLE']):
             col.prop(fluid, "use")
 
         layout = layout.column()
-        if fluid.type not in {'NONE', 'DOMAIN', 'PARTICLE', 'FLUID', 'OBSTACLE'}:
+        if fluid.type not in set(['NONE', 'DOMAIN', 'PARTICLE', 'FLUID', 'OBSTACLE']):
             layout.active = fluid.use
 
         if fluid.type == 'DOMAIN':
@@ -204,7 +205,7 @@ class PHYSICS_PT_fluid(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_domain_gravity(PhysicButtonsPanel, Panel):
     bl_label = "Fluid World"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -257,7 +258,7 @@ class PHYSICS_PT_domain_gravity(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_domain_boundary(PhysicButtonsPanel, Panel):
     bl_label = "Fluid Boundary"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -287,7 +288,7 @@ class PHYSICS_PT_domain_boundary(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_domain_particles(PhysicButtonsPanel, Panel):
     bl_label = "Fluid Particles"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):

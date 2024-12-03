@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 import nodeitems_utils
 from bpy.types import Header, Menu, Panel
@@ -58,7 +59,7 @@ class NODE_HT_header(Header):
                 # disable material slot buttons when pinned, cannot find correct slot within id_from (#36589)
                 row.enabled = not snode.pin
                 # Show material.new when no active ID/slot exists
-                if not id_from and ob.type in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'METABALL'}:
+                if not id_from and ob.type in set(['MESH', 'CURVE', 'SURFACE', 'FONT', 'METABALL']):
                     row.template_ID(ob, "active_material", new="material.new")
                 # Material ID, but not for Lamps
                 if id_from and ob.type != 'LAMP':
@@ -311,7 +312,7 @@ class NODE_PT_active_node_color(Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Color"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -433,7 +434,7 @@ class NODE_UL_interface_sockets(bpy.types.UIList):
         socket = item
         color = socket.draw_color(context)
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             row = layout.row(align=True)
 
             # inputs get icon on the left
@@ -467,7 +468,7 @@ class NODE_PT_grease_pencil(GreasePencilDataPanel, Panel):
 class NODE_PT_grease_pencil_tools(GreasePencilToolsPanel, Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     # NOTE: this is just a wrapper around the generic GP tools panel
     # It contains access to some essential tools usually found only in

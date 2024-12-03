@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 from bpy.props import IntProperty, FloatProperty
 
@@ -16,13 +17,13 @@ class ModalOperator(bpy.types.Operator):
             context.object.location.x = self.first_value + delta * 0.01
 
         elif event.type == 'LEFTMOUSE':
-            return {'FINISHED'}
+            return set(['FINISHED'])
 
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+        elif event.type in set(['RIGHTMOUSE', 'ESC']):
             context.object.location.x = self.first_value
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def invoke(self, context, event):
         if context.object:
@@ -30,10 +31,10 @@ class ModalOperator(bpy.types.Operator):
             self.first_value = context.object.location.x
 
             context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
+            return set(['RUNNING_MODAL'])
         else:
-            self.report({'WARNING'}, "No active object, could not finish")
-            return {'CANCELLED'}
+            self.report(set(['WARNING']), "No active object, could not finish")
+            return set(['CANCELLED'])
 
 
 def register():

@@ -23,6 +23,7 @@
 #             independently from the 3D topology of objects,
 #             and, second, so as to chain several times the same ViewEdge.
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import pySketchyChainingIterator
 from freestyle.predicates import (
     QuantitativeInvisibilityUP1D,

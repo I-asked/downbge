@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel
 
@@ -37,7 +38,7 @@ class CLOTH_MT_presets(Menu):
     draw = Menu.draw_preset
 
 
-class PhysicButtonsPanel:
+class PhysicButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "physics"
@@ -112,7 +113,7 @@ class PHYSICS_PT_cloth(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_cloth_cache(PhysicButtonsPanel, Panel):
     bl_label = "Cloth Cache"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         md = context.cloth
@@ -121,7 +122,7 @@ class PHYSICS_PT_cloth_cache(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_cloth_collision(PhysicButtonsPanel, Panel):
     bl_label = "Cloth Collision"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         cloth = context.cloth.collision_settings
@@ -160,7 +161,7 @@ class PHYSICS_PT_cloth_collision(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_cloth_stiffness(PhysicButtonsPanel, Panel):
     bl_label = "Cloth Stiffness Scaling"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         cloth = context.cloth.settings
@@ -192,7 +193,7 @@ class PHYSICS_PT_cloth_stiffness(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_cloth_sewing(PhysicButtonsPanel, Panel):
     bl_label = "Cloth Sewing Springs"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_header(self, context):
         cloth = context.cloth.settings
@@ -225,7 +226,7 @@ class PHYSICS_PT_cloth_sewing(PhysicButtonsPanel, Panel):
 
 class PHYSICS_PT_cloth_field_weights(PhysicButtonsPanel, Panel):
     bl_label = "Cloth Field Weights"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         cloth = context.cloth.settings

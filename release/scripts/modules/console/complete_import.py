@@ -41,6 +41,7 @@ changes have been made:
 """
 
 
+from __future__ import absolute_import
 import os
 import sys
 
@@ -114,8 +115,8 @@ def module_list(path):
     folder_list = [
             p for p in folder_list
             if (os.path.exists(os.path.join(path, p, '__init__.py')) or
-                p[-3:] in {'.py', '.so'} or
-                p[-4:] in {'.pyc', '.pyo', '.pyd'})]
+                p[-3:] in set(['.py', '.so']) or
+                p[-4:] in set(['.pyc', '.pyo', '.pyd']))]
 
     folder_list = [os.path.basename(p).split('.')[0] for p in folder_list]
     return folder_list

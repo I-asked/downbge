@@ -21,6 +21,7 @@
 #  Date     : 12/08/2004
 #  Purpose  : Smooth lines using an anisotropic diffusion scheme
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import ChainPredicateIterator
 from freestyle.predicates import (
     AndUP1D,

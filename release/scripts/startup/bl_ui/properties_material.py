@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel, UIList
 from rna_prop_ui import PropertyPanel
@@ -76,7 +77,7 @@ class MATERIAL_UL_matslots(UIList):
         # ob = data
         slot = item
         ma = slot.material
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             if ma:
                 layout.prop(ma, "name", text="", emboss=False, icon_value=icon)
             else:
@@ -92,7 +93,7 @@ class MATERIAL_UL_matslots(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class MaterialButtonsPanel:
+class MaterialButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "material"
@@ -105,8 +106,8 @@ class MaterialButtonsPanel:
 
 class MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
     bl_label = ""
-    bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['HIDE_HEADER'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -181,7 +182,7 @@ class MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_preview(MaterialButtonsPanel, Panel):
     bl_label = "Preview"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     def draw(self, context):
         self.layout.template_preview(context.material)
@@ -189,20 +190,20 @@ class MATERIAL_PT_preview(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_pipeline(MaterialButtonsPanel, Panel):
     bl_label = "Render Pipeline Options"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return mat and (not simple_material(mat)) and (mat.type in {'SURFACE', 'WIRE', 'VOLUME'}) and (engine in cls.COMPAT_ENGINES)
+        return mat and (not simple_material(mat)) and (mat.type in set(['SURFACE', 'WIRE', 'VOLUME'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self. layout
 
         mat = context.material
-        mat_type = mat.type in {'SURFACE', 'WIRE'}
+        mat_type = mat.type in set(['SURFACE', 'WIRE'])
 
         row = layout.row()
         row.active = mat_type
@@ -243,13 +244,13 @@ class MATERIAL_PT_pipeline(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
     bl_label = "Diffuse"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -300,13 +301,13 @@ class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
     bl_label = "Specular"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -326,7 +327,7 @@ class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
         col.prop(mat, "use_specular_ramp", text="Ramp")
 
         col = layout.column()
-        if mat.specular_shader in {'COOKTORR', 'PHONG'}:
+        if mat.specular_shader in set(['COOKTORR', 'PHONG']):
             col.prop(mat, "specular_hardness", text="Hardness")
         elif mat.specular_shader == 'BLINN':
             row = col.row()
@@ -353,20 +354,20 @@ class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
     bl_label = "Shading"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
 
         mat = active_node_mat(context.material)
 
-        if mat.type in {'SURFACE', 'WIRE'}:
+        if mat.type in set(['SURFACE', 'WIRE']):
             split = layout.split()
 
             col = split.column()
@@ -387,13 +388,13 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_transp(MaterialButtonsPanel, Panel):
     bl_label = "Transparency"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw_header(self, context):
         mat = context.material
@@ -452,14 +453,14 @@ class MATERIAL_PT_transp(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_mirror(MaterialButtonsPanel, Panel):
     bl_label = "Mirror"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw_header(self, context):
         raym = active_node_mat(context.material).raytrace_mirror
@@ -510,14 +511,14 @@ class MATERIAL_PT_mirror(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_sss(MaterialButtonsPanel, Panel):
     bl_label = "Subsurface Scattering"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw_header(self, context):
         mat = active_node_mat(context.material)
@@ -562,7 +563,7 @@ class MATERIAL_PT_sss(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_halo(MaterialButtonsPanel, Panel):
     bl_label = "Halo"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -615,7 +616,7 @@ class MATERIAL_PT_halo(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_flare(MaterialButtonsPanel, Panel):
     bl_label = "Flare"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -650,7 +651,7 @@ class MATERIAL_PT_flare(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_game_settings(MaterialButtonsPanel, Panel):
     bl_label = "Game Settings"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -675,7 +676,7 @@ class MATERIAL_PT_game_settings(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_physics(MaterialButtonsPanel, Panel):
     bl_label = "Physics"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     def draw_header(self, context):
         game = context.material.game_settings
@@ -710,14 +711,14 @@ class MATERIAL_PT_physics(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
     bl_label = "Strand"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return mat and (mat.type in {'SURFACE', 'WIRE', 'HALO'}) and (engine in cls.COMPAT_ENGINES)
+        return mat and (mat.type in set(['SURFACE', 'WIRE', 'HALO'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -757,13 +758,13 @@ class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_options(MaterialButtonsPanel, Panel):
     bl_label = "Options"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -808,14 +809,14 @@ class MATERIAL_PT_options(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_shadow(MaterialButtonsPanel, Panel):
     bl_label = "Shadow"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
         mat = context.material
         engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+        return check_material(mat) and (mat.type in set(['SURFACE', 'WIRE'])) and (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -858,8 +859,8 @@ class MATERIAL_PT_shadow(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_transp_game(MaterialButtonsPanel, Panel):
     bl_label = "Transparency"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+    bl_options = set(['DEFAULT_CLOSED'])
+    COMPAT_ENGINES = set(['BLENDER_GAME'])
 
     @classmethod
     def poll(cls, context):
@@ -888,11 +889,11 @@ class MATERIAL_PT_transp_game(MaterialButtonsPanel, Panel):
         layout.prop(mat, "specular_alpha", text="Specular")
 
 
-class VolumeButtonsPanel:
+class VolumeButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "material"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -903,7 +904,7 @@ class VolumeButtonsPanel:
 
 class MATERIAL_PT_volume_density(VolumeButtonsPanel, Panel):
     bl_label = "Density"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -917,7 +918,7 @@ class MATERIAL_PT_volume_density(VolumeButtonsPanel, Panel):
 
 class MATERIAL_PT_volume_shading(VolumeButtonsPanel, Panel):
     bl_label = "Shading"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -942,7 +943,7 @@ class MATERIAL_PT_volume_shading(VolumeButtonsPanel, Panel):
 
 class MATERIAL_PT_volume_lighting(VolumeButtonsPanel, Panel):
     bl_label = "Lighting"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -962,7 +963,7 @@ class MATERIAL_PT_volume_lighting(VolumeButtonsPanel, Panel):
             sub = col.column()
             sub.active = vol.use_light_cache
             sub.prop(vol, "cache_resolution")
-        elif vol.light_method in {'MULTIPLE_SCATTERING', 'SHADED_PLUS_MULTIPLE_SCATTERING'}:
+        elif vol.light_method in set(['MULTIPLE_SCATTERING', 'SHADED_PLUS_MULTIPLE_SCATTERING']):
             sub = col.column()
             sub.enabled = True
             sub.active = False
@@ -977,7 +978,7 @@ class MATERIAL_PT_volume_lighting(VolumeButtonsPanel, Panel):
 
 class MATERIAL_PT_volume_transp(VolumeButtonsPanel, Panel):
     bl_label = "Transparency"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     @classmethod
     def poll(cls, context):
@@ -995,7 +996,7 @@ class MATERIAL_PT_volume_transp(VolumeButtonsPanel, Panel):
 
 class MATERIAL_PT_volume_integration(VolumeButtonsPanel, Panel):
     bl_label = "Integration"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER'])
 
     def draw(self, context):
         layout = self.layout
@@ -1017,8 +1018,8 @@ class MATERIAL_PT_volume_integration(VolumeButtonsPanel, Panel):
 
 class MATERIAL_PT_volume_options(VolumeButtonsPanel, Panel):
     bl_label = "Options"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1048,7 +1049,7 @@ class MATERIAL_PT_volume_options(VolumeButtonsPanel, Panel):
 
 
 class MATERIAL_PT_custom_props(MaterialButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = set(['BLENDER_RENDER', 'BLENDER_GAME'])
     _context_path = "material"
     _property_type = bpy.types.Material
 

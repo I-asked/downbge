@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 
@@ -28,7 +29,7 @@ class MeshMirrorUV(Operator):
     """Copy mirror UV coordinates on the X axis based on a mirrored mesh"""
     bl_idname = "mesh.faces_mirror_uv"
     bl_label = "Copy Mirrored UV coords"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     direction = EnumProperty(
             name="Axis Direction",
@@ -109,7 +110,7 @@ class MeshMirrorUV(Operator):
             # Preparing next step finding matching polys.
             mirror_pm[tuple(sorted(vidxs[i]))] = i
 
-        for i in range(nbr_polys):
+        for i in xrange(nbr_polys):
             # Find matching mirror poly.
             tvidxs = [vmap.get(j) for j in vidxs[i]]
             if None not in tvidxs:
@@ -135,7 +136,7 @@ class MeshMirrorUV(Operator):
             v2 = tuple(vmap[k] for k in vidxs[i])
 
             if len(v1) == len(v2):
-                for k in range(len(v1)):
+                for k in xrange(len(v1)):
                     k_map = v1.index(v2[k])
                     uv1[k].xy = - (uv2[k_map].x - 0.5) + 0.5, uv2[k_map].y
 
@@ -143,8 +144,8 @@ class MeshMirrorUV(Operator):
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
 
         if double_warn:
-            self.report({'WARNING'},
+            self.report(set(['WARNING']),
                         "%d duplicates found, mirror may be incomplete" %
                         double_warn)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

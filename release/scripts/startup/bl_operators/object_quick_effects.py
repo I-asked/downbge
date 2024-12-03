@@ -18,6 +18,8 @@
 
 # <pep8-80 compliant>
 
+from __future__ import division
+from __future__ import absolute_import
 from mathutils import Vector
 import bpy
 from bpy.types import Operator
@@ -50,7 +52,7 @@ def object_ensure_material(obj, mat_name):
 class QuickFur(Operator):
     bl_idname = "object.quick_fur"
     bl_label = "Quick Fur"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     density = EnumProperty(
             name="Fur Density",
@@ -78,8 +80,8 @@ class QuickFur(Operator):
                         if obj.type == 'MESH' and obj.mode == 'OBJECT']
 
         if not mesh_objects:
-            self.report({'ERROR'}, "Select at least one mesh object")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Select at least one mesh object")
+            return set(['CANCELLED'])
 
         mat = bpy.data.materials.new("Fur Material")
         mat.strand.tip_size = 0.25
@@ -108,13 +110,13 @@ class QuickFur(Operator):
             obj.data.materials.append(mat)
             psys.settings.material = len(obj.data.materials)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class QuickExplode(Operator):
     bl_idname = "object.quick_explode"
     bl_label = "Quick Explode"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     style = EnumProperty(
             name="Explode Style",
@@ -166,28 +168,28 @@ class QuickExplode(Operator):
         obj_act = context.active_object
 
         if obj_act is None or obj_act.type != 'MESH':
-            self.report({'ERROR'}, "Active object is not a mesh")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Active object is not a mesh")
+            return set(['CANCELLED'])
 
         mesh_objects = [obj for obj in context.selected_objects
                         if obj.type == 'MESH' and obj != obj_act]
         mesh_objects.insert(0, obj_act)
 
         if self.style == 'BLEND' and len(mesh_objects) != 2:
-            self.report({'ERROR'}, "Select two mesh objects")
+            self.report(set(['ERROR']), "Select two mesh objects")
             self.style = 'EXPLODE'
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
         elif not mesh_objects:
-            self.report({'ERROR'}, "Select at least one mesh object")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Select at least one mesh object")
+            return set(['CANCELLED'])
 
         for obj in mesh_objects:
             if obj.particle_systems:
-                self.report({'ERROR'},
+                self.report(set(['ERROR']),
                             "Object %r already has a "
                             "particle system" % obj.name)
 
-                return {'CANCELLED'}
+                return set(['CANCELLED'])
 
         if self.fade:
             tex = bpy.data.textures.new("Explode fade", 'BLEND')
@@ -272,7 +274,7 @@ class QuickExplode(Operator):
                 settings.factor_random = self.velocity
                 settings.angular_velocity_factor = self.velocity / 10.0
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
     def invoke(self, context, event):
         self.frame_start = context.scene.frame_current
@@ -281,7 +283,7 @@ class QuickExplode(Operator):
 
 
 def obj_bb_minmax(obj, min_co, max_co):
-    for i in range(0, 8):
+    for i in xrange(0, 8):
         bb_vec = obj.matrix_world * Vector(obj.bound_box[i])
 
         min_co[0] = min(bb_vec[0], min_co[0])
@@ -299,7 +301,7 @@ def grid_location(x, y):
 class QuickSmoke(Operator):
     bl_idname = "object.quick_smoke"
     bl_label = "Quick Smoke"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     style = EnumProperty(
             name="Smoke Style",
@@ -324,8 +326,8 @@ class QuickSmoke(Operator):
         max_co = -min_co
 
         if not mesh_objects:
-            self.report({'ERROR'}, "Select at least one mesh object")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Select at least one mesh object")
+            return set(['CANCELLED'])
 
         for obj in mesh_objects:
             fake_context["object"] = obj
@@ -388,7 +390,7 @@ class QuickSmoke(Operator):
             links.new(node_add_shader_1.outputs["Shader"],
                     node_out.inputs["Volume"])
 
-            if self.style in {'SMOKE', 'FIRE', 'BOTH'}:
+            if self.style in set(['SMOKE', 'FIRE', 'BOTH']):
                 # Smoke
 
                 # Add shader 2
@@ -435,7 +437,7 @@ class QuickSmoke(Operator):
                 links.new(node_attrib_color.outputs["Color"],
                         node_absorption.inputs["Color"])
 
-            if self.style in {'FIRE', 'BOTH'}:
+            if self.style in set(['FIRE', 'BOTH']):
                 # Fire
 
                 # Emission
@@ -528,13 +530,13 @@ class QuickSmoke(Operator):
             mat.texture_slots[1].use_map_emission = True
             mat.texture_slots[1].emission_factor = 5
 
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 class QuickFluid(Operator):
     bl_idname = "object.quick_fluid"
     bl_label = "Quick Fluid"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = set(['REGISTER', 'UNDO'])
 
     style = EnumProperty(
             name="Fluid Style",
@@ -569,8 +571,8 @@ class QuickFluid(Operator):
         max_co = -min_co
 
         if not mesh_objects:
-            self.report({'ERROR'}, "Select at least one mesh object")
-            return {'CANCELLED'}
+            self.report(set(['ERROR']), "Select at least one mesh object")
+            return set(['CANCELLED'])
 
         for obj in mesh_objects:
             fake_context["object"] = obj
@@ -635,4 +637,4 @@ class QuickFluid(Operator):
         if self.start_baking:
             bpy.ops.fluid.bake('INVOKE_DEFAULT')
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

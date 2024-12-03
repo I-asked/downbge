@@ -18,7 +18,9 @@
 
 # <pep8 compliant>
 
+from __future__ import absolute_import
 import bpy
+from io import open
 
 header = '''
 digraph ancestors           {
@@ -62,10 +64,10 @@ def graph_armature(obj, filepath, FAKE_PARENT=True, CONSTRAINTS=True, DRIVERS=Tr
 
     bones = [bone.name for bone in arm.bones]
     bones.sort()
-    print("")
+    print ""
     for bone in bones:
         b = arm.bones[bone]
-        print(">>", bone, ["*>", "->"][b.use_connect], getattr(getattr(b, "parent", ""), "name", ""))
+        print ">>", bone, ["*>", "->"][b.use_connect], getattr(getattr(b, "parent", ""), "name", "")
         label = [bone]
         bone = arm.bones[bone]
 
@@ -176,7 +178,7 @@ def graph_armature(obj, filepath, FAKE_PARENT=True, CONSTRAINTS=True, DRIVERS=Tr
     import sys
     sys.stdout.flush()
     '''
-    print("\nSaved:", filepath)
+    print "\nSaved:", filepath
     return True
 
 if __name__ == "__main__":

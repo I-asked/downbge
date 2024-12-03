@@ -5,6 +5,7 @@
 # * External text modules are supported as long as they are at
 #   the same location as the blendfile or one of its libraries.
 
+from __future__ import absolute_import
 import bge
 
 # variables defined here will only be set once when the

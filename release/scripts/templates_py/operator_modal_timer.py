@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 
 
@@ -9,9 +10,9 @@ class ModalTimerOperator(bpy.types.Operator):
     _timer = None
 
     def modal(self, context, event):
-        if event.type in {'RIGHTMOUSE', 'ESC'}:
+        if event.type in set(['RIGHTMOUSE', 'ESC']):
             self.cancel(context)
-            return {'CANCELLED'}
+            return set(['CANCELLED'])
 
         if event.type == 'TIMER':
             # change theme color, silly!
@@ -19,13 +20,13 @@ class ModalTimerOperator(bpy.types.Operator):
             color.s = 1.0
             color.h += 0.01
 
-        return {'PASS_THROUGH'}
+        return set(['PASS_THROUGH'])
 
     def execute(self, context):
         wm = context.window_manager
         self._timer = wm.event_timer_add(0.1, context.window)
         wm.modal_handler_add(self)
-        return {'RUNNING_MODAL'}
+        return set(['RUNNING_MODAL'])
 
     def cancel(self, context):
         wm = context.window_manager

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 material = (bpy.context.material.active_node_material if bpy.context.material.active_node_material else bpy.context.material)
 

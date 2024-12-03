@@ -22,6 +22,8 @@
 # XXX: This script is meant to be used from inside Blender!
 #      You should not directly use this script, rather use update_msg.py!
 
+from __future__ import with_statement
+from __future__ import absolute_import
 import collections
 import copy
 import datetime
@@ -33,6 +35,7 @@ import sys
 from bl_i18n_utils import settings as settings_i18n, utils
 
 import bpy
+from io import open
 
 ##### Utils #####
 
@@ -45,8 +48,8 @@ def init_spell_check(settings, lang="en_US"):
     try:
         from bl_i18n_utils import utils_spell_check
         return utils_spell_check.SpellChecker(settings, lang)
-    except Exception as e:
-        print("Failed to import utils_spell_check ({})".format(str(e)))
+    except Exception, e:
+        print "Failed to import utils_spell_check ({})".format(str(e))
         return None
 
 
@@ -214,20 +217,19 @@ def dump_rna_messages(msgs, reports, settings, verbose=False):
     Dump into messages dict all RNA-defined UI messages (labels en tooltips).
     """
     def class_blacklist():
-        blacklist_rna_class = {getattr(bpy.types, cls_id) for cls_id in (
+        blacklist_rna_class = set(getattr(bpy.types, cls_id) for cls_id in (
                 # core classes
                 "Context", "Event", "Function", "UILayout", "UnknownType", "Property", "Struct",
                 # registerable classes
                 "Panel", "Menu", "Header", "RenderEngine", "Operator", "OperatorMacro", "Macro", "KeyingSetInfo",
                 # window classes
                 "Window",
-            )
-        }
+            ))
 
         # More builtin classes we don't need to parse.
-        blacklist_rna_class |= {cls for cls in bpy.types.Property.__subclasses__()}
+        blacklist_rna_class |= set(cls for cls in bpy.types.Property.__subclasses__())
 
-        _rna = {getattr(bpy.types, cls) for cls in dir(bpy.types)}
+        _rna = set(getattr(bpy.types, cls) for cls in dir(bpy.types))
 
         # Classes which are attached to collections can be skipped too, these are api access only.
         for cls in _rna:
@@ -248,17 +250,17 @@ def dump_rna_messages(msgs, reports, settings, verbose=False):
         # (we can't use only RNA identifiers, as some py-defined classes has a different name that rna id,
         # and we can't use class object themselves, because OperatorProperties subclasses are not in bpy.types!)...
 
-        _rna_clss_ids = {cls.__name__ for cls in _rna} | {cls.bl_rna.identifier for cls in _rna}
+        _rna_clss_ids = set(cls.__name__ for cls in _rna) | set(cls.bl_rna.identifier for cls in _rna)
 
         # All registrable types.
-        blacklist_rna_class |= {cls for cls in bpy.types.OperatorProperties.__subclasses__() +
+        blacklist_rna_class |= set(cls for cls in bpy.types.OperatorProperties.__subclasses__() +
                                                bpy.types.Operator.__subclasses__() +
                                                bpy.types.OperatorMacro.__subclasses__() +
                                                bpy.types.Header.__subclasses__() +
                                                bpy.types.Panel.__subclasses__() +
                                                bpy.types.Menu.__subclasses__() +
                                                bpy.types.UIList.__subclasses__()
-                                    if cls.__name__ not in _rna_clss_ids}
+                                    if cls.__name__ not in _rna_clss_ids)
 
         # Collect internal operators
         # extend with all internal operators
@@ -379,11 +381,11 @@ def dump_rna_messages(msgs, reports, settings, verbose=False):
                 bl_rna = bl_rna.base
             return cls_id
         if verbose:
-            print(cls_list)
+            print cls_list
         cls_list.sort(key=full_class_id)
         for cls in cls_list:
             if verbose:
-                print(cls)
+                print cls
             reports["rna_structs"].append(cls)
             # Ignore those Operator sub-classes (anyway, will get the same from OperatorProperties sub-classes!)...
             if (cls in blacklist_rna_class) or issubclass(cls, bpy.types.Operator):
@@ -475,7 +477,7 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
 
         return [_extract_string_merge(estr_ls, nds_ls) for estr_ls, nds_ls in bag]
 
-    i18n_ctxt_ids = {v for v in bpy.app.translations.contexts_C_to_py.values()}
+    i18n_ctxt_ids = set(v for v in bpy.app.translations.contexts_C_to_py.values())
     def _ctxt_to_ctxt(node):
         # We must try, to some extend, to get contexts from vars instead of only literal strings...
         ctxt = extract_strings(node)[0]
@@ -500,10 +502,10 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
             op = getattr(op, n)
         try:
             return op.get_rna().bl_rna.translation_context
-        except Exception as e:
+        except Exception, e:
             default_op_context = i18n_contexts.operator_default
-            print("ERROR: ", str(e))
-            print("       Assuming default operator context '{}'".format(default_op_context))
+            print "ERROR: ", str(e)
+            print "       Assuming default operator context '{}'".format(default_op_context)
             return default_op_context
 
     # Gather function names.
@@ -578,9 +580,9 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
     # Break recursive nodes look up on some kind of nodes.
     # E.g. we don't want to get strings inside subscripts (blah["foo"])!
     #      we don't want to get strings from comparisons (foo.type == 'BAR').
-    stopper_nodes = {ast.Subscript, ast.Compare}
+    stopper_nodes = set([ast.Subscript, ast.Compare])
     # Consider strings separate: ("a" if test else "b")
-    separate_nodes = {ast.IfExp}
+    separate_nodes = set([ast.IfExp])
 
     check_ctxt_py = None
     if reports["check_ctxt"]:
@@ -655,7 +657,7 @@ def dump_py_messages_from_files(msgs, reports, files, settings):
                     for estr, nds in estr_lst:
                         if estr:
                             if nds:
-                                msgsrc = "{}:{}".format(fp_rel, sorted({nd.lineno for nd in nds})[0])
+                                msgsrc = "{}:{}".format(fp_rel, sorted(set(nd.lineno for nd in nds))[0])
                             else:
                                 msgsrc = "{}:???".format(fp_rel)
                             process_msg(msgs, msgctxt, estr, msgsrc, reports, check_ctxt_py, settings)
@@ -692,7 +694,7 @@ def dump_py_messages(msgs, reports, addons, settings, addons_only=False):
 def dump_src_messages(msgs, reports, settings):
     def get_contexts():
         """Return a mapping {C_CTXT_NAME: ctxt_value}."""
-        return {k: getattr(bpy.app.translations.contexts, n) for k, n in bpy.app.translations.contexts_C_to_py.items()}
+        return dict((k, getattr(bpy.app.translations.contexts, n)) for k, n in bpy.app.translations.contexts_C_to_py.items())
 
     contexts = get_contexts()
 
@@ -712,14 +714,14 @@ def dump_src_messages(msgs, reports, settings):
                 elif '"' in _msgctxt or "'" in _msgctxt:
                     msgctxt = clean_str(_msgctxt)
                 else:
-                    print("WARNING: raw context “{}” couldn’t be resolved!".format(_msgctxt))
+                    print "WARNING: raw context “{}” couldn’t be resolved!".format(_msgctxt)
             # Message.
             msgid = ""
             if _msgid:
                 if '"' in _msgid or "'" in _msgid:
                     msgid = clean_str(_msgid)
                 else:
-                    print("WARNING: raw message “{}” couldn’t be resolved!".format(_msgid))
+                    print "WARNING: raw message “{}” couldn’t be resolved!".format(_msgid)
             return msgctxt, msgid
 
         check_ctxt_src = None
@@ -746,7 +748,7 @@ def dump_src_messages(msgs, reports, settings):
                 msgsrc = rel_path + ":" + str(line)
                 _msgid = d.get("msg_raw")
                 # First, try the "multi-contexts" stuff!
-                _msgctxts = tuple(d.get("ctxt_raw{}".format(i)) for i in range(settings.PYGETTEXT_MAX_MULTI_CTXT))
+                _msgctxts = tuple(d.get("ctxt_raw{}".format(i)) for i in xrange(settings.PYGETTEXT_MAX_MULTI_CTXT))
                 if _msgctxts[0]:
                     for _msgctxt in _msgctxts:
                         if not _msgctxt:
@@ -806,9 +808,9 @@ def dump_messages(do_messages, do_checks, settings):
 
     # Enable all wanted addons.
     # For now, enable all official addons, before extracting msgids.
-    addons = utils.enable_addons(support={"OFFICIAL"})
+    addons = utils.enable_addons(support=set(["OFFICIAL"]))
     # Note this is not needed if we have been started with factory settings, but just in case...
-    utils.enable_addons(support={"COMMUNITY", "TESTING"}, disable=True)
+    utils.enable_addons(support=set(["COMMUNITY", "TESTING"]), disable=True)
 
     reports = _gen_reports(_gen_check_ctxt(settings) if do_checks else None)
 
@@ -841,10 +843,10 @@ def dump_messages(do_messages, do_checks, settings):
     #pot.check()
 
     if do_messages:
-        print("Writing messages…")
+        print "Writing messages…"
         pot.write('PO', settings.FILE_NAME_POT)
 
-    print("Finished extracting UI messages!")
+    print "Finished extracting UI messages!"
 
     return pot  # Not used currently, but may be useful later (and to be consistent with dump_addon_messages!).
 
@@ -856,7 +858,7 @@ def dump_addon_messages(module_name, do_checks, settings):
     was_loaded = addon_utils.check(module_name)[1]
 
     # Enable our addon.
-    addon = utils.enable_addons(addons={module_name})[0]
+    addon = utils.enable_addons(addons=set([module_name]))[0]
 
     addon_info = addon_utils.module_bl_info(addon)
     ver = addon_info["name"] + " " + ".".join(str(v) for v in addon_info["version"])
@@ -874,23 +876,23 @@ def dump_addon_messages(module_name, do_checks, settings):
     minus_check_ctxt = _gen_check_ctxt(settings) if do_checks else None
 
     # Get strings from RNA, our addon being enabled.
-    print("A")
+    print "A"
     reports = _gen_reports(check_ctxt)
-    print("B")
+    print "B"
     dump_rna_messages(msgs, reports, settings)
-    print("C")
+    print "C"
 
     # Now disable our addon, and rescan RNA.
-    utils.enable_addons(addons={module_name}, disable=True)
-    print("D")
+    utils.enable_addons(addons=set([module_name]), disable=True)
+    print "D"
     reports["check_ctxt"] = minus_check_ctxt
-    print("E")
+    print "E"
     dump_rna_messages(minus_msgs, reports, settings)
-    print("F")
+    print "F"
 
     # Restore previous state if needed!
     if was_loaded:
-        utils.enable_addons(addons={module_name})
+        utils.enable_addons(addons=set([module_name]))
 
     # and make the diff!
     for key in minus_msgs:
@@ -907,12 +909,12 @@ def dump_addon_messages(module_name, do_checks, settings):
 
     # get strings from UI layout definitions text="..." args
     reports["check_ctxt"] = check_ctxt
-    dump_py_messages(msgs, reports, {addon}, settings, addons_only=True)
+    dump_py_messages(msgs, reports, set([addon]), settings, addons_only=True)
 
     pot.unescape()  # Strings gathered in py/C source code may contain escaped chars...
     print_info(reports, pot)
 
-    print("Finished extracting UI messages!")
+    print "Finished extracting UI messages!"
 
     return pot
 
@@ -921,7 +923,7 @@ def main():
     try:
         import bpy
     except ImportError:
-        print("This script must run from inside blender")
+        print "This script must run from inside blender"
         return
 
     import sys
@@ -948,5 +950,5 @@ def main():
 
 
 if __name__ == "__main__":
-    print("\n\n *** Running {} *** \n".format(__file__))
+    print "\n\n *** Running {} *** \n".format(__file__)
     main()

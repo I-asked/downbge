@@ -18,6 +18,7 @@
 
 # <pep8-80 compliant>
 
+from __future__ import absolute_import
 import bpy
 from bpy.types import Operator
 from bpy.props import (
@@ -38,7 +39,7 @@ class ConsoleExec(Operator):
     bl_label = "Console Execute"
 
     interactive = BoolProperty(
-            options={'SKIP_SAVE'},
+            options=set(['SKIP_SAVE']),
             )
 
     @classmethod
@@ -54,9 +55,8 @@ class ConsoleExec(Operator):
         if execute is not None:
             return execute(context, self.interactive)
         else:
-            print("Error: bpy.ops.console.execute_%s - not found" %
-                  sc.language)
-            return {'FINISHED'}
+            print "Error: bpy.ops.console.execute_%s - not found" % sc.language
+            return set(['FINISHED'])
 
 
 class ConsoleAutocomplete(Operator):
@@ -77,9 +77,8 @@ class ConsoleAutocomplete(Operator):
         if autocomplete:
             return autocomplete(context)
         else:
-            print("Error: bpy.ops.console.autocomplete_%s - not found" %
-                  sc.language)
-            return {'FINISHED'}
+            print "Error: bpy.ops.console.autocomplete_%s - not found" % sc.language
+            return set(['FINISHED'])
 
 
 class ConsoleCopyAsScript(Operator):
@@ -100,9 +99,8 @@ class ConsoleCopyAsScript(Operator):
         if copy_as_script:
             return copy_as_script(context)
         else:
-            print("Error: copy_as_script - not found for %r" %
-                  sc.language)
-            return {'FINISHED'}
+            print "Error: copy_as_script - not found for %r" % sc.language
+            return set(['FINISHED'])
 
 
 class ConsoleBanner(Operator):
@@ -127,9 +125,8 @@ class ConsoleBanner(Operator):
         if banner:
             return banner(context)
         else:
-            print("Error: bpy.ops.console.banner_%s - not found" %
-                  sc.language)
-            return {'FINISHED'}
+            print "Error: bpy.ops.console.banner_%s - not found" % sc.language
+            return set(['FINISHED'])
 
 
 class ConsoleLanguage(Operator):
@@ -158,4 +155,4 @@ class ConsoleLanguage(Operator):
         bpy.ops.console.history_append(text="", current_character=0,
                                        remove_duplicates=True)
 
-        return {'FINISHED'}
+        return set(['FINISHED'])

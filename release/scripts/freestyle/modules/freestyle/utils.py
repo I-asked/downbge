@@ -21,6 +21,10 @@ This module contains helper functions used for Freestyle style module
 writing.
 """
 
+from __future__ import division
+from __future__ import absolute_import
+from itertools import imap
+from itertools import izip
 __all__ = (
     "angle_x_normal",
     "bound",
@@ -82,7 +86,7 @@ class BoundedProperty(namedtuple("BoundedProperty", ["min", "max", "delta"])):
     def __new__(cls, minimum, maximum, delta=None):
         if delta is None:
             delta = abs(maximum - minimum)
-        return super().__new__(cls, minimum, maximum, delta)
+        return super(BoundedProperty, cls).__new__(cls, minimum, maximum, delta)
 
     def interpolate(self, val):
         result = (self.max - val) / self.delta
@@ -106,7 +110,7 @@ def bound(lower, x, higher):
 
 def get_strokes():
     """Get all strokes that are currently available"""
-    return tuple(map(Operators().get_stroke_from_index, range(Operators().get_strokes_size())))
+    return tuple(imap(Operators().get_stroke_from_index, xrange(Operators().get_strokes_size())))
 
 
 def is_poly_clockwise(stroke):
@@ -142,11 +146,11 @@ def bounding_box(stroke):
     """
     Returns the maximum and minimum coordinates (the bounding box) of the stroke's vertices
     """
-    x, y = zip(*(svert.point for svert in stroke))
+    x, y = izip(*(svert.point for svert in stroke))
     return (Vector((min(x), min(y))), Vector((max(x), max(y))))
 
 
-def normal_at_I0D(it: Interface0DIterator) -> Vector:
+def normal_at_I0D(it):
     """Normal at an Interface0D object. In contrast to Normal2DF0D this
        function uses the actual data instead of underlying Fedge objects.
     """
@@ -155,9 +159,9 @@ def normal_at_I0D(it: Interface0DIterator) -> Vector:
         return Vector((0, 0))
     elif it.at_last:
         it.decrement()
-        a, b = it.object, next(it)
+        a, b = it.object, it.next()
     elif it.is_begin:
-        a, b = it.object, next(it)
+        a, b = it.object, it.next()
         # give iterator back in original state
         it.decrement()
     elif it.is_end:
@@ -167,13 +171,13 @@ def normal_at_I0D(it: Interface0DIterator) -> Vector:
         # this case sometimes has a small difference with Normal2DF0D (1e-3 -ish)
         it.decrement()
         a = it.object
-        curr, b = next(it), next(it)
+        curr, b = it.next(), it.next()
         # give iterator back in original state
         it.decrement()
     return (b.point - a.point).orthogonal().normalized()
 
 
-def angle_x_normal(it: Interface0DIterator):
+def angle_x_normal(it):
     """unsigned angle between a Point's normal and the X axis, in radians"""
     normal = normal_at_I0D(it)
     return abs(atan2(normal[1], normal[0]))
@@ -205,7 +209,7 @@ def phase_to_direction(length):
     - a Vector with the values of the cosine and sine of 2pi * phase  (the direction)
     """
     results = list()
-    for i in range(length):
+    for i in xrange(length):
         phase = i / (length - 1)
         results.append((phase, Vector((cos(2 * pi * phase), sin(2 * pi * phase)))))
     return results
@@ -253,7 +257,7 @@ def simplifyDouglasPeucker(points, tolerance):
     while last:
         max_sqdist = 0
 
-        for i in range(first, last):
+        for i in xrange(first, last):
             sqdist = getSquareSegmentDistance(points[i], points[first], points[last])
 
             if sqdist > max_sqdist:
@@ -280,7 +284,7 @@ def simplify(points, tolerance):
     return simplifyDouglasPeucker(points, tolerance * tolerance)
 
 
-class BoundingBox:
+class BoundingBox(object):
     """Object representing a bounding box consisting out of 2 2D vectors"""
 
     __slots__ = (
@@ -290,7 +294,7 @@ class BoundingBox:
         "corners",
         )
 
-    def __init__(self, minimum: Vector, maximum: Vector):
+    def __init__(self, minimum, maximum):
         self.minimum = minimum
         self.maximum = maximum
         if len(minimum) != len(maximum):
@@ -304,7 +308,7 @@ class BoundingBox:
     @classmethod
     def from_sequence(cls, sequence):
         """BoundingBox from sequence of 2D or 3D Vector objects"""
-        x, y = zip(*sequence)
+        x, y = izip(*sequence)
         mini = Vector((min(x), min(y)))
         maxi = Vector((max(x), max(y)))
         return cls(mini, maxi)
@@ -366,29 +370,29 @@ def get_chain_length(ve, orientation):
 
 def find_matching_vertex(id, it):
     """Finds the matching vertex, or returns None."""
-    return next((ve for ve in it if ve.id == id), None)
+    return (ve for ve in it if ve.id == id), None.next()
 
 
 # -- helper functions for iterating -- #
 
-def pairwise(iterable, types={Stroke, StrokeVertexIterator}):
+def pairwise(iterable, types=set([Stroke, StrokeVertexIterator])):
     """Yields a tuple containing the previous and current object """
     # use .incremented() for types that support it
     if type(iterable) in types:
         it = iter(iterable)
-        return zip(it, it.incremented())
+        return izip(it, it.incremented())
     else:
         a, b = tee(iterable)
-        next(b, None)
-        return zip(a, b)
+        b, None.next()
+        return izip(a, b)
 
 
 def tripplewise(iterable):
     """Yields a tuple containing the current object and its immediate neighbors """
     a, b, c = tee(iterable)
-    next(b, None)
-    next(c, None)
-    return zip(a, b, c)
+    b, None.next()
+    c, None.next()
+    return izip(a, b, c)
 
 
 def iter_t2d_along_stroke(stroke):
@@ -500,7 +504,7 @@ def stroke_curvature(it):
             continue
         else:
             it.decrement()
-            prev, current, succ = it.object.point.copy(), next(it).point.copy(), next(it).point.copy()
+            prev, current, succ = it.object.point.copy(), it.next().point.copy(), it.next().point.copy()
             # return the iterator in an unchanged state
             it.decrement()
 
@@ -547,7 +551,7 @@ def get_test_stroke():
     stroke = Stroke()
     it = iter(stroke)
 
-    for svert in map(SVertex, points, ids):
+    for svert in imap(SVertex, points, ids):
         stroke.insert_vertex(StrokeVertex(svert), it)
         it = iter(stroke)
 

@@ -420,7 +420,7 @@ void SCA_PythonController::Trigger(SCA_LogicManager* logicmgr)
 
 			excdict= PyDict_Copy(m_pythondictionary);
 
-			resultobj = PyEval_EvalCode((PyObject *)m_bytecode, excdict, excdict);
+			resultobj = PyEval_EvalCode((PyCodeObject *)m_bytecode, excdict, excdict);
 
 			/* PyRun_SimpleString(m_scriptText.Ptr()); */
 			break;

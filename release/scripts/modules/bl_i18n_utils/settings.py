@@ -25,11 +25,14 @@
 #     edit (most probably, BLENDER_EXEC and SOURCE_DIR).
 
 
+from __future__ import with_statement
+from __future__ import absolute_import
 import json
 import os
 import sys
 
 import bpy
+from io import open
 
 ###############################################################################
 # MISC
@@ -101,14 +104,12 @@ LANGUAGES_FILE = "languages"
 IMPORT_MIN_LEVEL = 0.0
 
 # Languages in /branches we do not want to import in /trunk currently...
-IMPORT_LANGUAGES_SKIP = {
-    'am_ET', 'bg_BG', 'fi_FI', 'el_GR', 'et_EE', 'ne_NP', 'ro_RO', 'uz_UZ', 'uz_UZ@cyrillic',
-}
+IMPORT_LANGUAGES_SKIP = set([
+    'am_ET', 'bg_BG', 'fi_FI', 'el_GR', 'et_EE', 'ne_NP', 'ro_RO', 'uz_UZ', 'uz_UZ@cyrillic',])
 
 # Languages that need RTL pre-processing.
-IMPORT_LANGUAGES_RTL = {
-    'ar_EG', 'fa_IR', 'he_IL',
-}
+IMPORT_LANGUAGES_RTL = set([
+    'ar_EG', 'fa_IR', 'he_IL',])
 
 # The comment prefix used in generated messages.txt file.
 MSG_COMMENT_PREFIX = "#~ "
@@ -182,7 +183,7 @@ DOMAIN = "blender"
 
 # Our own "gettext" stuff.
 # File type (ext) to parse.
-PYGETTEXT_ALLOWED_EXTS = {".c", ".cpp", ".cxx", ".hpp", ".hxx", ".h"}
+PYGETTEXT_ALLOWED_EXTS = set([".c", ".cpp", ".cxx", ".hpp", ".hxx", ".h"])
 
 # Max number of contexts into a BLT_I18N_MSGID_MULTI_CTXT macro...
 PYGETTEXT_MAX_MULTI_CTXT = 16
@@ -254,7 +255,7 @@ PYGETTEXT_KEYWORDS = (() +
           for it in ("modifier_setError",)) +
 
     tuple((r"{}\(\s*" + _msg_re + r"\s*,\s*(?:" +
-           r"\s*,\s*)?(?:".join(_ctxt_re_gen(i) for i in range(PYGETTEXT_MAX_MULTI_CTXT)) + r")?\s*\)").format(it)
+           r"\s*,\s*)?(?:".join(_ctxt_re_gen(i) for i in xrange(PYGETTEXT_MAX_MULTI_CTXT)) + r")?\s*\)").format(it)
           for it in ("BLT_I18N_MSGID_MULTI_CTXT",))
 )
 
@@ -272,7 +273,7 @@ CHECK_PRINTF_FORMAT = (
 WARN_MSGID_NOT_CAPITALIZED = True
 
 # Strings that should not raise above warning!
-WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
+WARN_MSGID_NOT_CAPITALIZED_ALLOWED = set([
     "",                              # Simplifies things... :p
     "ac3",
     "along X",
@@ -349,19 +350,17 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     "unsupported image format",
     "unsupported movie clip format",
     "verts only",
-    "virtual parents",
-}
+    "virtual parents",])
 WARN_MSGID_NOT_CAPITALIZED_ALLOWED |= set(lng[2] for lng in LANGUAGES)
 
-WARN_MSGID_END_POINT_ALLOWED = {
+WARN_MSGID_END_POINT_ALLOWED = set([
     "Circle|Alt .",
     "Float Neg. Exp.",
     "Max Ext.",
     "Numpad .",
     "Pad.",
     "    RNA Path: bpy.types.",
-    "Temp. Diff.",
-}
+    "Temp. Diff.",])
 
 PARSER_CACHE_HASH = 'sha1'
 
@@ -509,7 +508,7 @@ def _gen_get_set_path(ref, name):
     return _get, _set
 
 
-class I18nSettings:
+class I18nSettings(object):
     """
     Class allowing persistence of our settings!
     Saved in JSon format, so settings should be JSon'able objects!
@@ -520,7 +519,7 @@ class I18nSettings:
         # Addon preferences are singleton by definition, so is this class!
         if not I18nSettings._settings:
             cls._settings = super(I18nSettings, cls).__new__(cls)
-            cls._settings.__dict__ = {uid: data for uid, data in globals().items() if not uid.startswith("_")}
+            cls._settings.__dict__ = dict((uid, data) for uid, data in globals().items() if not uid.startswith("_"))
         return I18nSettings._settings
 
     def from_json(self, string):
@@ -533,12 +532,12 @@ class I18nSettings:
     def to_json(self):
         # Only save the diff from default i18n_settings!
         glob = globals()
-        export_dict = {uid: val for uid, val in self.__dict__.items() if glob.get(uid) != val}
+        export_dict = dict((uid, val) for uid, val in self.__dict__.items() if glob.get(uid) != val)
         return json.dumps(export_dict)
 
     def load(self, fname, reset=False):
         if reset:
-            self.__dict__ = {uid: data for uid, data in globals().items() if not uid.startswith("_")}
+            self.__dict__ = dict((uid, data) for uid, data in globals().items() if not uid.startswith("_"))
         if isinstance(fname, str):
             if not os.path.isfile(fname):
                 return
@@ -570,8 +569,8 @@ class I18nSettings:
     def _get_py_sys_paths(self):
         return self.INTERN_PY_SYS_PATHS
     def _set_py_sys_paths(self, val):
-        old_paths = set(self.INTERN_PY_SYS_PATHS.split(";")) - {""}
-        new_paths = set(val.split(";")) - {""}
+        old_paths = set(self.INTERN_PY_SYS_PATHS.split(";")) - set([""])
+        new_paths = set(val.split(";")) - set([""])
         for p in old_paths - new_paths:
             if p in sys.path:
                 sys.path.remove(p)

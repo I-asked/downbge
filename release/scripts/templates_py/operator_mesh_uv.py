@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import bpy
 import bmesh
 
@@ -32,7 +33,7 @@ class UvOperator(bpy.types.Operator):
 
     def execute(self, context):
         main(context)
-        return {'FINISHED'}
+        return set(['FINISHED'])
 
 
 def register():

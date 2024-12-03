@@ -23,6 +23,7 @@
 #             parameterization that covers the complete lines (visible+invisible)
 #             whereas only the visible portions are actually drawn
 
+from __future__ import absolute_import
 from freestyle.chainingiterators import pySketchyChainSilhouetteIterator
 from freestyle.predicates import (
     QuantitativeInvisibilityUP1D,

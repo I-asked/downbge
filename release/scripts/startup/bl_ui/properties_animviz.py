@@ -25,11 +25,12 @@
 # don't register these classes since they are only helpers.
 
 
-class MotionPathButtonsPanel:
+from __future__ import absolute_import
+class MotionPathButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_label = "Motion Paths"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw_settings(self, context, avs, mpath, bones=False):
         layout = self.layout
@@ -97,11 +98,11 @@ class MotionPathButtonsPanel:
 
 
 # FIXME: this panel still needs to be ported so that it will work correctly with animviz
-class OnionSkinButtonsPanel:
+class OnionSkinButtonsPanel(object):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_label = "Onion Skinning"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout

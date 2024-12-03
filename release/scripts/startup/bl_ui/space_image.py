@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import division
+from __future__ import absolute_import
 import bpy
 from bpy.types import Header, Menu, Panel
 from bl_ui.properties_paint_common import (
@@ -31,6 +33,7 @@ from bl_ui.properties_grease_pencil_common import (
         GreasePencilDataPanel,
         )
 from bpy.app.translations import pgettext_iface as iface_
+from io import open
 
 
 class ImagePaintPanel(UnifiedPaintPanel):
@@ -49,7 +52,7 @@ class BrushButtonsPanel(UnifiedPaintPanel):
         return sima.show_paint and toolsettings.brush
 
 
-class UVToolsPanel:
+class UVToolsPanel(object):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Tools"
@@ -215,7 +218,7 @@ class IMAGE_MT_image(Menu):
                 # only for dirty && specific image types, perhaps
                 # this could be done in operator poll too
                 if ima.is_dirty:
-                    if ima.source in {'FILE', 'GENERATED'} and ima.type != 'OPEN_EXR_MULTILAYER':
+                    if ima.source in set(['FILE', 'GENERATED']) and ima.type != 'OPEN_EXR_MULTILAYER':
                         layout.operator("image.pack", text="Pack As PNG").as_png = True
 
             layout.separator()
@@ -476,7 +479,7 @@ class IMAGE_HT_header(Header):
             row = layout.row(align=True)
             if ima.type == 'COMPOSITE':
                 row.operator("image.record_composite", icon='REC')
-            if ima.type == 'COMPOSITE' and ima.source in {'MOVIE', 'SEQUENCE'}:
+            if ima.type == 'COMPOSITE' and ima.source in set(['MOVIE', 'SEQUENCE']):
                 row.operator("image.play_composite", icon='PLAY')
 
         if show_uvedit or show_maskedit or mode == 'PAINT':
@@ -729,7 +732,7 @@ class IMAGE_PT_paint(Panel, ImagePaintPanel):
 
 class IMAGE_PT_tools_brush_overlay(BrushButtonsPanel, Panel):
     bl_label = "Overlay"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Options"
 
     def draw(self, context):
@@ -783,7 +786,7 @@ class IMAGE_PT_tools_brush_overlay(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_tools_brush_texture(BrushButtonsPanel, Panel):
     bl_label = "Texture"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Tools"
 
     def draw(self, context):
@@ -800,7 +803,7 @@ class IMAGE_PT_tools_brush_texture(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_tools_mask_texture(BrushButtonsPanel, Panel):
     bl_label = "Texture Mask"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Tools"
 
     def draw(self, context):
@@ -817,7 +820,7 @@ class IMAGE_PT_tools_mask_texture(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_tools_brush_tool(BrushButtonsPanel, Panel):
     bl_label = "Tool"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Options"
 
     def draw(self, context):
@@ -836,7 +839,7 @@ class IMAGE_PT_tools_brush_tool(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_paint_stroke(BrushButtonsPanel, Panel):
     bl_label = "Paint Stroke"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Tools"
 
     def draw(self, context):
@@ -904,7 +907,7 @@ class IMAGE_PT_paint_stroke(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_paint_curve(BrushButtonsPanel, Panel):
     bl_label = "Paint Curve"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Tools"
 
     def draw(self, context):
@@ -929,7 +932,7 @@ class IMAGE_PT_tools_imagepaint_symmetry(BrushButtonsPanel, Panel):
     bl_category = "Tools"
     bl_context = "imagepaint"
     bl_label = "Tiling"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -945,7 +948,7 @@ class IMAGE_PT_tools_imagepaint_symmetry(BrushButtonsPanel, Panel):
 
 class IMAGE_PT_tools_brush_appearance(BrushButtonsPanel, Panel):
     bl_label = "Appearance"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
     bl_category = "Options"
 
     def draw(self, context):
@@ -998,7 +1001,7 @@ class IMAGE_UV_sculpt_curve(Panel):
     bl_region_type = 'TOOLS'
     bl_label = "UV Sculpt Curve"
     bl_category = "Tools"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1073,7 +1076,7 @@ class IMAGE_PT_tools_mask(MASK_PT_tools, Panel):
 # --- end mask ---
 
 
-class ImageScopesPanel:
+class ImageScopesPanel(object):
     @classmethod
     def poll(cls, context):
         sima = context.space_data
@@ -1083,7 +1086,7 @@ class ImageScopesPanel:
         if sima.mode == 'PAINT':
             return False
         ob = context.active_object
-        if ob and ob.mode in {'TEXTURE_PAINT', 'EDIT'}:
+        if ob and ob.mode in set(['TEXTURE_PAINT', 'EDIT']):
             return False
         return True
 

@@ -20,6 +20,7 @@
 
 # classes for extracting info from blenders internal classes
 
+from __future__ import absolute_import
 import bpy
 
 # use to strip python paths
@@ -82,7 +83,7 @@ def float_as_string(f):
     return val_str
 
 
-class InfoStructRNA:
+class InfoStructRNA(object):
     __slots__ = (
         "bl_rna",
         "identifier",
@@ -164,7 +165,7 @@ class InfoStructRNA:
         for identifier, attr in self._get_py_visible_attrs():
             # methods may be python wrappers to C functions
             attr_func = getattr(attr, "__func__", attr)
-            if type(attr_func) in {types.FunctionType, types.MethodType}:
+            if type(attr_func) in set([types.FunctionType, types.MethodType]):
                 functions.append((identifier, attr))
         return functions
 
@@ -174,7 +175,7 @@ class InfoStructRNA:
         for identifier, attr in self._get_py_visible_attrs():
             # methods may be python wrappers to C functions
             attr_func = getattr(attr, "__func__", attr)
-            if type(attr_func) in {types.BuiltinMethodType, types.BuiltinFunctionType}:
+            if type(attr_func) in set([types.BuiltinMethodType, types.BuiltinFunctionType]):
                 functions.append((identifier, attr))
         return functions
 
@@ -195,7 +196,7 @@ class InfoStructRNA:
         return txt
 
 
-class InfoPropertyRNA:
+class InfoPropertyRNA(object):
     __slots__ = (
         "bl_prop",
         "srna",
@@ -301,7 +302,7 @@ class InfoPropertyRNA:
             if self.array_length:
                 type_str += " array of %d items" % (self.array_length)
 
-            if self.type in {"float", "int"}:
+            if self.type in set(["float", "int"]):
                 type_str += " in [%s, %s]" % (range_str(self.min), range_str(self.max))
             elif self.type == "enum":
                 if self.is_enum_flag:
@@ -354,7 +355,7 @@ class InfoPropertyRNA:
         return txt
 
 
-class InfoFunctionRNA:
+class InfoFunctionRNA(object):
     __slots__ = (
         "bl_func",
         "identifier",
@@ -399,7 +400,7 @@ class InfoFunctionRNA:
         return txt
 
 
-class InfoOperatorRNA:
+class InfoOperatorRNA(object):
     __slots__ = (
         "bl_op",
         "identifier",
@@ -443,7 +444,7 @@ class InfoOperatorRNA:
             op_func = getattr(op_class, "poll", None)
 
         if op_func:
-            op_code = op_func.__code__
+            op_code = op_func.func_code
             source_path = op_code.co_filename
 
             # clear the prefix
@@ -553,7 +554,7 @@ def BuildRNAInfo():
                 rna_children_dict[identifier] = []
                 rna_references_dict[identifier] = []
         else:
-            print("Ignoring", rna_type_name)
+            print "Ignoring", rna_type_name
 
     structs.sort()  # not needed but speeds up sort below, setting items without an inheritance first
 
@@ -579,7 +580,7 @@ def BuildRNAInfo():
                     i += 1
 
                 if not ok:
-                    print('Dependancy "%s" could not be found for "%s"' % (identifier, rna_base))
+                    print 'Dependancy "%s" could not be found for "%s"' % (identifier, rna_base)
 
                 break
 
@@ -662,9 +663,9 @@ def BuildRNAInfo():
             for prop in rna_info.properties:
                 # ERROR CHECK
                 default = prop.default
-                if type(default) in {float, int}:
+                if type(default) in set([float, int]):
                     if default < prop.min or default > prop.max:
-                        print("\t %s.%s, %s not in [%s - %s]" % (rna_info.identifier, prop.identifier, default, prop.min, prop.max))
+                        print "\t %s.%s, %s not in [%s - %s]" % (rna_info.identifier, prop.identifier, default, prop.min, prop.max)
 
     # now for operators
     op_mods = dir(bpy.ops)

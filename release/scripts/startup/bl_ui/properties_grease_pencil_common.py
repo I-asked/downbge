@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 
+from __future__ import absolute_import
 from bpy.types import Menu, UIList
 
 
@@ -37,11 +38,11 @@ def gpencil_stroke_placement_settings(context, layout, gpd):
         row.prop_enum(gpd, "draw_mode", 'STROKE')
 
         row = col.row(align=False)
-        row.active = gpd.draw_mode in {'SURFACE', 'STROKE'}
+        row.active = gpd.draw_mode in set(['SURFACE', 'STROKE'])
         row.prop(gpd, "use_stroke_endpoints")
 
 
-class GreasePencilDrawingToolsPanel:
+class GreasePencilDrawingToolsPanel(object):
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Grease Pencil"
@@ -66,7 +67,7 @@ class GreasePencilDrawingToolsPanel:
         row = col.row(align=True)
         row.prop(context.tool_settings, "use_grease_pencil_sessions", text="Continuous Drawing")
 
-        if context.space_data.type in {'VIEW_3D', 'CLIP_EDITOR'}:
+        if context.space_data.type in set(['VIEW_3D', 'CLIP_EDITOR']):
             col.separator()
             col.label("Data Source:")
             row = col.row(align=True)
@@ -89,7 +90,7 @@ class GreasePencilDrawingToolsPanel:
             col.operator("view3d.ruler")
 
 
-class GreasePencilStrokeEditPanel:
+class GreasePencilStrokeEditPanel(object):
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Edit Strokes"
@@ -310,7 +311,7 @@ class GPENCIL_UL_layer(UIList):
         # assert(isinstance(item, bpy.types.GPencilLayer)
         gpl = item
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             if gpl.lock:
                 layout.active = False
 
@@ -328,7 +329,7 @@ class GPENCIL_UL_layer(UIList):
             layout.label(text="", icon_value=icon)
 
 
-class GreasePencilDataPanel:
+class GreasePencilDataPanel(object):
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Grease Pencil"
@@ -462,7 +463,7 @@ class GreasePencilDataPanel:
         sub.prop(gpl, "ghost_after_range", text="After")
 
 
-class GreasePencilToolsPanel:
+class GreasePencilToolsPanel(object):
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     # bl_options = {'DEFAULT_CLOSED'}

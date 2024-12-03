@@ -366,8 +366,13 @@ PyObject *BPy_BMVertSkin_CreatePyObject(struct MVertSkin *mvertskin)
  * color which uses mathutils callbacks for mathutils.Color
  */
 
+#if 0
 #define MLOOPCOL_FROM_CAPSULE(color_capsule)  \
 	((MLoopCol *)PyCapsule_GetPointer(color_capsule, NULL))
+#else
+#define MLOOPCOL_FROM_CAPSULE(color_capsule)  \
+	((MLoopCol *)NULL)
+#endif
 
 static void mloopcol_to_float(const MLoopCol *mloopcol, float r_col[3])
 {
@@ -449,9 +454,13 @@ int BPy_BMLoopColor_AssignPyObject(struct MLoopCol *mloopcol, PyObject *value)
 
 PyObject *BPy_BMLoopColor_CreatePyObject(struct MLoopCol *data)
 {
+#if 0
 	PyObject *color_capsule;
 	color_capsule = PyCapsule_New(data, NULL, NULL);
 	return Color_CreatePyObject_cb(color_capsule, mathutils_bmloopcol_cb_index, 0);
+#else
+	return NULL;
+#endif
 }
 
 #undef MLOOPCOL_FROM_CAPSULE

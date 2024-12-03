@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+from __future__ import absolute_import
 import bpy
 from bpy.types import Menu, Panel, UIList
 from bl_ui.properties_grease_pencil_common import (
@@ -31,7 +32,7 @@ from bl_ui.properties_paint_common import (
         )
 
 
-class View3DPanel:
+class View3DPanel(object):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
 
@@ -85,15 +86,15 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         if obj:
             obj_type = obj.type
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+            if obj_type in set(['MESH', 'CURVE', 'SURFACE', 'ARMATURE']):
                 col = layout.column(align=True)
                 col.operator("object.join")
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+            if obj_type in set(['MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE']):
                 col = layout.column(align=True)
                 col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+            if obj_type in set(['MESH', 'CURVE', 'SURFACE']):
                 col = layout.column(align=True)
                 col.label(text="Shading:")
                 row = col.row(align=True)
@@ -354,7 +355,7 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
     bl_label = "Weight Tools"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     # Used for Weight-Paint mode and Edit-Mode
     @staticmethod
@@ -1072,9 +1073,9 @@ class TEXTURE_UL_texpaintslots(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         mat = data
 
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+        if self.layout_type in set(['DEFAULT', 'COMPACT']):
             layout.prop(item, "name", text="", emboss=False, icon_value=icon)
-            if (not mat.use_nodes) and context.scene.render.engine in {'BLENDER_RENDER', 'BLENDER_GAME'}:
+            if (not mat.use_nodes) and context.scene.render.engine in set(['BLENDER_RENDER', 'BLENDER_GAME']):
                 mtex_index = mat.texture_paint_slots[index].index
                 layout.prop(mat, "use_textures", text="", index=mtex_index)
         elif self.layout_type == 'GRID':
@@ -1137,7 +1138,7 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
                 else:
                     slot = None
 
-                if (not mat.use_nodes) and context.scene.render.engine in {'BLENDER_RENDER', 'BLENDER_GAME'}:
+                if (not mat.use_nodes) and context.scene.render.engine in set(['BLENDER_RENDER', 'BLENDER_GAME']):
                     row = col.row(align=True)
                     row.operator_menu_enum("paint.add_texture_paint_slot", "type")
                     row.operator("paint.delete_texture_paint_slot", text="", icon='X')
@@ -1272,7 +1273,7 @@ class VIEW3D_PT_tools_brush_overlay(Panel, View3DPaintPanel):
 class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Texture"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1297,7 +1298,7 @@ class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_context = "imagepaint"
     bl_label = "Texture Mask"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1319,7 +1320,7 @@ class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel):
 class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Stroke"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1417,7 +1418,7 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
 class VIEW3D_PT_tools_brush_curve(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Curve"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1446,7 +1447,7 @@ class VIEW3D_PT_tools_brush_curve(Panel, View3DPaintPanel):
 class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Dyntopo"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1492,7 +1493,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
 class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
     bl_category = "Options"
     bl_label = "Options"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1524,7 +1525,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Symmetry / Lock"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     @classmethod
     def poll(cls, context):
@@ -1693,7 +1694,7 @@ class VIEW3D_PT_tools_imagepaint_external(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_context = "imagepaint"
     bl_label = "External"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -1715,7 +1716,7 @@ class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_context = "imagepaint"
     bl_label = "Symmetry"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
@@ -1880,7 +1881,7 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
     bl_category = "Tools"
     # No bl_context, we are always available!
     bl_label = "History"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = set(['DEFAULT_CLOSED'])
 
     def draw(self, context):
         layout = self.layout
