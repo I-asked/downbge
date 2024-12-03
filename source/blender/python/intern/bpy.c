@@ -78,11 +78,11 @@ static PyObject *bpy_script_paths(PyObject *UNUSED(self))
 	const char *path;
 
 	path = BKE_appdir_folder_id(BLENDER_SYSTEM_SCRIPTS, NULL);
-	item = PyC_UnicodeFromByte(path ? path : "");
+	item = PyC_StringFromByte(path ? path : "");
 	BLI_assert(item != NULL);
 	PyTuple_SET_ITEM(ret, 0, item);
 	path = BKE_appdir_folder_id(BLENDER_USER_SCRIPTS, NULL);
-	item = PyC_UnicodeFromByte(path ? path : "");
+	item = PyC_StringFromByte(path ? path : "");
 	BLI_assert(item != NULL);
 	PyTuple_SET_ITEM(ret, 1, item);
 
@@ -91,7 +91,7 @@ static PyObject *bpy_script_paths(PyObject *UNUSED(self))
 
 static bool bpy_blend_paths_visit_cb(void *userdata, char *UNUSED(path_dst), const char *path_src)
 {
-	PyList_APPEND((PyObject *)userdata, PyC_UnicodeFromByte(path_src));
+	PyList_APPEND((PyObject *)userdata, PyC_StringFromByte(path_src));
 	return false; /* never edits the path */
 }
 
@@ -169,7 +169,7 @@ static PyObject *bpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
 	if (!path)
 		path = BKE_appdir_folder_id_user_notest(folder_id, subdir);
 
-	return PyC_UnicodeFromByte(path ? path : "");
+	return PyC_StringFromByte(path ? path : "");
 }
 
 PyDoc_STRVAR(bpy_resource_path_doc,
@@ -208,7 +208,7 @@ static PyObject *bpy_resource_path(PyObject *UNUSED(self), PyObject *args, PyObj
 
 	path = BKE_appdir_folder_id_version(folder_id, (major * 100) + minor, false);
 
-	return PyC_UnicodeFromByte(path ? path : "");
+	return PyC_StringFromByte(path ? path : "");
 }
 
 PyDoc_STRVAR(bpy_escape_identifier_doc,
@@ -231,7 +231,7 @@ static PyObject *bpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
 	PyObject   *value_escape;
 	size_t size;
 
-	value_str = _PyUnicode_AsStringAndSize(value, &value_str_len);
+	PyString_AsStringAndSize(value, &value_str, &value_str_len);
 
 	if (value_str == NULL) {
 		PyErr_SetString(PyExc_TypeError, "expected a string");
@@ -247,7 +247,7 @@ static PyObject *bpy_escape_identifier(PyObject *UNUSED(self), PyObject *value)
 		value_escape = value;
 	}
 	else {
-		value_escape = PyUnicode_FromStringAndSize(value_escape_str, value_escape_str_len);
+		value_escape = PyString_FromStringAndSize(value_escape_str, value_escape_str_len);
 	}
 
 	PyMem_FREE(value_escape_str);
@@ -295,7 +295,7 @@ void BPy_init_modules(void)
 	if (modpath) {
 		// printf("bpy: found module path '%s'.\n", modpath);
 		PyObject *sys_path = PySys_GetObject("path"); /* borrow */
-		PyObject *py_modpath = PyUnicode_FromString(modpath);
+		PyObject *py_modpath = PyString_FromString(modpath);
 		PyList_Insert(sys_path, 0, py_modpath); /* add first */
 		Py_DECREF(py_modpath);
 	}

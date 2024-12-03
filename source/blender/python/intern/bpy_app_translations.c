@@ -193,16 +193,16 @@ static void _build_translations_cache(PyObject *py_messages, const char *locale)
 					if (tmp == Py_None) {
 						msgctxt = BLT_I18NCONTEXT_DEFAULT_BPYRNA;
 					}
-					else if (PyUnicode_Check(tmp)) {
-						msgctxt = _PyUnicode_AsString(tmp);
+					else if (PyString_Check(tmp)) {
+						msgctxt = PyString_AsString(tmp);
 					}
 					else {
 						invalid_key = true;
 					}
 
 					tmp = PyTuple_GET_ITEM(pykey, 1);
-					if (PyUnicode_Check(tmp)) {
-						msgid = _PyUnicode_AsString(tmp);
+					if (PyString_Check(tmp)) {
+						msgid = PyString_AsString(tmp);
 					}
 					else {
 						invalid_key = true;
@@ -219,7 +219,7 @@ static void _build_translations_cache(PyObject *py_messages, const char *locale)
 					printf("\n");
 					continue;
 				}
-				if (PyUnicode_Check(trans) == false) {
+				if (PyString_Check(trans) == false) {
 					printf("WARNING! In translations' dict of \"");
 					PyObject_Print(uuid, stdout, Py_PRINT_RAW);
 					printf("\":\n");
@@ -236,7 +236,7 @@ static void _build_translations_cache(PyObject *py_messages, const char *locale)
 					continue;
 				}
 
-				BLI_ghash_insert(_translations_cache, key, BLI_strdup(_PyUnicode_AsString(trans)));
+				BLI_ghash_insert(_translations_cache, key, BLI_strdup(PyString_AsString(trans)));
 			}
 		}
 	}
@@ -309,7 +309,7 @@ static PyObject *app_translations_py_messages_register(BlenderAppTranslations *s
 	static const char *kwlist[] = {"module_name", "translations_dict", NULL};
 	PyObject *module_name, *uuid_dict;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kw, "O!O!:bpy.app.translations.register", (char **)kwlist, &PyUnicode_Type,
+	if (!PyArg_ParseTupleAndKeywords(args, kw, "O!O!:bpy.app.translations.register", (char **)kwlist, &PyString_Type,
 	                                 &module_name, &PyDict_Type, &uuid_dict))
 	{
 		return NULL;
@@ -318,7 +318,7 @@ static PyObject *app_translations_py_messages_register(BlenderAppTranslations *s
 	if (PyDict_Contains(self->py_messages, module_name)) {
 		PyErr_Format(PyExc_ValueError,
 		             "bpy.app.translations.register: translations message cache already contains some data for "
-		             "addon '%s'", (const char *)_PyUnicode_AsString(module_name));
+		             "addon '%s'", (const char *)PyString_AsString(module_name));
 		return NULL;
 	}
 
@@ -354,7 +354,7 @@ static PyObject *app_translations_py_messages_unregister(BlenderAppTranslations 
 	static const char *kwlist[] = {"module_name", NULL};
 	PyObject *module_name;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kw, "O!:bpy.app.translations.unregister", (char **)kwlist, &PyUnicode_Type,
+	if (!PyArg_ParseTupleAndKeywords(args, kw, "O!:bpy.app.translations.unregister", (char **)kwlist, &PyString_Type,
 	                                 &module_name))
 	{
 		return NULL;
@@ -406,7 +406,7 @@ static PyObject *app_translations_contexts_make(void)
 		return NULL;
 	}
 
-#define SetObjString(item) PyStructSequence_SET_ITEM(translations_contexts, pos++, PyUnicode_FromString((item)))
+#define SetObjString(item) PyStructSequence_SET_ITEM(translations_contexts, pos++, PyString_FromString((item)))
 #define SetObjNone() PyStructSequence_SET_ITEM(translations_contexts, pos++, Py_INCREF_RET(Py_None))
 
 	for (ctxt = _contexts; ctxt->c_id; ctxt++) {
@@ -452,7 +452,7 @@ PyDoc_STRVAR(app_translations_locale_doc,
 );
 static PyObject *app_translations_locale_get(PyObject *UNUSED(self), void *UNUSED(userdata))
 {
-	return PyUnicode_FromString(BLT_lang_get());
+	return PyString_FromString(BLT_lang_get());
 }
 
 /* Note: defining as getter, as (even if quite unlikely), this *may* change during runtime... */
@@ -476,7 +476,7 @@ static PyObject *app_translations_locales_get(PyObject *UNUSED(self), void *UNUS
 	if (items) {
 		for (it = items; it->identifier; it++) {
 			if (it->value)
-				PyTuple_SET_ITEM(ret, pos++, PyUnicode_FromString(it->description));
+				PyTuple_SET_ITEM(ret, pos++, PyString_FromString(it->description));
 		}
 	}
 
@@ -505,7 +505,7 @@ static PyObject *_py_pgettext(PyObject *args, PyObject *kw, const char *(*_pgett
 		return NULL;
 	}
 
-	return PyUnicode_FromString((*_pgettext)(msgctxt ? msgctxt : BLT_I18NCONTEXT_DEFAULT, msgid));
+	return PyString_FromString((*_pgettext)(msgctxt ? msgctxt : BLT_I18NCONTEXT_DEFAULT, msgid));
 #else
 	PyObject *msgid, *msgctxt;
 	(void)_pgettext;
@@ -682,7 +682,7 @@ static PyObject *app_translations_new(PyTypeObject *type, PyObject *UNUSED(args)
 
 			py_ctxts = PyDict_New();
 			for (ctxt = _contexts; ctxt->c_id; ctxt++) {
-				PyObject *val = PyUnicode_FromString(ctxt->py_id);
+				PyObject *val = PyString_FromString(ctxt->py_id);
 				PyDict_SetItemString(py_ctxts, ctxt->c_id, val);
 				Py_DECREF(val);
 			}

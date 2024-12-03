@@ -256,14 +256,21 @@ void PyC_StackSpit(void)
 
 void PyC_FileAndNum(const char **filename, int *lineno)
 {
+	PyObject *typ = NULL, *val = NULL, *tb = NULL;
 	PyFrameObject *frame;
 	
 	if (filename) *filename = NULL;
 	if (lineno)   *lineno = -1;
 
-	if (!(frame = PyThreadState_GET()->frame)) {
+	if (PyErr_Occurred()) {
+		PyErr_Fetch(&typ, &val, &tb);
+	}
+
+	if (!tb) {
 		return;
 	}
+
+	frame = ((PyTracebackObject *)tb)->tb_frame;
 
 	/* when executing a script */
 	if (filename) {
@@ -394,6 +401,9 @@ PyObject *PyC_ExceptionBuffer(void)
 	PyObject *format_tb_func = NULL;
 	PyObject *ret = NULL;
 
+	if (!PyErr_Occurred())
+		return NULL;
+
 	if (!(traceback_mod = PyImport_ImportModule("traceback"))) {
 		goto error_cleanup;
 	}
@@ -418,30 +428,33 @@ error_cleanup:
 #else /* verbose, non-threadsafe version */
 PyObject *PyC_ExceptionBuffer(void)
 {
-	PyObject *stdout_backup = PySys_GetObject("stdout"); /* borrowed */
-	PyObject *stderr_backup = PySys_GetObject("stderr"); /* borrowed */
+	PyObject *error_type, *error_value, *error_traceback;
+
+	PyObject *stdout_backup; /* borrowed */
+	PyObject *stderr_backup; /* borrowed */
 	PyObject *string_io = NULL;
 	PyObject *string_io_buf = NULL;
 	PyObject *string_io_mod = NULL;
 	PyObject *string_io_getvalue = NULL;
-
-	PyObject *error_type, *error_value, *error_traceback;
 
 	if (!PyErr_Occurred())
 		return NULL;
 
 	PyErr_Fetch(&error_type, &error_value, &error_traceback);
 
+	stdout_backup = PySys_GetObject("stdout"); /* borrowed */
+	stderr_backup = PySys_GetObject("stderr"); /* borrowed */
+
 	PyErr_Clear();
 
 	/* import io
-	 * string_io = io.StringIO()
+	 * string_io = io.BytesIO()
 	 */
 
 	if (!(string_io_mod = PyImport_ImportModule("io"))) {
 		goto error_cleanup;
 	}
-	else if (!(string_io = PyObject_CallMethod(string_io_mod, "StringIO", NULL))) {
+	else if (!(string_io = PyObject_CallMethod(string_io_mod, "BytesIO", NULL))) {
 		goto error_cleanup;
 	}
 	else if (!(string_io_getvalue = PyObject_GetAttrString(string_io, "getvalue"))) {
@@ -471,6 +484,8 @@ PyObject *PyC_ExceptionBuffer(void)
 	Py_DECREF(string_io); /* free the original reference */
 
 	PyErr_Clear();
+
+	PyErr_Restore(error_type, error_value, error_traceback);
 	return string_io_buf;
 
 

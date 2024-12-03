@@ -50,9 +50,9 @@ void            PyC_Tuple_Fill(PyObject *tuple, PyObject *value);
 void            PyC_List_Fill(PyObject *list, PyObject *value);
 
 /* follow http://www.python.org/dev/peps/pep-0383/ */
-PyObject *      PyC_UnicodeFromByte(const char *str);
-PyObject *      PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size);
-const char *    PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce); /* coerce must be NULL */
+PyObject *      PyC_StringFromByte(const char *str);
+PyObject *      PyC_StringFromByteAndSize(const char *str, Py_ssize_t size);
+const char *    PyC_StringAsByte(PyObject *py_str, PyObject **coerce); /* coerce must be NULL */
 
 /* name namespace function for bpy & bge */
 PyObject *		PyC_DefaultNameSpace(const char *filename);

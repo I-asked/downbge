@@ -1375,7 +1375,7 @@ PyObject *pyrna_prop_to_py(PointerRNA *ptr, PropertyRNA *prop)
 				ret = PyBytes_FromStringAndSize(buf, buf_len);
 			}
 			else if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_FILENAME)) {
-				ret = PyC_UnicodeFromByteAndSize(buf, buf_len);
+				ret = PyC_StringFromByteAndSize(buf, buf_len);
 			}
 			else {
 				ret = PyString_FromStringAndSize(buf, buf_len);
@@ -1642,7 +1642,7 @@ static int pyrna_py_to_prop(PointerRNA *ptr, PropertyRNA *prop, void *data, PyOb
 					PyObject *value_coerce = NULL;
 					if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_FILENAME)) {
 						/* TODO, get size */
-						param = PyC_UnicodeAsByte(value, &value_coerce);
+						param = PyC_StringAsByte(value, &value_coerce);
 					}
 					else {
 						param = PyString_AsString(value);
@@ -4933,7 +4933,7 @@ static PyObject *pyrna_param_to_py(PointerRNA *ptr, PropertyRNA *prop, void *dat
 					ret = PyBytes_FromString(data_ch);
 				}
 				else if (ELEM(subtype, PROP_FILEPATH, PROP_DIRPATH, PROP_FILENAME)) {
-					ret = PyC_UnicodeFromByte(data_ch);
+					ret = PyC_StringFromByte(data_ch);
 				}
 				else {
 					ret = PyString_FromString(data_ch);
@@ -7125,6 +7125,7 @@ static int bpy_class_validate(PointerRNA *dummyptr, void *py_data, int *have_fun
 /* TODO - multiple return values like with rna functions */
 static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, ParameterList *parms)
 {
+	PyObject *typ = NULL, *val = NULL, *tb = NULL;
 	PyObject *args;
 	PyObject *ret = NULL, *py_srna = NULL, *py_class_instance = NULL, *parmitem;
 	PyTypeObject *py_class;
@@ -7265,6 +7266,8 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
 		PyObject *item = PyObject_GetAttrString((PyObject *)py_class, RNA_function_identifier(func));
 
 		if (item) {
+			PyGILState_STATE gstate;
+
 			RNA_pointer_create(NULL, &RNA_Function, func, &funcptr);
 
 			if (PyMethod_Check(item) || is_staticmethod) {
@@ -7320,9 +7323,23 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
 #ifdef USE_PEDANTIC_WRITE
 			rna_disallow_writes = is_readonly ? true : false;
 #endif
+
+			if (PyErr_Occurred()) {
+				PyErr_Print();
+				PyErr_Clear();
+			}
+
 			/* *** Main Caller *** */
 
-			ret = PyObject_Call(item, args, NULL);
+			gstate = PyGILState_Ensure();
+
+			ret = PyObject_CallObject(item, args);
+
+			if (PyErr_Occurred()) {
+				PyErr_Fetch(&typ, &val, &tb);
+			}
+
+			PyGILState_Release(gstate);
 
 			/* *** Done Calling *** */
 
@@ -7435,11 +7452,16 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
 			reports = CTX_wm_reports(C);
 		}
 
+		if (typ) {
+			PyErr_Restore(typ, val, tb);
+		}
+
 		BPy_errors_to_report(reports);
 
-		fprintf(stderr, "py_class->tp_name=%s;\n", py_class->tp_name);
+		if (typ) {
+			PyErr_Restore(typ, val, tb);
+		}
 
-		/* also print in the console for py */
 		PyErr_Print();
 		PyErr_Clear();
 	}

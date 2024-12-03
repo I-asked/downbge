@@ -70,7 +70,7 @@ static PyObject *make_sdl_info(void)
 	}
 
 #define SetStrItem(str) \
-	PyStructSequence_SET_ITEM(sdl_info, pos++, PyUnicode_FromString(str))
+	PyStructSequence_SET_ITEM(sdl_info, pos++, PyString_FromString(str))
 
 #define SetObjItem(obj) \
 	PyStructSequence_SET_ITEM(sdl_info, pos++, obj)
@@ -94,7 +94,7 @@ static PyObject *make_sdl_info(void)
 
 	SetObjItem(Py_BuildValue("(iii)", version.major, version.minor, version.patch));
 	if (sdl_available) {
-		SetObjItem(PyUnicode_FromFormat("%d.%d.%d", version.major, version.minor, version.patch));
+		SetObjItem(PyString_FromFormat("%d.%d.%d", version.major, version.minor, version.patch));
 	}
 	else {
 		SetStrItem("Unknown");

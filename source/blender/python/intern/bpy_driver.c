@@ -104,7 +104,7 @@ static void bpy_pydriver_update_dict(const float evaltime)
 
 		/* currently only update the frame */
 		if (bpy_pydriver_InternStr__frame == NULL) {
-			bpy_pydriver_InternStr__frame = PyUnicode_FromString("frame");
+			bpy_pydriver_InternStr__frame = PyString_FromString("frame");
 		}
 
 		PyDict_SetItem(bpy_pydriver_Dict,
@@ -249,7 +249,7 @@ float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
 		PyTuple_SET_ITEM(((PyObject *)driver->expr_comp), 1, expr_vars);
 
 		for (dvar = driver->variables.first, i = 0; dvar; dvar = dvar->next) {
-			PyTuple_SET_ITEM(expr_vars, i++, PyUnicode_FromString(dvar->name));
+			PyTuple_SET_ITEM(expr_vars, i++, PyString_FromString(dvar->name));
 		}
 		
 		driver->flag &= ~DRIVER_FLAG_RENAMEVAR;

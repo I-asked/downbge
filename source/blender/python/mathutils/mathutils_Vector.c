@@ -1334,7 +1334,7 @@ static PyObject *Vector_repr(VectorObject *self)
 		return NULL;
 
 	tuple = Vector_to_tuple_ext(self, -1);
-	ret = PyUnicode_FromFormat("Vector(%R)", tuple);
+	ret = PyString_FromFormat("Vector(%R)", tuple);
 	Py_DECREF(tuple);
 	return ret;
 }

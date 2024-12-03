@@ -61,6 +61,9 @@ typedef struct PyModuleDef{
 #define PyUnicode_EncodeFSDefault PyUnicode_AS_DATA
 #define PyUnicode_DecodeFSDefaultAndSize PyUnicode_FromStringAndSize
 
+#define PyString_EncodeFSDefault PyString_AS_STRING
+#define PyString_DecodeFSDefaultAndSize PyString_FromStringAndSize
+
 #if 0
 __attribute__((always_inline)) inline int _PyErr_WarnFormat2(PyObject *cat, char *sb, int sl) {
   int res = PyErr_WarnEx(cat, sb, sl);

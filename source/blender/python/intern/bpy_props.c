@@ -188,9 +188,9 @@ static void printf_func_error(PyObject *py_func)
 
 	/* use py style error */
 	fprintf(stderr, "File \"%s\", line %d, in %s\n",
-	        _PyUnicode_AsString(f_code->co_filename),
+	        PyString_AsString(f_code->co_filename),
 	        f_code->co_firstlineno,
-	        _PyUnicode_AsString(((PyFunctionObject *)py_func)->func_name)
+	        PyString_AsString(((PyFunctionObject *)py_func)->func_name)
 	        );
 }
 
@@ -1015,7 +1015,7 @@ static void bpy_prop_string_get_cb(struct PointerRNA *ptr, struct PropertyRNA *p
 		printf_func_error(py_func);
 		value[0] = '\0';
 	}
-	else if (!PyUnicode_Check(ret)) {
+	else if (!PyString_Check(ret)) {
 		PyErr_Format(PyExc_TypeError,
 		             "return value must be a string, not %.200s",
 		             Py_TYPE(ret)->tp_name);
@@ -1025,7 +1025,8 @@ static void bpy_prop_string_get_cb(struct PointerRNA *ptr, struct PropertyRNA *p
 	}
 	else {
 		Py_ssize_t length;
-		const char *buffer = _PyUnicode_AsStringAndSize(ret, &length);
+		const char *buffer = NULL;
+		PyString_AsStringAndSize(ret, &buffer, &length);
 		memcpy(value, buffer, length + 1);
 		Py_DECREF(ret);
 	}
@@ -1075,7 +1076,7 @@ static int bpy_prop_string_length_cb(struct PointerRNA *ptr, struct PropertyRNA 
 		printf_func_error(py_func);
 		length = 0;
 	}
-	else if (!PyUnicode_Check(ret)) {
+	else if (!PyString_Check(ret)) {
 		PyErr_Format(PyExc_TypeError,
 		             "return value must be a string, not %.200s",
 		             Py_TYPE(ret)->tp_name);
@@ -1084,8 +1085,9 @@ static int bpy_prop_string_length_cb(struct PointerRNA *ptr, struct PropertyRNA 
 		Py_DECREF(ret);
 	}
 	else {
+		const char *tmp;
 		Py_ssize_t length_ssize_t = 0;
-		_PyUnicode_AsStringAndSize(ret, &length_ssize_t);
+		PyString_AsStringAndSize(ret, &tmp, &length_ssize_t);
 		length = length_ssize_t;
 		Py_DECREF(ret);
 	}
@@ -1129,7 +1131,7 @@ static void bpy_prop_string_set_cb(struct PointerRNA *ptr, struct PropertyRNA *p
 	self = pyrna_struct_as_instance(ptr);
 	PyTuple_SET_ITEM(args, 0, self);
 
-	py_value = PyUnicode_FromString(value);
+	py_value = PyString_FromString(value);
 	if (!py_value) {
 		PyErr_SetString(PyExc_ValueError, "the return value must be a string");
 		printf_func_error(py_func);
@@ -2767,7 +2769,7 @@ static StructRNA *pointer_type_from_py(PyObject *value, const char *error_prefix
 	if (!srna) {
 		if (PyErr_Occurred()) {
 			PyObject *msg = PyC_ExceptionBuffer();
-			const char *msg_char = _PyUnicode_AsString(msg);
+			const char *msg_char = PyString_AsString(msg);
 			PyErr_Format(PyExc_TypeError,
 			             "%.200s expected an RNA type derived from PropertyGroup, failed with: %s",
 			             error_prefix, msg_char);

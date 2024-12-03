@@ -268,7 +268,7 @@ static PyObject *gPyExpandPath(PyObject *, PyObject *args)
 
 	BLI_strncpy(expanded, filename, FILE_MAX);
 	BLI_path_abs(expanded, gp_GamePythonPath);
-	return PyC_UnicodeFromByte(expanded);
+	return PyC_StringFromByte(expanded);
 }
 
 PyDoc_STRVAR(gPyStartGame_doc,
@@ -583,7 +583,7 @@ static PyObject *gPyGetBlendFileList(PyObject *, PyObject *args)
 	
 	while ((dirp = readdir(dp)) != NULL) {
 		if (BLI_testextensie(dirp->d_name, ".blend")) {
-			value = PyC_UnicodeFromByte(dirp->d_name);
+			value = PyC_StringFromByte(dirp->d_name);
 			PyList_Append(list, value);
 			Py_DECREF(value);
 		}
@@ -1952,7 +1952,7 @@ static void initPySysObjects__append(PyObject *sys_path, const char *filename)
 	BLI_split_dir_part(filename, expanded, sizeof(expanded)); /* get the dir part of filename only */
 	BLI_path_abs(expanded, gp_GamePythonPath); /* filename from lib->filename is (always?) absolute, so this may not be needed but it wont hurt */
 	BLI_cleanup_file(gp_GamePythonPath, expanded); /* Don't use BLI_cleanup_dir because it adds a slash - BREAKS WIN32 ONLY */
-	item = PyC_UnicodeFromByte(expanded);
+	item = PyC_StringFromByte(expanded);
 	
 //	printf("SysPath - '%s', '%s', '%s'\n", expanded, filename, gp_GamePythonPath);
 	
@@ -2152,7 +2152,7 @@ PyObject *initGamePlayerPythonScripting(Main *maggie, int argc, char** argv)
 		PyObject *py_argv= PyList_New(argc);
 
 		for (i=0; i<argc; i++)
-			PyList_SET_ITEM(py_argv, i, PyC_UnicodeFromByte(argv[i]));
+			PyList_SET_ITEM(py_argv, i, PyC_StringFromByte(argv[i]));
 
 		PySys_SetObject("argv", py_argv);
 		Py_DECREF(py_argv);

@@ -53,7 +53,7 @@ void bpy_intern_string_init(void)
 	unsigned int i = 0;
 
 #define BPY_INTERN_STR(var, str) \
-	{ var = bpy_intern_str_arr[i++] = PyUnicode_FromString(str); } (void)0
+	{ var = bpy_intern_str_arr[i++] = PyString_FromString(str); } (void)0
 
 	BPY_INTERN_STR(bpy_intern_str_register, "register");
 	BPY_INTERN_STR(bpy_intern_str_unregister, "unregister");

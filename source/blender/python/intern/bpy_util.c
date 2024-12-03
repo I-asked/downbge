@@ -84,6 +84,7 @@ short BPy_reports_to_error(ReportList *reports, PyObject *exception, const bool 
 
 bool BPy_errors_to_report_ex(ReportList *reports, const bool use_full, const bool use_location)
 {
+	PyObject *typ = NULL, *val = NULL, *tb = NULL;
 	PyObject *pystring;
 
 	if (!PyErr_Occurred())
@@ -95,7 +96,10 @@ bool BPy_errors_to_report_ex(ReportList *reports, const bool use_full, const boo
 		PyErr_Clear();
 		return 1;
 	}
-	
+
+	PyErr_Fetch(&typ, &val, &tb);
+	PyErr_Restore(typ, val, tb);
+
 	if (use_full) {
 		pystring = PyC_ExceptionBuffer();
 	}
@@ -107,6 +111,8 @@ bool BPy_errors_to_report_ex(ReportList *reports, const bool use_full, const boo
 		BKE_report(reports, RPT_ERROR, "Unknown py-exception, could not convert");
 		return 0;
 	}
+
+	PyErr_Restore(typ, val, tb);
 
 	if (use_location) {
 		const char *filename;
@@ -121,24 +127,24 @@ bool BPy_errors_to_report_ex(ReportList *reports, const bool use_full, const boo
 		}
 
 #if 0 /* ARG!. workaround for a bug in blenders use of vsnprintf */
-		BKE_reportf(reports, RPT_ERROR, "%s\nlocation: %s:%d\n", _PyUnicode_AsString(pystring), filename, lineno);
+		BKE_reportf(reports, RPT_ERROR, "%s\nlocation: %s:%d\n", PyString_AsString(pystring), filename, lineno);
 #else
-		pystring_format = PyUnicode_FromFormat(
+		pystring_format = PyString_FromFormat(
 		        TIP_("%s\nlocation: %s:%d\n"),
-		        _PyUnicode_AsString(pystring), filename, lineno);
+		        PyString_AsString(pystring), filename, lineno);
 
-		cstring = _PyUnicode_AsString(pystring_format);
+		cstring = PyString_AsString(pystring_format);
 		BKE_report(reports, RPT_ERROR, cstring);
 
 		/* not exactly needed. just for testing */
-		cstring = _PyUnicode_AsString(pystring);
-		fprintf(stderr, TIP_("%s\n%d bytes\nlocation: %s:%d\n"), cstring, strlen(cstring), filename, lineno);
+		cstring = PyString_AsString(pystring);
+		fprintf(stderr, TIP_("%s\nlocation: %s:%d\n"), cstring, filename, lineno);
 
 		Py_DECREF(pystring_format);  /* workaround */
 #endif
 	}
 	else {
-		BKE_report(reports, RPT_ERROR, _PyUnicode_AsString(pystring));
+		BKE_report(reports, RPT_ERROR, PyString_AsString(pystring));
 	}
 
 

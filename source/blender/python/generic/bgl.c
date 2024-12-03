@@ -422,7 +422,7 @@
 
 #define ret_ret_GLstring                                                      \
 	if (ret_str) {                                                            \
-		return PyUnicode_FromString((const char *)ret_str);                   \
+		return PyString_FromString((const char *)ret_str);                   \
 	}                                                                         \
 	else {                                                                    \
 		PyErr_SetString(PyExc_AttributeError, "could not get opengl string"); \
@@ -989,7 +989,7 @@ static PyObject *Buffer_repr(Buffer *self)
 		default:        typestr = "UNKNOWN"; break;
 	}
 
-	repr = PyUnicode_FromFormat("Buffer(%s, %R)", typestr, list);
+	repr = PyString_FromFormat("Buffer(%s, %R)", typestr, list);
 	Py_DECREF(list);
 
 	return repr;

@@ -55,7 +55,7 @@ void python_thread_state_restore(void **python_thread_state)
 	*python_thread_state = NULL;
 }
 
-static const char *PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce)
+static const char *PyC_StringAsByte(PyObject *py_str, PyObject **coerce)
 {
 #ifdef WIN32
 	/* bug [#31856] oddly enough, Python3.2 --> 3.3 on Windows will throw an
@@ -82,8 +82,8 @@ static PyObject *init_func(PyObject * /*self*/, PyObject *args)
 	}
 
 	PyObject *path_coerce = NULL, *user_path_coerce = NULL;
-	path_init(PyC_UnicodeAsByte(path, &path_coerce),
-	          PyC_UnicodeAsByte(user_path, &user_path_coerce));
+	path_init(PyC_StringAsByte(path, &path_coerce),
+	          PyC_StringAsByte(user_path, &user_path_coerce));
 	Py_XDECREF(path_coerce);
 	Py_XDECREF(user_path_coerce);
 

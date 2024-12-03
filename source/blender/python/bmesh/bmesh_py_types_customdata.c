@@ -182,7 +182,7 @@ static PyObject *bpy_bmlayeritem_name_get(BPy_BMLayerItem *self, void *UNUSED(fl
 
 	layer = bpy_bmlayeritem_get(self);
 	if (layer) {
-		return PyUnicode_FromString(layer->name);
+		return PyString_FromString(layer->name);
 	}
 	else {
 		return NULL;
@@ -454,7 +454,7 @@ static PyObject *bpy_bmlayercollection_keys(BPy_BMLayerCollection *self)
 	ret = PyList_New(tot);
 
 	for (i = 0; tot-- > 0; index++) {
-		item = PyUnicode_FromString(data->layers[index].name);
+		item = PyString_FromString(data->layers[index].name);
 		PyList_SET_ITEM(ret, i++, item);
 	}
 
@@ -489,7 +489,7 @@ static PyObject *bpy_bmlayercollection_items(BPy_BMLayerCollection *self)
 	for (i = 0; tot-- > 0; index++) {
 		item = PyTuple_New(2);
 		PyTuple_SET_ITEMS(item,
-		        PyUnicode_FromString(data->layers[index].name),
+		        PyString_FromString(data->layers[index].name),
 		        BPy_BMLayerItem_CreatePyObject(self->bm, self->htype, self->type, i));
 		PyList_SET_ITEM(ret, i++, item);
 	}
@@ -663,8 +663,8 @@ static PyObject *bpy_bmlayercollection_subscript_slice(BPy_BMLayerCollection *se
 static PyObject *bpy_bmlayercollection_subscript(BPy_BMLayerCollection *self, PyObject *key)
 {
 	/* don't need error check here */
-	if (PyUnicode_Check(key)) {
-		return bpy_bmlayercollection_subscript_str(self, _PyUnicode_AsString(key));
+	if (PyString_Check(key)) {
+		return bpy_bmlayercollection_subscript_str(self, PyString_AsString(key));
 	}
 	else if (PyIndex_Check(key)) {
 		Py_ssize_t i = PyNumber_AsSsize_t(key, PyExc_IndexError);
@@ -718,7 +718,7 @@ static PyObject *bpy_bmlayercollection_subscript(BPy_BMLayerCollection *self, Py
 
 static int bpy_bmlayercollection_contains(BPy_BMLayerCollection *self, PyObject *value)
 {
-	const char *keyname = _PyUnicode_AsString(value);
+	const char *keyname = PyString_AsString(value);
 	CustomData *data;
 	int index;
 

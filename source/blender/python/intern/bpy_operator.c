@@ -361,11 +361,11 @@ static PyObject *pyop_as_string(PyObject *UNUSED(self), PyObject *args)
 	}
 
 	if (buf) {
-		pybuf = PyUnicode_FromString(buf);
+		pybuf = PyString_FromString(buf);
 		MEM_freeN(buf);
 	}
 	else {
-		pybuf = PyUnicode_FromString("");
+		pybuf = PyString_FromString("");
 	}
 
 	return pybuf;
@@ -382,7 +382,7 @@ static PyObject *pyop_dir(PyObject *UNUSED(self))
 
 	for (i = 0; !BLI_ghashIterator_done(&iter); BLI_ghashIterator_step(&iter), i++) {
 		wmOperatorType *ot = BLI_ghashIterator_getValue(&iter);
-		PyList_SET_ITEM(list, i, PyUnicode_FromString(ot->idname));
+		PyList_SET_ITEM(list, i, PyString_FromString(ot->idname));
 	}
 
 	return list;
@@ -392,7 +392,7 @@ static PyObject *pyop_getrna(PyObject *UNUSED(self), PyObject *value)
 {
 	wmOperatorType *ot;
 	PointerRNA ptr;
-	const char *opname = _PyUnicode_AsString(value);
+	const char *opname = PyString_AsString(value);
 	BPy_StructRNA *pyrna = NULL;
 	
 	if (opname == NULL) {
@@ -425,7 +425,7 @@ static PyObject *pyop_getinstance(PyObject *UNUSED(self), PyObject *value)
 	wmOperatorType *ot;
 	wmOperator *op;
 	PointerRNA ptr;
-	const char *opname = _PyUnicode_AsString(value);
+	const char *opname = PyString_AsString(value);
 	BPy_StructRNA *pyrna = NULL;
 
 	if (opname == NULL) {

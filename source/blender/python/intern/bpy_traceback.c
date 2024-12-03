@@ -39,7 +39,7 @@
 
 static const char *traceback_filepath(PyTracebackObject *tb, PyObject **coerce)
 {
-	return PyBytes_AS_STRING((*coerce = PyUnicode_EncodeFSDefault(tb->tb_frame->f_code->co_filename)));
+	return PyBytes_AS_STRING((*coerce = PyString_EncodeFSDefault(tb->tb_frame->f_code->co_filename)));
 }
 
 static int
@@ -62,7 +62,7 @@ parse_syntax_error(PyObject *err, PyObject **message, PyObject **filename,
 		goto finally;
 	if (v == Py_None) {
 		Py_DECREF(v);
-		*filename = PyUnicode_FromString("string");
+		*filename = PyString_FromString("string");
 		if (*filename == NULL)
 			goto finally;
 		Py_INCREF(*filename);
@@ -135,7 +135,7 @@ void python_script_error_jump(const char *filepath, int *lineno, int *offset)
 			PyObject *filename_py, *text_py;
 
 			if (parse_syntax_error(value, &message, &filename_py, lineno, offset, &text_py)) {
-				const char *filename = _PyUnicode_AsString(filename_py);
+				const char *filename = PyString_AsString(filename_py);
 				/* python adds a '/', prefix, so check for both */
 				if ((BLI_path_cmp(filename, filepath) == 0) ||
 				    ((filename[0] == '\\' || filename[0] == '/') && BLI_path_cmp(filename + 1, filepath) == 0))

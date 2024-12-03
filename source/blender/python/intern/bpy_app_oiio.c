@@ -65,7 +65,7 @@ static PyObject *make_oiio_info(void)
 
 #ifndef WITH_OPENIMAGEIO
 #define SetStrItem(str) \
-	PyStructSequence_SET_ITEM(oiio_info, pos++, PyUnicode_FromString(str))
+	PyStructSequence_SET_ITEM(oiio_info, pos++, PyString_FromString(str))
 #endif
 
 #define SetObjItem(obj) \
@@ -76,7 +76,7 @@ static PyObject *make_oiio_info(void)
 	SetObjItem(PyBool_FromLong(1));
 	SetObjItem(Py_BuildValue("(iii)",
 	                         curversion / 10000, (curversion / 100) % 100, curversion % 100));
-	SetObjItem(PyUnicode_FromFormat("%2d, %2d, %2d",
+	SetObjItem(PyString_FromFormat("%2d, %2d, %2d",
 	                                curversion / 10000, (curversion / 100) % 100, curversion % 100));
 #else
 	SetObjItem(PyBool_FromLong(0));

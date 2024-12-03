@@ -320,7 +320,7 @@ char *BLI_sprintfN(const char *__restrict format, ...)
 /* match pythons string escaping, assume double quotes - (")
  * TODO: should be used to create RNA animation paths.
  * TODO: support more fancy string escaping. current code is primitive
- *    this basically is an ascii version of PyUnicode_EncodeUnicodeEscape()
+ *    this basically is an ascii version of PyString_EncodeUnicodeEscape()
  *    which is a useful reference. */
 size_t BLI_strescape(char *__restrict dst, const char *__restrict src, const size_t maxncpy)
 {

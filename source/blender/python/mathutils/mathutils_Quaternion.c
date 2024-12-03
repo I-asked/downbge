@@ -515,7 +515,7 @@ static PyObject *Quaternion_repr(QuaternionObject *self)
 
 	tuple = Quaternion_to_tuple_ext(self, -1);
 
-	ret = PyUnicode_FromFormat("Quaternion(%R)", tuple);
+	ret = PyString_FromFormat("Quaternion(%R)", tuple);
 
 	Py_DECREF(tuple);
 	return ret;

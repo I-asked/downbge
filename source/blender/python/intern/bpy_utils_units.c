@@ -120,7 +120,7 @@ static PyObject *py_structseq_from_strings(
 	BLI_assert(py_struct_seq != NULL);
 
 	for (str_iter = str_items; *str_iter; str_iter++) {
-		PyStructSequence_SET_ITEM(py_struct_seq, pos++, PyUnicode_FromString((*str_iter)));
+		PyStructSequence_SET_ITEM(py_struct_seq, pos++, PyString_FromString((*str_iter)));
 	}
 
 	return py_struct_seq;
@@ -288,7 +288,7 @@ static PyObject *bpyunits_to_string(PyObject *UNUSED(self), PyObject *args, PyOb
 			str = buf1;
 		}
 
-		result = PyUnicode_FromString(str);
+		result = PyString_FromString(str);
 
 		return result;
 	}

@@ -718,7 +718,7 @@ PyObject *BPy_BMO_call(BPy_BMeshOpFunc *self, PyObject *args, PyObject *kw)
 		PyObject *key, *value;
 		Py_ssize_t pos = 0;
 		while (PyDict_Next(kw, &pos, &key, &value)) {
-			const char *slot_name = _PyUnicode_AsString(key);
+			const char *slot_name = PyString_AsString(key);
 			BMOpSlot *slot;
 
 			if (!BMO_slot_exists(bmop.slots_in, slot_name)) {

@@ -329,7 +329,7 @@ static PyObject *Euler_repr(EulerObject *self)
 
 	tuple = Euler_ToTupleExt(self, -1);
 
-	ret = PyUnicode_FromFormat("Euler(%R, '%s')", tuple, euler_order_str(self));
+	ret = PyString_FromFormat("Euler(%R, '%s')", tuple, euler_order_str(self));
 
 	Py_DECREF(tuple);
 	return ret;
@@ -628,7 +628,7 @@ static PyObject *Euler_order_get(EulerObject *self, void *UNUSED(closure))
 	if (BaseMath_ReadCallback(self) == -1) /* can read order too */
 		return NULL;
 
-	return PyUnicode_FromString(euler_order_str(self));
+	return PyString_FromString(euler_order_str(self));
 }
 
 static int Euler_order_set(EulerObject *self, PyObject *value, void *UNUSED(closure))
@@ -639,7 +639,7 @@ static int Euler_order_set(EulerObject *self, PyObject *value, void *UNUSED(clos
 	if (BaseMath_Prepare_ForWrite(self) == -1)
 		return -1;
 
-	if (((order_str = _PyUnicode_AsString(value)) == NULL) ||
+	if (((order_str = PyString_AsString(value)) == NULL) ||
 	    ((order = euler_order_from_string(order_str, "euler.order")) == -1))
 	{
 		return -1;

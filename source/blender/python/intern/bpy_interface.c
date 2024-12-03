@@ -289,8 +289,8 @@ void BPY_python_start(int argc, const char **argv)
 		PyObject *py_argv = PyList_New(argc);
 		for (i = 0; i < argc; i++) {
 			/* should fix bug #20021 - utf path name problems, by replacing
-			 * PyUnicode_FromString, with this one */
-			PyList_SET_ITEM(py_argv, i, PyC_UnicodeFromByte(argv[i]));
+			 * PyString_FromString, with this one */
+			PyList_SET_ITEM(py_argv, i, PyC_StringFromByte(argv[i]));
 		}
 
 		PySys_SetObject("argv", py_argv);
@@ -821,7 +821,7 @@ static void bpy_module_delay_init(PyObject *bpy_proxy)
 	/* updating the module dict below will loose the reference to __file__ */
 	PyObject *filename_obj = PyModule_GetFilenameObject(bpy_proxy);
 
-	const char *filename_rel = _PyUnicode_AsString(filename_obj); /* can be relative */
+	const char *filename_rel = PyString_AsString(filename_obj); /* can be relative */
 	char filename_abs[1024];
 
 	BLI_strncpy(filename_abs, filename_rel, sizeof(filename_abs));

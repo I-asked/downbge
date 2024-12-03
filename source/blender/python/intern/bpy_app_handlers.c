@@ -256,7 +256,7 @@ void BPY_app_handlers_reset(const short do_all)
 	}
 	else {
 		/* save string conversion thrashing */
-		PyObject *perm_id_str = PyUnicode_FromString(PERMINENT_CB_ID);
+		PyObject *perm_id_str = PyString_FromString(PERMINENT_CB_ID);
 
 		for (pos = 0; pos < BLI_CB_EVT_TOT; pos++) {
 			/* clear only items without PERMINENT_CB_ID */

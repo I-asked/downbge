@@ -58,7 +58,7 @@ static PyObject *bpy_bmesh_op_CreatePyObject(const char *opname)
 
 static PyObject *bpy_bmesh_op_repr(BPy_BMeshOpFunc *self)
 {
-	return PyUnicode_FromFormat("<%.200s bmesh.ops.%.200s()>",
+	return PyString_FromFormat("<%.200s bmesh.ops.%.200s()>",
 	                            Py_TYPE(self)->tp_name,
 	                            self->opname);
 }
@@ -116,7 +116,7 @@ static PyObject *bpy_bmesh_op_doc_get(BPy_BMeshOpFunc *self, void *UNUSED(closur
 	slot_in  = bmp_slots_as_args(bmo_opdefines[i]->slot_types_in, false);
 	slot_out = bmp_slots_as_args(bmo_opdefines[i]->slot_types_out, true);
 
-	ret = PyUnicode_FromFormat("%.200s bmesh.ops.%.200s(bmesh, %s)\n  -> dict(%s)",
+	ret = PyString_FromFormat("%.200s bmesh.ops.%.200s(bmesh, %s)\n  -> dict(%s)",
 	                           Py_TYPE(self)->tp_name,
 	                           self->opname, slot_in, slot_out);
 
@@ -220,7 +220,7 @@ static PyTypeObject bmesh_op_Type = {
 
 static PyObject *bpy_bmesh_ops_fakemod_getattro(PyObject *UNUSED(self), PyObject *pyname)
 {
-	const char *opname = _PyUnicode_AsString(pyname);
+	const char *opname = PyString_AsString(pyname);
 
 	if (BMO_opcode_from_opname(opname) != -1) {
 		return bpy_bmesh_op_CreatePyObject(opname);
@@ -242,7 +242,7 @@ static PyObject *bpy_bmesh_ops_fakemod_dir(PyObject *UNUSED(self))
 	ret = PyList_New(bmo_opdefines_total);
 
 	for (i = 0; i < tot; i++) {
-		PyList_SET_ITEM(ret, i, PyUnicode_FromString(bmo_opdefines[i]->opname));
+		PyList_SET_ITEM(ret, i, PyString_FromString(bmo_opdefines[i]->opname));
 	}
 
 	return ret;

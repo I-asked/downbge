@@ -130,7 +130,7 @@ static PyObject *Color_repr(ColorObject *self)
 
 	tuple = Color_ToTupleExt(self, -1);
 
-	ret = PyUnicode_FromFormat("Color(%R)", tuple);
+	ret = PyString_FromFormat("Color(%R)", tuple);
 
 	Py_DECREF(tuple);
 	return ret;

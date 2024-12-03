@@ -229,7 +229,7 @@ static PyObject *_bpy_names(BPy_Library *self, int blocktype)
 		int counter = 0;
 		list = PyList_New(totnames);
 		for (l = names; l; l = l->next) {
-			PyList_SET_ITEM(list, counter, PyUnicode_FromString((char *)l->link));
+			PyList_SET_ITEM(list, counter, PyString_FromString((char *)l->link));
 			counter++;
 		}
 		BLI_linklist_free(names, free); /* free linklist *and* each node's data */
@@ -265,7 +265,7 @@ static PyObject *bpy_lib_enter(BPy_Library *self, PyObject *UNUSED(args))
 		while ((code = BKE_idcode_iter_step(&i))) {
 			if (BKE_idcode_is_linkable(code)) {
 				const char *name_plural = BKE_idcode_to_name_plural(code);
-				PyObject *str = PyUnicode_FromString(name_plural);
+				PyObject *str = PyString_FromString(name_plural);
 				PyDict_SetItem(self->dict, str, PyList_New(0));
 				PyDict_SetItem(from_dict, str, _bpy_names(self, code));
 				Py_DECREF(str);
@@ -353,7 +353,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 
 					for (i = 0; i < size; i++) {
 						item = PyList_GET_ITEM(ls, i);
-						item_str = _PyUnicode_AsString(item);
+						item_str = PyString_AsString(item);
 
 						// printf("  %s\n", item_str);
 

@@ -128,7 +128,7 @@ static PyObject *make_app_info(void)
 #define SetIntItem(flag) \
 	PyStructSequence_SET_ITEM(app_info, pos++, PyLong_FromLong(flag))
 #define SetStrItem(str) \
-	PyStructSequence_SET_ITEM(app_info, pos++, PyUnicode_FromString(str))
+	PyStructSequence_SET_ITEM(app_info, pos++, PyString_FromString(str))
 #define SetBytesItem(str) \
 	PyStructSequence_SET_ITEM(app_info, pos++, PyBytes_FromString(str))
 #define SetObjItem(obj) \
@@ -136,7 +136,7 @@ static PyObject *make_app_info(void)
 
 	SetObjItem(Py_BuildValue("(iii)",
 	                         BLENDER_VERSION / 100, BLENDER_VERSION % 100, BLENDER_SUBVERSION));
-	SetObjItem(PyUnicode_FromFormat("%d.%02d (sub %d)",
+	SetObjItem(PyString_FromFormat("%d.%02d (sub %d)",
 	                                BLENDER_VERSION / 100, BLENDER_VERSION % 100, BLENDER_SUBVERSION));
 
 	SetStrItem(STRINGIFY(BLENDER_VERSION_CHAR));
@@ -240,7 +240,7 @@ static PyObject *bpy_app_binary_path_python_get(PyObject *UNUSED(self), void *UN
 		BKE_appdir_program_python_search(
 		        fullpath, sizeof(fullpath),
 		        PY_MAJOR_VERSION, PY_MINOR_VERSION);
-		ret = PyC_UnicodeFromByte(fullpath);
+		ret = PyC_StringFromByte(fullpath);
 		PyDict_SetItemString(BlenderAppType.tp_dict, "binary_path_python", ret);
 	}
 	else {
@@ -284,7 +284,7 @@ PyDoc_STRVAR(bpy_app_tempdir_doc,
 );
 static PyObject *bpy_app_tempdir_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
-	return PyC_UnicodeFromByte(BKE_tempdir_session());
+	return PyC_StringFromByte(BKE_tempdir_session());
 }
 
 PyDoc_STRVAR(bpy_app_driver_dict_doc,
@@ -312,7 +312,7 @@ static PyObject *bpy_app_preview_render_size_get(PyObject *UNUSED(self), void *c
 
 static PyObject *bpy_app_autoexec_fail_message_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
-	return PyC_UnicodeFromByte(G.autoexec_fail);
+	return PyC_StringFromByte(G.autoexec_fail);
 }
 
 

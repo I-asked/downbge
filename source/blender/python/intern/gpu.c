@@ -167,7 +167,7 @@ static PyObject *PyInit_gpu(void)
 }
 
 #define PY_DICT_ADD_STRING(d, s, f)      \
-	val = PyUnicode_FromString(s->f);    \
+	val = PyString_FromString(s->f);    \
 	PyDict_SetItemString(d, # f, val);   \
 	Py_DECREF(val)
 
@@ -184,7 +184,7 @@ static PyObject *PyInit_gpu(void)
 
 #if 0  /* UNUSED */
 #define PY_OBJ_ADD_ID(d, s, f)                      \
-	val = PyUnicode_FromString(&s->f->id.name[2]);  \
+	val = PyString_FromString(&s->f->id.name[2]);  \
 	PyObject_SetAttrString(d, # f, val);            \
 	Py_DECREF(val)
 
@@ -194,7 +194,7 @@ static PyObject *PyInit_gpu(void)
 	Py_DECREF(val)
 
 #define PY_OBJ_ADD_STRING(d, s, f)       \
-	val = PyUnicode_FromString(s->f);    \
+	val = PyString_FromString(s->f);    \
 	PyObject_SetAttrString(d, # f, val); \
 	Py_DECREF(val)
 #endif

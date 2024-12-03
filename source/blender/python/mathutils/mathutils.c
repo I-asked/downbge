@@ -400,7 +400,7 @@ PyObject *mathutils_dynstr_to_py(struct DynStr *ds)
 	PyObject *ret;
 	BLI_dynstr_get_cstring_ex(ds, ds_buf);
 	BLI_dynstr_free(ds);
-	ret = PyUnicode_FromStringAndSize(ds_buf, ds_len);
+	ret = PyString_FromStringAndSize(ds_buf, ds_len);
 	PyMem_Free(ds_buf);
 	return ret;
 }
