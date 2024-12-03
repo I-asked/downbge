@@ -24,6 +24,7 @@ from __future__ import division
 from __future__ import absolute_import
 import bpy
 import sys
+import traceback
 from io import open
 
 
@@ -260,9 +261,10 @@ def xml2rna(root_xml,
             if subvalue is Ellipsis:
                 print "%s.%s not found" % (type(value).__name__, attr)
             else:
-                value_xml = xml_node.attributes[attr].value
+                value_xml = xml_node.attributes[attr].value.encode()
 
                 subvalue_type = type(subvalue)
+                value_xml_coerce = None
                 tp_name = 'UNKNOWN'
                 if subvalue_type == float:
                     value_xml_coerce = float(value_xml)
@@ -304,6 +306,8 @@ def xml2rna(root_xml,
                         setattr(value, attr, value_xml_coerce[:len(val)])
                     else:
                         setattr(value, attr, list(value_xml_coerce) + list(val)[len(value_xml_coerce):])
+                except TypeError:
+                    traceback.print_exc()
 
         # ---------------------------------------------------------------------
         # Complex attributes
@@ -373,9 +377,9 @@ def _get_context_val(context, path):
 
 def xml_file_run(context, filepath, rna_map):
 
-    import xml.dom.minidom
+    from xml.dom import minidom
 
-    xml_nodes = xml.dom.minidom.parse(filepath)
+    xml_nodes = minidom.parse(filepath)
     bpy_xml = xml_nodes.getElementsByTagName("bpy")[0]
 
     for rna_path, xml_tag in rna_map:

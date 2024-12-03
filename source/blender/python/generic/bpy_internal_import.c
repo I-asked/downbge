@@ -274,7 +274,7 @@ static PyObject *blender_import(PyObject *UNUSED(self), PyObject *args, PyObject
 	const char *name;
 	int found = 0;
 	PyObject *globals = NULL, *locals = NULL, *fromlist = NULL;
-	int level = 0; /* relative imports */
+	int level = -1; /* relative imports */
 	
 	PyObject *newmodule;
 	//PyObject_Print(args, stderr, 0);

@@ -3439,6 +3439,7 @@ class VIEW3D_PT_context_properties(Panel):
     bl_label = "Properties"
     bl_options = set(['DEFAULT_CLOSED'])
 
+    @staticmethod
     def _active_context_member(context):
         obj = context.object
         if obj:
