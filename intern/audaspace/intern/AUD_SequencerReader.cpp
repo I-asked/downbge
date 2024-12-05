@@ -30,10 +30,10 @@
 #include "AUD_SequencerReader.h"
 #include "AUD_MutexLock.h"
 
-typedef std::list<boost::shared_ptr<AUD_SequencerHandle> >::iterator AUD_HandleIterator;
-typedef std::list<boost::shared_ptr<AUD_SequencerEntry> >::iterator AUD_EntryIterator;
+typedef std::list<std::shared_ptr<AUD_SequencerHandle> >::iterator AUD_HandleIterator;
+typedef std::list<std::shared_ptr<AUD_SequencerEntry> >::iterator AUD_EntryIterator;
 
-AUD_SequencerReader::AUD_SequencerReader(boost::shared_ptr<AUD_Sequencer> sequence, bool quality) :
+AUD_SequencerReader::AUD_SequencerReader(std::shared_ptr<AUD_Sequencer> sequence, bool quality) :
 	m_position(0), m_device(sequence->m_specs), m_sequence(sequence), m_status(0), m_entry_status(0)
 {
 	m_device.setQuality(quality);
@@ -92,18 +92,18 @@ void AUD_SequencerReader::read(int& length, bool& eos, sample_t* buffer)
 
 	if(m_sequence->m_entry_status != m_entry_status)
 	{
-		std::list<boost::shared_ptr<AUD_SequencerHandle> > handles;
+		std::list<std::shared_ptr<AUD_SequencerHandle> > handles;
 
 		AUD_HandleIterator hit = m_handles.begin();
 		AUD_EntryIterator  eit = m_sequence->m_entries.begin();
 
 		int result;
-		boost::shared_ptr<AUD_SequencerHandle> handle;
+		std::shared_ptr<AUD_SequencerHandle> handle;
 
 		while(hit != m_handles.end() && eit != m_sequence->m_entries.end())
 		{
 			handle = *hit;
-			boost::shared_ptr<AUD_SequencerEntry> entry = *eit;
+			std::shared_ptr<AUD_SequencerEntry> entry = *eit;
 
 			result = handle->compare(entry);
 
@@ -111,7 +111,7 @@ void AUD_SequencerReader::read(int& length, bool& eos, sample_t* buffer)
 			{
 				try
 				{
-					handle = boost::shared_ptr<AUD_SequencerHandle>(new AUD_SequencerHandle(entry, m_device));
+					handle = std::shared_ptr<AUD_SequencerHandle>(new AUD_SequencerHandle(entry, m_device));
 					handles.push_back(handle);
 				}
 				catch(AUD_Exception&)
@@ -142,7 +142,7 @@ void AUD_SequencerReader::read(int& length, bool& eos, sample_t* buffer)
 		{
 			try
 			{
-				handle = boost::shared_ptr<AUD_SequencerHandle>(new AUD_SequencerHandle(*eit, m_device));
+				handle = std::shared_ptr<AUD_SequencerHandle>(new AUD_SequencerHandle(*eit, m_device));
 				handles.push_back(handle);
 			}
 			catch(AUD_Exception&)

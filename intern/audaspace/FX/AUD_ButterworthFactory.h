@@ -48,7 +48,7 @@ public:
 	 * \param factory The input factory.
 	 * \param frequency The cutoff frequency.
 	 */
-	AUD_ButterworthFactory(boost::shared_ptr<AUD_IFactory> factory, float frequency);
+	AUD_ButterworthFactory(std::shared_ptr<AUD_IFactory> factory, float frequency);
 };
 
 #endif //__AUD_BUTTERWORTHFACTORY_H__

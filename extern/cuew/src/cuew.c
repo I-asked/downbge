@@ -27,7 +27,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #  define WIN32_LEAN_AND_MEAN
 #  define VC_EXTRALEAN
 #  include <windows.h>
@@ -39,6 +39,12 @@ typedef HMODULE DynamicLibrary;
 #  define dynamic_library_open(path)         LoadLibrary(path)
 #  define dynamic_library_close(lib)         FreeLibrary(lib)
 #  define dynamic_library_find(lib, symbol)  GetProcAddress(lib, symbol)
+#elif defined(__wii__)
+    typedef void*                   DynamicLibrary;
+
+#  define dynamic_library_open(path)         (NULL)
+#  define dynamic_library_close(lib)         (void)(NULL)
+#  define dynamic_library_find(lib, symbol)  (NULL)
 #else
 #  include <dlfcn.h>
 

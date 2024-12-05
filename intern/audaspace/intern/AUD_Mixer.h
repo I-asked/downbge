@@ -34,7 +34,7 @@
 #include "AUD_Buffer.h"
 class AUD_IReader;
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This abstract class is able to mix audiosignals with same channel count

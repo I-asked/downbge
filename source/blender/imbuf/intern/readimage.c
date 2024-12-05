@@ -175,9 +175,13 @@ ImBuf *IMB_loadifffile(int file, const char *filepath, int flags, char colorspac
 
 	size = BLI_file_descriptor_size(file);
 
+#if defined(__wii__) || defined(__vita__)
+	return NULL;
+#else
 	imb_mmap_lock();
 	mem = mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
 	imb_mmap_unlock();
+#endif
 
 	if (mem == (unsigned char *) -1) {
 		fprintf(stderr, "%s: couldn't get mapping %s\n", __func__, descr);
@@ -186,10 +190,12 @@ ImBuf *IMB_loadifffile(int file, const char *filepath, int flags, char colorspac
 
 	ibuf = IMB_ibImageFromMemory(mem, size, flags, colorspace, descr);
 
+#if !defined(__wii__) && !defined(__vita__)
 	imb_mmap_lock();
 	if (munmap(mem, size))
 		fprintf(stderr, "%s: couldn't unmap file %s\n", __func__, descr);
 	imb_mmap_unlock();
+#endif
 
 	return ibuf;
 }
@@ -275,9 +281,13 @@ static void imb_loadtilefile(ImBuf *ibuf, int file, int tx, int ty, unsigned int
 
 	size = BLI_file_descriptor_size(file);
 
+#if defined(__wii__) || defined(__vita__)
+	return;
+#else
 	imb_mmap_lock();
 	mem = mmap(NULL, size, PROT_READ, MAP_SHARED, file, 0);
 	imb_mmap_unlock();
+#endif
 
 	if (mem == (unsigned char *) -1) {
 		fprintf(stderr, "Couldn't get memory mapping for %s\n", ibuf->cachename);
@@ -288,10 +298,12 @@ static void imb_loadtilefile(ImBuf *ibuf, int file, int tx, int ty, unsigned int
 		if (type->load_tile && type->ftype(type, ibuf))
 			type->load_tile(ibuf, mem, size, tx, ty, rect);
 
+#if !defined(__wii__) && defined(__vita__)
 	imb_mmap_lock();
 	if (munmap(mem, size))
 		fprintf(stderr, "Couldn't unmap memory for %s.\n", ibuf->cachename);
 	imb_mmap_unlock();
+#endif
 }
 
 void imb_loadtile(ImBuf *ibuf, int tx, int ty, unsigned int *rect)

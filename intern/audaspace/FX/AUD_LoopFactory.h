@@ -55,14 +55,14 @@ public:
 	 * \param loop The desired loop count, negative values result in endless
 	 *        looping.
 	 */
-	AUD_LoopFactory(boost::shared_ptr<AUD_IFactory> factory, int loop = -1);
+	AUD_LoopFactory(std::shared_ptr<AUD_IFactory> factory, int loop = -1);
 
 	/**
 	 * Returns the loop count.
 	 */
 	int getLoop() const;
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_LOOPFACTORY_H__

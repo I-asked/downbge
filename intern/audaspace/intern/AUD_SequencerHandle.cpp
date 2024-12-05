@@ -50,7 +50,7 @@ void AUD_SequencerHandle::start()
 		try
 		{
 			m_handle = m_device.play(m_entry->m_sound, true);
-			m_3dhandle = boost::dynamic_pointer_cast<AUD_I3DHandle>(m_handle);
+			m_3dhandle = std::dynamic_pointer_cast<AUD_I3DHandle>(m_handle);
 		}
 		catch(AUD_Exception&)
 		{
@@ -116,7 +116,7 @@ bool AUD_SequencerHandle::updatePosition(float position)
 	return false;
 }
 
-AUD_SequencerHandle::AUD_SequencerHandle(boost::shared_ptr<AUD_SequencerEntry> entry, AUD_ReadDevice& device) :
+AUD_SequencerHandle::AUD_SequencerHandle(std::shared_ptr<AUD_SequencerEntry> entry, AUD_ReadDevice& device) :
 	m_entry(entry),
 	m_valid(true),
 	m_status(0),
@@ -131,7 +131,7 @@ AUD_SequencerHandle::~AUD_SequencerHandle()
 	stop();
 }
 
-int AUD_SequencerHandle::compare(boost::shared_ptr<AUD_SequencerEntry> entry) const
+int AUD_SequencerHandle::compare(std::shared_ptr<AUD_SequencerEntry> entry) const
 {
 	if(m_entry->getID() < entry->getID())
 		return -1;
@@ -144,8 +144,8 @@ void AUD_SequencerHandle::stop()
 {
 	if(m_handle.get())
 		m_handle->stop();
-	m_handle = boost::shared_ptr<AUD_IHandle>();
-	m_3dhandle = boost::shared_ptr<AUD_I3DHandle>();
+	m_handle = std::shared_ptr<AUD_IHandle>();
+	m_3dhandle = std::shared_ptr<AUD_I3DHandle>();
 }
 
 void AUD_SequencerHandle::update(float position, float frame, float fps)

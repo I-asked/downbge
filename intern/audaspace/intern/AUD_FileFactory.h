@@ -34,7 +34,7 @@
 #include "AUD_Buffer.h"
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This factory tries to read a sound file via all available file readers.
@@ -50,7 +50,7 @@ private:
 	/**
 	 * The buffer to read from.
 	 */
-	boost::shared_ptr<AUD_Buffer> m_buffer;
+	std::shared_ptr<AUD_Buffer> m_buffer;
 
 	// hide copy constructor and operator=
 	AUD_FileFactory(const AUD_FileFactory&);
@@ -70,7 +70,7 @@ public:
 	 */
 	AUD_FileFactory(const data_t* buffer, int size);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_FILEFACTORY_H__

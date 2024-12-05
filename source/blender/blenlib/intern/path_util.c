@@ -1597,6 +1597,9 @@ bool BLI_testextensie_glob(const char *str, const char *ext_fnmatch)
 			len_ext = BLI_strncpy_rlen(pattern, ext_step, sizeof(pattern));
 		}
 
+#ifndef FNM_CASEFOLD
+#define FNM_CASEFOLD 0
+#endif
 		if (fnmatch(pattern, str, FNM_CASEFOLD) == 0) {
 			return true;
 		}

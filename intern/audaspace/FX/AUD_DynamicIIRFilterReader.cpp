@@ -28,8 +28,8 @@
 
 #include "AUD_DynamicIIRFilterReader.h"
 
-AUD_DynamicIIRFilterReader::AUD_DynamicIIRFilterReader(boost::shared_ptr<AUD_IReader> reader,
-													   boost::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator) :
+AUD_DynamicIIRFilterReader::AUD_DynamicIIRFilterReader(std::shared_ptr<AUD_IReader> reader,
+													   std::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator) :
 	AUD_IIRFilterReader(reader, std::vector<float>(), std::vector<float>()),
 	m_calculator(calculator)
 {

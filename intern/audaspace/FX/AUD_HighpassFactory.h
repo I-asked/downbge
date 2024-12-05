@@ -49,7 +49,7 @@ public:
 	 * \param frequency The cutoff frequency.
 	 * \param Q The Q factor.
 	 */
-	AUD_HighpassFactory(boost::shared_ptr<AUD_IFactory> factory, float frequency, float Q = 1.0f);
+	AUD_HighpassFactory(std::shared_ptr<AUD_IFactory> factory, float frequency, float Q = 1.0f);
 };
 
 #endif //__AUD_HIGHPASSFACTORY_H__

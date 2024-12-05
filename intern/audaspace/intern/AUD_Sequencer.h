@@ -59,7 +59,7 @@ private:
 	int m_id;
 
 	/// The sequenced entries.
-	std::list<boost::shared_ptr<AUD_SequencerEntry> > m_entries;
+	std::list<std::shared_ptr<AUD_SequencerEntry> > m_entries;
 
 	/// Whether the whole scene is muted.
 	bool m_muted;
@@ -194,13 +194,13 @@ public:
 	 * \param skip How much seconds should be skipped at the beginning.
 	 * \return The entry added.
 	 */
-	boost::shared_ptr<AUD_SequencerEntry> add(boost::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip);
+	std::shared_ptr<AUD_SequencerEntry> add(std::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip);
 
 	/**
 	 * Removes an entry from the scene.
 	 * \param entry The entry to remove.
 	 */
-	void remove(boost::shared_ptr<AUD_SequencerEntry> entry);
+	void remove(std::shared_ptr<AUD_SequencerEntry> entry);
 };
 
 #endif //__AUD_SEQUENCER_H__

@@ -33,7 +33,7 @@
 #include "AUD_IReader.h"
 #include "AUD_Buffer.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This reader plays two readers sequently.
@@ -44,12 +44,12 @@ private:
 	/**
 	 * The first reader.
 	 */
-	boost::shared_ptr<AUD_IReader> m_reader1;
+	std::shared_ptr<AUD_IReader> m_reader1;
 
 	/**
 	 * The second reader.
 	 */
-	boost::shared_ptr<AUD_IReader> m_reader2;
+	std::shared_ptr<AUD_IReader> m_reader2;
 
 	/**
 	 * Whether we've reached the end of the first reader.
@@ -66,7 +66,7 @@ public:
 	 * \param reader1 The first reader to read from.
 	 * \param reader2 The second reader to read from.
 	 */
-	AUD_DoubleReader(boost::shared_ptr<AUD_IReader> reader1, boost::shared_ptr<AUD_IReader> reader2);
+	AUD_DoubleReader(std::shared_ptr<AUD_IReader> reader1, std::shared_ptr<AUD_IReader> reader2);
 
 	/**
 	 * Destroys the reader.

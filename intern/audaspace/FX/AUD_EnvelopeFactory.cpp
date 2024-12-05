@@ -54,7 +54,7 @@ void AUD_EnvelopeFactory::endEnvelopeFilter(EnvelopeParameters* param)
 	delete param;
 }
 
-AUD_EnvelopeFactory::AUD_EnvelopeFactory(boost::shared_ptr<AUD_IFactory> factory, float attack,
+AUD_EnvelopeFactory::AUD_EnvelopeFactory(std::shared_ptr<AUD_IFactory> factory, float attack,
 										 float release, float threshold,
 										 float arthreshold) :
 		AUD_EffectFactory(factory),
@@ -65,9 +65,9 @@ AUD_EnvelopeFactory::AUD_EnvelopeFactory(boost::shared_ptr<AUD_IFactory> factory
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_EnvelopeFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_EnvelopeFactory::createReader()
 {
-	boost::shared_ptr<AUD_IReader> reader = getReader();
+	std::shared_ptr<AUD_IReader> reader = getReader();
 
 	EnvelopeParameters* param = new EnvelopeParameters();
 	param->arthreshold = m_arthreshold;
@@ -75,7 +75,7 @@ boost::shared_ptr<AUD_IReader> AUD_EnvelopeFactory::createReader()
 	param->release = pow(m_arthreshold, 1.0f/(static_cast<float>(reader->getSpecs().rate) * m_release));
 	param->threshold = m_threshold;
 
-	return boost::shared_ptr<AUD_IReader>(new AUD_CallbackIIRFilterReader(reader, 1, 2,
+	return std::shared_ptr<AUD_IReader>(new AUD_CallbackIIRFilterReader(reader, 1, 2,
 										   (doFilterIIR) envelopeFilter,
 										   (endFilterIIR) endEnvelopeFilter,
 										   param));

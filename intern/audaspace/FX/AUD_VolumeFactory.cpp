@@ -30,7 +30,7 @@
 #include "AUD_VolumeFactory.h"
 #include "AUD_IIRFilterReader.h"
 
-AUD_VolumeFactory::AUD_VolumeFactory(boost::shared_ptr<AUD_IFactory> factory, float volume) :
+AUD_VolumeFactory::AUD_VolumeFactory(std::shared_ptr<AUD_IFactory> factory, float volume) :
 		AUD_EffectFactory(factory),
 		m_volume(volume)
 {
@@ -41,10 +41,10 @@ float AUD_VolumeFactory::getVolume() const
 	return m_volume;
 }
 
-boost::shared_ptr<AUD_IReader> AUD_VolumeFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_VolumeFactory::createReader()
 {
 	std::vector<float> a, b;
 	a.push_back(1);
 	b.push_back(m_volume);
-	return boost::shared_ptr<AUD_IReader>(new AUD_IIRFilterReader(getReader(), b, a));
+	return std::shared_ptr<AUD_IReader>(new AUD_IIRFilterReader(getReader(), b, a));
 }

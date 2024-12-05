@@ -53,9 +53,9 @@ public:
 	 * \param factory The input factory.
 	 * \param pitch The desired pitch.
 	 */
-	AUD_PitchFactory(boost::shared_ptr<AUD_IFactory> factory, float pitch);
+	AUD_PitchFactory(std::shared_ptr<AUD_IFactory> factory, float pitch);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_PITCHFACTORY_H__

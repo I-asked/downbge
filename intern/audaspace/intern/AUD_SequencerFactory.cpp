@@ -34,7 +34,7 @@
 
 AUD_SequencerFactory::AUD_SequencerFactory(AUD_Specs specs, float fps, bool muted)
 {
-	m_sequence = boost::shared_ptr<AUD_Sequencer>(new AUD_Sequencer(specs, fps, muted));
+	m_sequence = std::shared_ptr<AUD_Sequencer>(new AUD_Sequencer(specs, fps, muted));
 }
 
 /*void AUD_SequencerFactory::lock()
@@ -102,22 +102,22 @@ AUD_AnimateableProperty* AUD_SequencerFactory::getAnimProperty(AUD_AnimateablePr
 	return m_sequence->getAnimProperty(type);
 }
 
-boost::shared_ptr<AUD_SequencerEntry> AUD_SequencerFactory::add(boost::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip)
+std::shared_ptr<AUD_SequencerEntry> AUD_SequencerFactory::add(std::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip)
 {
 	return m_sequence->add(sound, begin, end, skip);
 }
 
-void AUD_SequencerFactory::remove(boost::shared_ptr<AUD_SequencerEntry> entry)
+void AUD_SequencerFactory::remove(std::shared_ptr<AUD_SequencerEntry> entry)
 {
 	m_sequence->remove(entry);
 }
 
-boost::shared_ptr<AUD_IReader> AUD_SequencerFactory::createQualityReader()
+std::shared_ptr<AUD_IReader> AUD_SequencerFactory::createQualityReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_SequencerReader(m_sequence, true));
+	return std::shared_ptr<AUD_IReader>(new AUD_SequencerReader(m_sequence, true));
 }
 
-boost::shared_ptr<AUD_IReader> AUD_SequencerFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_SequencerFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_SequencerReader(m_sequence));
+	return std::shared_ptr<AUD_IReader>(new AUD_SequencerReader(m_sequence));
 }

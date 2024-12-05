@@ -3745,15 +3745,15 @@ static ListBase running_threads;
 static ListBase prefetch_wait;
 static ListBase prefetch_done;
 
-static pthread_mutex_t queue_lock          = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t wakeup_lock         = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t wakeup_cond          = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t queue_lock          = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t wakeup_lock         = BLI_MUTEX_INITIALIZER;
+static pthread_cond_t wakeup_cond          = BLI_COND_INITIALIZER;
 
-//static pthread_mutex_t prefetch_ready_lock = PTHREAD_MUTEX_INITIALIZER;
-//static pthread_cond_t  prefetch_ready_cond = PTHREAD_COND_INITIALIZER;
+//static pthread_mutex_t prefetch_ready_lock = BLI_MUTEX_INITIALIZER;
+//static pthread_cond_t  prefetch_ready_cond = BLI_COND_INITIALIZER;
 
-static pthread_mutex_t frame_done_lock     = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t frame_done_cond      = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t frame_done_lock     = BLI_MUTEX_INITIALIZER;
+static pthread_cond_t frame_done_cond      = BLI_COND_INITIALIZER;
 
 static volatile bool seq_thread_shutdown = true; 
 static volatile int seq_last_given_monoton_cfra = 0;

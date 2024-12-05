@@ -37,12 +37,12 @@ sample_t AUD_RectifyFactory::rectifyFilter(AUD_CallbackIIRFilterReader* reader, 
 	return fabs(reader->x(0));
 }
 
-AUD_RectifyFactory::AUD_RectifyFactory(boost::shared_ptr<AUD_IFactory> factory) :
+AUD_RectifyFactory::AUD_RectifyFactory(std::shared_ptr<AUD_IFactory> factory) :
 		AUD_EffectFactory(factory)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_RectifyFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_RectifyFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_CallbackIIRFilterReader(getReader(), 1, 1, rectifyFilter));
+	return std::shared_ptr<AUD_IReader>(new AUD_CallbackIIRFilterReader(getReader(), 1, 1, rectifyFilter));
 }

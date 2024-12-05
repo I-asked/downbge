@@ -42,11 +42,11 @@ private:
 	/**
 	 * The factory for dynamically recalculating filter coefficients.
 	 */
-	boost::shared_ptr<AUD_IDynamicIIRFilterCalculator> m_calculator;
+	std::shared_ptr<AUD_IDynamicIIRFilterCalculator> m_calculator;
 
 public:
-	AUD_DynamicIIRFilterReader(boost::shared_ptr<AUD_IReader> reader,
-							   boost::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator);
+	AUD_DynamicIIRFilterReader(std::shared_ptr<AUD_IReader> reader,
+							   std::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator);
 
 	virtual void sampleRateChanged(AUD_SampleRate rate);
 };

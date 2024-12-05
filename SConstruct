@@ -174,7 +174,7 @@ if re.match('linux[0-9]+', platform):
 
 crossbuild = B.arguments.get('BF_CROSS', None)
 if crossbuild and platform not in ('win32-vc', 'win64-vc'):
-    platform = 'linuxcross'
+    platform = crossbuild
 
 env['OURPLATFORM'] = platform
 
@@ -187,7 +187,8 @@ else:
 
 if crossbuild and env['PLATFORM'] != 'win32':
     print B.bc.HEADER+"Preparing for crossbuild"+B.bc.ENDC
-    env.Tool('crossmingw', [toolpath])
+    if platform == 'linuxcross':
+        env.Tool('crossmingw', [toolpath])
     # todo: determine proper libs/includes etc.
     # Needed for gui programs, console programs should do without it
 

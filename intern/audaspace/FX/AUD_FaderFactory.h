@@ -67,7 +67,7 @@ public:
 	 * \param start The time where fading should start in seconds.
 	 * \param length How long fading should last in seconds.
 	 */
-	AUD_FaderFactory(boost::shared_ptr<AUD_IFactory> factory,
+	AUD_FaderFactory(std::shared_ptr<AUD_IFactory> factory,
 	                 AUD_FadeType type = AUD_FADE_IN,
 	                 float start = 0.0f, float length = 1.0f);
 
@@ -86,7 +86,7 @@ public:
 	 */
 	float getLength() const;
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_FADERFACTORY_H__

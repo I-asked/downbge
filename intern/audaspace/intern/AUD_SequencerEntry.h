@@ -35,7 +35,7 @@
 #include "AUD_ILockable.h"
 
 #include <pthread.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This class represents a sequenced entry in a sequencer factory.
@@ -57,7 +57,7 @@ private:
 	int m_id;
 
 	/// The sound this entry plays.
-	boost::shared_ptr<AUD_IFactory> m_sound;
+	std::shared_ptr<AUD_IFactory> m_sound;
 
 	/// The begin time.
 	float m_begin;
@@ -125,7 +125,7 @@ public:
 	 * \param skip How much seconds should be skipped at the beginning.
 	 * \param id The ID of the entry.
 	 */
-	AUD_SequencerEntry(boost::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip, int id);
+	AUD_SequencerEntry(std::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip, int id);
 	virtual ~AUD_SequencerEntry();
 
 	/**
@@ -142,7 +142,7 @@ public:
 	 * Sets the sound of the entry.
 	 * \param sound The new sound.
 	 */
-	void setSound(boost::shared_ptr<AUD_IFactory> sound);
+	void setSound(std::shared_ptr<AUD_IFactory> sound);
 
 	/**
 	 * Moves the entry.

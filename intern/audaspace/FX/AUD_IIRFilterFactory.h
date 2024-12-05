@@ -62,10 +62,10 @@ public:
 	 * \param b The input filter coefficients.
 	 * \param a The output filter coefficients.
 	 */
-	AUD_IIRFilterFactory(boost::shared_ptr<AUD_IFactory> factory, std::vector<float> b,
+	AUD_IIRFilterFactory(std::shared_ptr<AUD_IFactory> factory, std::vector<float> b,
 						 std::vector<float> a);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_IIRFILTERFACTORY_H__

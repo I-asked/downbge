@@ -54,12 +54,12 @@ private:
 	/**
 	 * Saves the sequence the reader belongs to.
 	 */
-	boost::shared_ptr<AUD_Sequencer> m_sequence;
+	std::shared_ptr<AUD_Sequencer> m_sequence;
 
 	/**
 	 * The list of playback handles for the entries.
 	 */
-	std::list<boost::shared_ptr<AUD_SequencerHandle> > m_handles;
+	std::list<std::shared_ptr<AUD_SequencerHandle> > m_handles;
 
 	/**
 	 * Last status read from the sequence.
@@ -81,7 +81,7 @@ public:
 	 * \param reader The reader to mix.
 	 * \param specs The target specification.
 	 */
-	AUD_SequencerReader(boost::shared_ptr<AUD_Sequencer> sequence, bool quality = false);
+	AUD_SequencerReader(std::shared_ptr<AUD_Sequencer> sequence, bool quality = false);
 
 	/**
 	 * Destroys the reader.

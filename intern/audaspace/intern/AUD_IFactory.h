@@ -33,7 +33,7 @@
 #include "AUD_Space.h"
 #include "AUD_IReader.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This class represents a type of sound source and saves the necessary values
@@ -55,7 +55,7 @@ public:
 	 * \exception AUD_Exception An exception may be thrown if there has been
 	 *            a more unexpected error during reader creation.
 	 */
-	virtual boost::shared_ptr<AUD_IReader> createReader()=0;
+	virtual std::shared_ptr<AUD_IReader> createReader()=0;
 };
 
 #endif //__AUD_IFACTORY_H__

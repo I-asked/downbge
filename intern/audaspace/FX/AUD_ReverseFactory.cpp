@@ -31,12 +31,12 @@
 #include "AUD_ReverseReader.h"
 #include "AUD_Space.h"
 
-AUD_ReverseFactory::AUD_ReverseFactory(boost::shared_ptr<AUD_IFactory> factory) :
+AUD_ReverseFactory::AUD_ReverseFactory(std::shared_ptr<AUD_IFactory> factory) :
 		AUD_EffectFactory(factory)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_ReverseFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_ReverseFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_ReverseReader(getReader()));
+	return std::shared_ptr<AUD_IReader>(new AUD_ReverseReader(getReader()));
 }

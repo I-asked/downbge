@@ -51,13 +51,7 @@ AUD_Sequencer::AUD_Sequencer(AUD_Specs specs, float fps, bool muted) :
 	float f = 1;
 	m_volume.write(&f);
 
-	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-
-	pthread_mutex_init(&m_mutex, &attr);
-
-	pthread_mutexattr_destroy(&attr);
+	pthread_mutex_init(&m_mutex, NULL);
 }
 
 AUD_Sequencer::~AUD_Sequencer()
@@ -156,11 +150,11 @@ AUD_AnimateableProperty* AUD_Sequencer::getAnimProperty(AUD_AnimateablePropertyT
 	}
 }
 
-boost::shared_ptr<AUD_SequencerEntry> AUD_Sequencer::add(boost::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip)
+std::shared_ptr<AUD_SequencerEntry> AUD_Sequencer::add(std::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip)
 {
 	AUD_MutexLock lock(*this);
 
-	boost::shared_ptr<AUD_SequencerEntry> entry = boost::shared_ptr<AUD_SequencerEntry>(new AUD_SequencerEntry(sound, begin, end, skip, m_id++));
+	std::shared_ptr<AUD_SequencerEntry> entry = std::shared_ptr<AUD_SequencerEntry>(new AUD_SequencerEntry(sound, begin, end, skip, m_id++));
 
 	m_entries.push_back(entry);
 	m_entry_status++;
@@ -168,7 +162,7 @@ boost::shared_ptr<AUD_SequencerEntry> AUD_Sequencer::add(boost::shared_ptr<AUD_I
 	return entry;
 }
 
-void AUD_Sequencer::remove(boost::shared_ptr<AUD_SequencerEntry> entry)
+void AUD_Sequencer::remove(std::shared_ptr<AUD_SequencerEntry> entry)
 {
 	AUD_MutexLock lock(*this);
 

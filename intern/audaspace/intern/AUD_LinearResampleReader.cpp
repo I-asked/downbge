@@ -34,7 +34,7 @@
 
 #define CC m_channels + channel
 
-AUD_LinearResampleReader::AUD_LinearResampleReader(boost::shared_ptr<AUD_IReader> reader,
+AUD_LinearResampleReader::AUD_LinearResampleReader(std::shared_ptr<AUD_IReader> reader,
 												   AUD_Specs specs) :
 	AUD_ResampleReader(reader, specs.rate),
 	m_channels(reader->getSpecs().channels),

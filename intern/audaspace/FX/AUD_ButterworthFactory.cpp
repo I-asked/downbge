@@ -31,9 +31,9 @@
 #include "AUD_IIRFilterReader.h"
 #include "AUD_ButterworthCalculator.h"
 
-AUD_ButterworthFactory::AUD_ButterworthFactory(boost::shared_ptr<AUD_IFactory> factory,
+AUD_ButterworthFactory::AUD_ButterworthFactory(std::shared_ptr<AUD_IFactory> factory,
 											   float frequency) :
-		AUD_DynamicIIRFilterFactory(factory, boost::shared_ptr<AUD_IDynamicIIRFilterCalculator>(new AUD_ButterworthCalculator(frequency)))
+		AUD_DynamicIIRFilterFactory(factory, std::shared_ptr<AUD_IDynamicIIRFilterCalculator>(new AUD_ButterworthCalculator(frequency)))
 {
 }
 
