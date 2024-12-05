@@ -164,7 +164,7 @@ static void rna_Scene_ray_cast(Scene *scene, float ray_start[3], float ray_end[3
 	}
 }
 
-#ifdef WITH_COLLADA
+#if defined(WITH_COLLADA) && !defined(__wii__)
 /* don't remove this, as COLLADA exporting cannot be done through operators in render() callback. */
 #include "../../collada/collada.h"
 
@@ -251,7 +251,7 @@ void RNA_api_scene(StructRNA *srna)
 	RNA_def_property_flag(parm, PROP_THICK_WRAP);
 	RNA_def_function_output(func, parm);
 
-#ifdef WITH_COLLADA
+#if defined(WITH_COLLADA) && !defined(__wii__)
 	/* don't remove this, as COLLADA exporting cannot be done through operators in render() callback. */
 	func = RNA_def_function(srna, "collada_export", "rna_Scene_collada_export");
 	parm = RNA_def_string(func, "filepath", NULL, FILE_MAX, "File Path", "File path to write Collada file");
