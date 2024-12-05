@@ -71,7 +71,7 @@ static inline int lrint(double d)
 #define fp_rest(x) (x & ((1 << SHIFT_BITS) - 1))
 #define fp_rest_to_double(x) fp_to_double(fp_rest(x))
 
-AUD_JOSResampleReader::AUD_JOSResampleReader(boost::shared_ptr<AUD_IReader> reader, AUD_Specs specs) :
+AUD_JOSResampleReader::AUD_JOSResampleReader(std::shared_ptr<AUD_IReader> reader, AUD_Specs specs) :
 	AUD_ResampleReader(reader, specs.rate),
 	m_channels(AUD_CHANNELS_INVALID),
 	m_n(0),

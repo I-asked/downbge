@@ -97,10 +97,10 @@ extern "C" {
 
 #include <cassert>
 
-typedef boost::shared_ptr<AUD_IFactory> AUD_Sound;
-typedef boost::shared_ptr<AUD_IDevice> AUD_Device;
-typedef boost::shared_ptr<AUD_IHandle> AUD_Handle;
-typedef boost::shared_ptr<AUD_SequencerEntry> AUD_SEntry;
+typedef std::shared_ptr<AUD_IFactory> AUD_Sound;
+typedef std::shared_ptr<AUD_IDevice> AUD_Device;
+typedef std::shared_ptr<AUD_IHandle> AUD_Handle;
+typedef std::shared_ptr<AUD_SequencerEntry> AUD_SEntry;
 
 #define AUD_CAPI_IMPLEMENTATION
 #include "AUD_C-API.h"
@@ -109,7 +109,7 @@ typedef boost::shared_ptr<AUD_SequencerEntry> AUD_SEntry;
 #  define NULL (void *)0
 #endif
 
-static boost::shared_ptr<AUD_IDevice> AUD_device;
+static std::shared_ptr<AUD_IDevice> AUD_device;
 static AUD_I3DDevice *AUD_3ddevice;
 
 void AUD_initOnce()
@@ -131,7 +131,7 @@ void AUD_exitOnce()
 
 AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, const char* name)
 {
-	boost::shared_ptr<AUD_IDevice> dev;
+	std::shared_ptr<AUD_IDevice> dev;
 
 	if (AUD_device.get()) {
 		AUD_exit(NULL);
@@ -141,18 +141,18 @@ AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, 
 
 	try {
 		if(dname == "Null") {
-			dev = boost::shared_ptr<AUD_IDevice>(new AUD_NULLDevice());
+			dev = std::shared_ptr<AUD_IDevice>(new AUD_NULLDevice());
 		}
 #ifdef WITH_SDL
 		else if(dname == "SDL")
 		{
-			dev = boost::shared_ptr<AUD_IDevice>(new AUD_SDLDevice(specs, buffersize));
+			dev = std::shared_ptr<AUD_IDevice>(new AUD_SDLDevice(specs, buffersize));
 		}
 #endif
 #ifdef WITH_OPENAL
 		else if(dname == "OpenAL")
 		{
-			dev = boost::shared_ptr<AUD_IDevice>(new AUD_OpenALDevice(specs, buffersize));
+			dev = std::shared_ptr<AUD_IDevice>(new AUD_OpenALDevice(specs, buffersize));
 		}
 #endif
 #ifdef WITH_JACK
@@ -171,7 +171,7 @@ AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, 
 				return NULL;
 			}
 			else {
-				dev = boost::shared_ptr<AUD_IDevice>(new AUD_JackDevice(name, specs, buffersize));
+				dev = std::shared_ptr<AUD_IDevice>(new AUD_JackDevice(name, specs, buffersize));
 			}
 		}
 #endif
@@ -193,7 +193,7 @@ AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, 
 
 void AUD_exit(AUD_Device* device)
 {
-	AUD_device = boost::shared_ptr<AUD_IDevice>();
+	AUD_device = std::shared_ptr<AUD_IDevice>();
 	AUD_3ddevice = NULL;
 }
 
@@ -203,7 +203,7 @@ static PyObject *AUD_getCDevice(PyObject *self)
 	if (AUD_device.get()) {
 		Device *device = (Device *)Device_empty();
 		if (device != NULL) {
-			device->device = new boost::shared_ptr<AUD_IDevice>(AUD_device);
+			device->device = new std::shared_ptr<AUD_IDevice>(AUD_device);
 			return (PyObject *)device;
 		}
 	}
@@ -229,12 +229,12 @@ static PyObject *AUD_getSoundFromPointer(PyObject *self, PyObject *args)
 
 	if (PyArg_Parse(args, "l:_sound_from_pointer", &lptr)) {
 		if (lptr) {
-			boost::shared_ptr<AUD_IFactory>* factory = (boost::shared_ptr<AUD_IFactory>*) BKE_sound_get_factory((void *) lptr);
+			std::shared_ptr<AUD_IFactory>* factory = (std::shared_ptr<AUD_IFactory>*) BKE_sound_get_factory((void *) lptr);
 
 			if (factory) {
 				Factory *obj = (Factory *)Factory_empty();
 				if (obj) {
-					obj->factory = new boost::shared_ptr<AUD_IFactory>(*factory);
+					obj->factory = new std::shared_ptr<AUD_IFactory>(*factory);
 					return (PyObject *) obj;
 				}
 			}
@@ -269,7 +269,7 @@ void *AUD_getPythonSound(AUD_Sound *sound)
 	if (sound) {
 		Factory *obj = (Factory *) Factory_empty();
 		if (obj) {
-			obj->factory = new boost::shared_ptr<AUD_IFactory>(*sound);
+			obj->factory = new std::shared_ptr<AUD_IFactory>(*sound);
 			return (PyObject *) obj;
 		}
 	}
@@ -284,7 +284,7 @@ AUD_Sound *AUD_getSoundFromPython(void *sound)
 	if (!factory)
 		return NULL;
 
-	return new boost::shared_ptr<AUD_IFactory>(*reinterpret_cast<boost::shared_ptr<AUD_IFactory>*>(factory->factory));
+	return new std::shared_ptr<AUD_IFactory>(*reinterpret_cast<std::shared_ptr<AUD_IFactory>*>(factory->factory));
 }
 
 #endif
@@ -319,7 +319,7 @@ AUD_SoundInfo AUD_getInfo(AUD_Sound *sound)
 	info.length = 0.0f;
 
 	try {
-		boost::shared_ptr<AUD_IReader> reader = (*sound)->createReader();
+		std::shared_ptr<AUD_IReader> reader = (*sound)->createReader();
 
 		if (reader.get()) {
 			info.specs = reader->getSpecs();
@@ -591,7 +591,7 @@ int AUD_Device_setDistanceModel(void* device, AUD_DistanceModel model)
 int AUD_Handle_setLocation(AUD_Handle *handle, const float location[3])
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		AUD_Vector3 v(location[0], location[1], location[2]);
@@ -604,7 +604,7 @@ int AUD_Handle_setLocation(AUD_Handle *handle, const float location[3])
 int AUD_Handle_setVelocity(AUD_Handle *handle, const float velocity[3])
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		AUD_Vector3 v(velocity[0], velocity[1], velocity[2]);
@@ -617,7 +617,7 @@ int AUD_Handle_setVelocity(AUD_Handle *handle, const float velocity[3])
 int AUD_Handle_setOrientation(AUD_Handle *handle, const float orientation[4])
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		AUD_Quaternion q(orientation[3], orientation[0], orientation[1], orientation[2]);
@@ -630,7 +630,7 @@ int AUD_Handle_setOrientation(AUD_Handle *handle, const float orientation[4])
 int AUD_Handle_setRelative(AUD_Handle *handle, int relative)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setRelative(relative);
@@ -642,7 +642,7 @@ int AUD_Handle_setRelative(AUD_Handle *handle, int relative)
 int AUD_Handle_setVolumeMaximum(AUD_Handle *handle, float volume)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setVolumeMaximum(volume);
@@ -654,7 +654,7 @@ int AUD_Handle_setVolumeMaximum(AUD_Handle *handle, float volume)
 int AUD_Handle_setVolumeMinimum(AUD_Handle *handle, float volume)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setVolumeMinimum(volume);
@@ -666,7 +666,7 @@ int AUD_Handle_setVolumeMinimum(AUD_Handle *handle, float volume)
 int AUD_Handle_setDistanceMaximum(AUD_Handle *handle, float distance)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setDistanceMaximum(distance);
@@ -678,7 +678,7 @@ int AUD_Handle_setDistanceMaximum(AUD_Handle *handle, float distance)
 int AUD_Handle_setDistanceReference(AUD_Handle *handle, float distance)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setDistanceReference(distance);
@@ -690,7 +690,7 @@ int AUD_Handle_setDistanceReference(AUD_Handle *handle, float distance)
 int AUD_Handle_setAttenuation(AUD_Handle *handle, float factor)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setAttenuation(factor);
@@ -702,7 +702,7 @@ int AUD_Handle_setAttenuation(AUD_Handle *handle, float factor)
 int AUD_Handle_setConeAngleOuter(AUD_Handle *handle, float angle)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setConeAngleOuter(angle);
@@ -714,7 +714,7 @@ int AUD_Handle_setConeAngleOuter(AUD_Handle *handle, float angle)
 int AUD_Handle_setConeAngleInner(AUD_Handle *handle, float angle)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setConeAngleInner(angle);
@@ -726,7 +726,7 @@ int AUD_Handle_setConeAngleInner(AUD_Handle *handle, float angle)
 int AUD_Handle_setConeVolumeOuter(AUD_Handle *handle, float volume)
 {
 	assert(handle);
-	boost::shared_ptr<AUD_I3DHandle> h = boost::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
+	std::shared_ptr<AUD_I3DHandle> h = std::dynamic_pointer_cast<AUD_I3DHandle>(*handle);
 
 	if (h.get()) {
 		return h->setConeVolumeOuter(volume);
@@ -803,7 +803,7 @@ int AUD_Device_read(AUD_Device *device, data_t *buffer, int length)
 	assert(buffer);
 
 	try {
-		return boost::dynamic_pointer_cast<AUD_ReadDevice>(*device)->read(buffer, length);
+		return std::dynamic_pointer_cast<AUD_ReadDevice>(*device)->read(buffer, length);
 	}
 	catch(AUD_Exception&)
 	{
@@ -831,34 +831,34 @@ float *AUD_readSoundBuffer(const char *filename, float low, float high,
 	AUD_DeviceSpecs specs;
 	specs.channels = AUD_CHANNELS_MONO;
 	specs.rate = (AUD_SampleRate)samplerate;
-	boost::shared_ptr<AUD_IFactory> sound;
+	std::shared_ptr<AUD_IFactory> sound;
 
-	boost::shared_ptr<AUD_IFactory> file = boost::shared_ptr<AUD_IFactory>(new AUD_FileFactory(filename));
+	std::shared_ptr<AUD_IFactory> file = std::shared_ptr<AUD_IFactory>(new AUD_FileFactory(filename));
 
 	int position = 0;
 
 	try {
-		boost::shared_ptr<AUD_IReader> reader = file->createReader();
+		std::shared_ptr<AUD_IReader> reader = file->createReader();
 
 		AUD_SampleRate rate = reader->getSpecs().rate;
 
-		sound = boost::shared_ptr<AUD_IFactory>(new AUD_ChannelMapperFactory(file, specs));
+		sound = std::shared_ptr<AUD_IFactory>(new AUD_ChannelMapperFactory(file, specs));
 
 		if (high < rate)
-			sound = boost::shared_ptr<AUD_IFactory>(new AUD_LowpassFactory(sound, high));
+			sound = std::shared_ptr<AUD_IFactory>(new AUD_LowpassFactory(sound, high));
 		if (low > 0)
-			sound = boost::shared_ptr<AUD_IFactory>(new AUD_HighpassFactory(sound, low));
+			sound = std::shared_ptr<AUD_IFactory>(new AUD_HighpassFactory(sound, low));
 
-		sound = boost::shared_ptr<AUD_IFactory>(new AUD_EnvelopeFactory(sound, attack, release, threshold, 0.1f));
-		sound = boost::shared_ptr<AUD_IFactory>(new AUD_LinearResampleFactory(sound, specs));
+		sound = std::shared_ptr<AUD_IFactory>(new AUD_EnvelopeFactory(sound, attack, release, threshold, 0.1f));
+		sound = std::shared_ptr<AUD_IFactory>(new AUD_LinearResampleFactory(sound, specs));
 
 		if (square)
-			sound = boost::shared_ptr<AUD_IFactory>(new AUD_SquareFactory(sound, sthreshold));
+			sound = std::shared_ptr<AUD_IFactory>(new AUD_SquareFactory(sound, sthreshold));
 
 		if (accumulate)
-			sound = boost::shared_ptr<AUD_IFactory>(new AUD_AccumulatorFactory(sound, additive));
+			sound = std::shared_ptr<AUD_IFactory>(new AUD_AccumulatorFactory(sound, additive));
 		else if (additive)
-			sound = boost::shared_ptr<AUD_IFactory>(new AUD_SumFactory(sound));
+			sound = std::shared_ptr<AUD_IFactory>(new AUD_SumFactory(sound));
 
 		reader = sound->createReader();
 
@@ -894,8 +894,8 @@ static void pauseSound(AUD_Handle *handle)
 
 AUD_Handle *AUD_pauseAfter(AUD_Handle *handle, float seconds)
 {
-	boost::shared_ptr<AUD_IFactory> silence = boost::shared_ptr<AUD_IFactory>(new AUD_SilenceFactory);
-	boost::shared_ptr<AUD_IFactory> limiter = boost::shared_ptr<AUD_IFactory>(new AUD_LimiterFactory(silence, 0, seconds));
+	std::shared_ptr<AUD_IFactory> silence = std::shared_ptr<AUD_IFactory>(new AUD_SilenceFactory);
+	std::shared_ptr<AUD_IFactory> limiter = std::shared_ptr<AUD_IFactory>(new AUD_LimiterFactory(silence, 0, seconds));
 
 	AUD_MutexLock lock(*AUD_device);
 
@@ -919,7 +919,7 @@ AUD_Sound *AUD_Sequence_create(float fps, int muted)
 	AUD_Specs specs;
 	specs.channels = AUD_CHANNELS_STEREO;
 	specs.rate = AUD_RATE_44100;
-	AUD_Sound *sequencer = new AUD_Sound(boost::shared_ptr<AUD_SequencerFactory>(new AUD_SequencerFactory(specs, fps, muted)));
+	AUD_Sound *sequencer = new AUD_Sound(std::shared_ptr<AUD_SequencerFactory>(new AUD_SequencerFactory(specs, fps, muted)));
 	return sequencer;
 }
 
@@ -1158,7 +1158,7 @@ int AUD_readSound(AUD_Sound *sound, sample_t *buffer, int length, int samples_pe
 	specs.channels = AUD_CHANNELS_MONO;
 	specs.format = AUD_FORMAT_INVALID;
 
-	boost::shared_ptr<AUD_IReader> reader = AUD_ChannelMapperFactory(*sound, specs).createReader();
+	std::shared_ptr<AUD_IReader> reader = AUD_ChannelMapperFactory(*sound, specs).createReader();
 
 	specs.specs = reader->getSpecs();
 	int len;
@@ -1215,7 +1215,7 @@ int AUD_readSound(AUD_Sound *sound, sample_t *buffer, int length, int samples_pe
 
 AUD_Sound *AUD_Sound_copy(AUD_Sound *sound)
 {
-	return new boost::shared_ptr<AUD_IFactory>(*sound);
+	return new std::shared_ptr<AUD_IFactory>(*sound);
 }
 
 void AUD_Handle_free(AUD_Handle *handle)
@@ -1229,9 +1229,9 @@ const char *AUD_mixdown(AUD_Sound *sound, unsigned int start, unsigned int lengt
 		AUD_SequencerFactory *f = dynamic_cast<AUD_SequencerFactory *>(sound->get());
 
 		f->setSpecs(specs.specs);
-		boost::shared_ptr<AUD_IReader> reader = f->createQualityReader();
+		std::shared_ptr<AUD_IReader> reader = f->createQualityReader();
 		reader->seek(start);
-		boost::shared_ptr<AUD_IWriter> writer = AUD_FileWriter::createWriter(filename, specs, format, codec, bitrate);
+		std::shared_ptr<AUD_IWriter> writer = AUD_FileWriter::createWriter(filename, specs, format, codec, bitrate);
 		AUD_FileWriter::writeReader(reader, writer, length, buffersize);
 
 		return NULL;
@@ -1249,7 +1249,7 @@ const char *AUD_mixdown_per_channel(AUD_Sound *sound, unsigned int start, unsign
 
 		f->setSpecs(specs.specs);
 
-		std::vector<boost::shared_ptr<AUD_IWriter> > writers;
+		std::vector<std::shared_ptr<AUD_IWriter> > writers;
 
 		int channels = specs.channels;
 		specs.channels = AUD_CHANNELS_MONO;
@@ -1273,7 +1273,7 @@ const char *AUD_mixdown_per_channel(AUD_Sound *sound, unsigned int start, unsign
 			writers.push_back(AUD_FileWriter::createWriter(stream.str(), specs, format, codec, bitrate));
 		}
 
-		boost::shared_ptr<AUD_IReader> reader = f->createQualityReader();
+		std::shared_ptr<AUD_IReader> reader = f->createQualityReader();
 		reader->seek(start);
 		AUD_FileWriter::writeReader(reader, writers, length, buffersize);
 

@@ -54,14 +54,14 @@ public:
 	 * \param factory The input factory.
 	 * \param threshold The threshold.
 	 */
-	AUD_SquareFactory(boost::shared_ptr<AUD_IFactory> factory, float threshold = 0.0f);
+	AUD_SquareFactory(std::shared_ptr<AUD_IFactory> factory, float threshold = 0.0f);
 
 	/**
 	 * Returns the threshold.
 	 */
 	float getThreshold() const;
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 
 	static sample_t squareFilter(AUD_CallbackIIRFilterReader* reader, float* threshold);
 	static void endSquareFilter(float* threshold);

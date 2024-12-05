@@ -32,7 +32,7 @@
 
 #include <cstring>
 
-AUD_LoopReader::AUD_LoopReader(boost::shared_ptr<AUD_IReader> reader, int loop) :
+AUD_LoopReader::AUD_LoopReader(std::shared_ptr<AUD_IReader> reader, int loop) :
 		AUD_EffectReader(reader), m_count(loop), m_left(loop)
 {
 }

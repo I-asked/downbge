@@ -42,17 +42,17 @@
 class AUD_DynamicIIRFilterFactory : public AUD_EffectFactory
 {
 protected:
-	boost::shared_ptr<AUD_IDynamicIIRFilterCalculator> m_calculator;
+	std::shared_ptr<AUD_IDynamicIIRFilterCalculator> m_calculator;
 
 public:
 	/**
 	 * Creates a new Dynmic IIR filter factory.
 	 * \param factory The input factory.
 	 */
-	AUD_DynamicIIRFilterFactory(boost::shared_ptr<AUD_IFactory> factory,
-								boost::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator);
+	AUD_DynamicIIRFilterFactory(std::shared_ptr<AUD_IFactory> factory,
+								std::shared_ptr<AUD_IDynamicIIRFilterCalculator> calculator);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif // __AUD_DYNAMICIIRFILTERFACTORY_H__

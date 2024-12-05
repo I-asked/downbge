@@ -766,7 +766,7 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 		char *ptr = NULL;
 		long long sz = 0;
 
-		if ((PyObject_AsCharBuffer(py_buffer, &ptr, &sz) < 0)
+		if ((PyObject_AsCharBuffer(py_buffer, &ptr, (Py_ssize_t)&sz) < 0)
 				|| (status=kx_scene->GetSceneConverter()->LinkBlendFileMemory(ptr, sz, path, group, kx_scene, &err_str, options)))	{
 			Py_DECREF(py_buffer);
 			return status->GetProxy();

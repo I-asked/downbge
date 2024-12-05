@@ -8,7 +8,7 @@
 
 #include "clew.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)
     #define WIN32_LEAN_AND_MEAN
     #define VC_EXTRALEAN
     #include <windows.h>
@@ -18,6 +18,12 @@
     #define CLEW_DYNLIB_OPEN    LoadLibrary
     #define CLEW_DYNLIB_CLOSE   FreeLibrary
     #define CLEW_DYNLIB_IMPORT  GetProcAddress
+#elif defined(__wii__)
+    typedef void*                   CLEW_DYNLIB_HANDLE;
+
+    #define CLEW_DYNLIB_OPEN(path)  (NULL)
+    #define CLEW_DYNLIB_CLOSE(...)       (void)(NULL)
+    #define CLEW_DYNLIB_IMPORT(...)      (NULL)
 #else
     #include <dlfcn.h>
     

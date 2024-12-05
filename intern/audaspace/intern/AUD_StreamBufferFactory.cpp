@@ -33,10 +33,10 @@
 
 #include <cstring>
 
-AUD_StreamBufferFactory::AUD_StreamBufferFactory(boost::shared_ptr<AUD_IFactory> factory) :
+AUD_StreamBufferFactory::AUD_StreamBufferFactory(std::shared_ptr<AUD_IFactory> factory) :
 	m_buffer(new AUD_Buffer())
 {
-	boost::shared_ptr<AUD_IReader> reader = factory->createReader();
+	std::shared_ptr<AUD_IReader> reader = factory->createReader();
 
 	m_specs = reader->getSpecs();
 
@@ -70,7 +70,7 @@ AUD_StreamBufferFactory::AUD_StreamBufferFactory(boost::shared_ptr<AUD_IFactory>
 	m_buffer->resize(index * sample_size, true);
 }
 
-boost::shared_ptr<AUD_IReader> AUD_StreamBufferFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_StreamBufferFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_BufferReader(m_buffer, m_specs));
+	return std::shared_ptr<AUD_IReader>(new AUD_BufferReader(m_buffer, m_specs));
 }

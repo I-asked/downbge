@@ -49,9 +49,8 @@ for api_file in api_files:
 
 generated_files = [filename[:-2] + '_gen.c' for filename in generated_files]
 
-makesrna_tool = env.Clone()
+makesrna_tool = env.Clone(CPPFLAGS='', CXXFLAGS='', CCFLAGS='', LINKFLAGS='')
 rna = env.Clone()
-makesrna_tool.Append(CCFLAGS = '-DBASE_HEADER="\\"source/blender/makesrna/\\"" ')
 
 defs = []
 defs += env['BF_GL_DEFINITIONS']
@@ -178,20 +177,24 @@ if env['WITH_BF_INTERNATIONAL']:
 if not env['BF_DEBUG']:
     defs.append('NDEBUG')
 
-makesrna_tool.Append(CPPDEFINES=defs)
-
-makesrna_tool.Append (CPPPATH = Split(incs))
-
 if env['OURPLATFORM'] == 'linuxcross':
     USE_WINE = True # when cross compiling on linux 64bit this is useful
 else:
     USE_WINE = False
 
 if not USE_WINE:
-    if env['OURPLATFORM'] == 'linuxcross':
-        makesdna_tool.Replace(CC='gcc')
-        makesdna_tool.Replace(AR='ar')
-        makesdna_tool.Replace(LINK='gcc')
+    if env['OURPLATFORM'] in ('linuxcross', 'wii', 'psp', 'vita'):
+        #makesrna_tool.Replace(CC='gcc')
+        #makesrna_tool.Replace(AR='ar')
+        #makesrna_tool.Replace(LINK='gcc')
+        #makesrna_tool.Append(LINKFLAGS=['-L../build/linux/lib'])
+        pass
+
+makesrna_tool.Append(CCFLAGS = '-DBASE_HEADER="\\"source/blender/makesrna/\\"" ')
+
+makesrna_tool.Append(CPPDEFINES=defs)
+
+makesrna_tool.Append (CPPPATH = Split(incs))
 
 if sys.platform != 'cygwin':
     makesrna_tool.Append (CCFLAGS = cflags)
@@ -220,23 +223,24 @@ targetpath = root_build_dir+'/makesrna'
 if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetpath = '#' + targetpath
 
-if env['OURPLATFORM'] == 'linux' and root_build_dir[0]==os.sep:
-    makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
-else:
-    makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
+if env['OURPLATFORM'] not in ('wii', 'psp', 'vita'):
+    if env['OURPLATFORM'] == 'linux' and root_build_dir[0]==os.sep:
+        makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
+    else:
+        makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
 
 rna_dict = rna.Dictionary()
-rna.Depends (generated_files, makesrna)
+#rna.Depends (generated_files, makesrna)
 
 build_dir = Dir(".").abspath + os.sep
     
-if env['OURPLATFORM'] != 'linuxcross':
+if env['OURPLATFORM'] not in ('linuxcross', 'wii', 'psp', 'vita'):
     if env['OURPLATFORM'] in ('win32-vc', 'win64-vc', 'win32-mingw', 'win64-mingw'):
         rna.Command (generated_files, '', "\"" + root_build_dir+os.sep+"makesrna.exe\" \""  + build_dir )
     else:
         rna.Command (generated_files, '', "\"" + root_build_dir+os.sep+"makesrna\" \""  + build_dir + '"' )
 else:
-    rna.Command (generated_files, '', ('', 'wine ')[USE_WINE] + root_build_dir+os.sep+"makesrna.exe "  + build_dir)
+    rna.Command (generated_files, '', ('../build/linux/makesrna ', 'wine '+root_build_dir+os.sep+"makesdna ")[USE_WINE]  + build_dir)
 
 
 obj = ['intern/rna_access.c']

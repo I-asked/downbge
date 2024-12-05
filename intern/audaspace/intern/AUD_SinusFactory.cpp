@@ -42,7 +42,7 @@ float AUD_SinusFactory::getFrequency() const
 	return m_frequency;
 }
 
-boost::shared_ptr<AUD_IReader> AUD_SinusFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_SinusFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_SinusReader(m_frequency, m_sampleRate));
+	return std::shared_ptr<AUD_IReader>(new AUD_SinusReader(m_frequency, m_sampleRate));
 }

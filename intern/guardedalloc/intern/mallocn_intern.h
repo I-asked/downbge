@@ -35,6 +35,11 @@
 /* mmap exception */
 #if defined(WIN32)
 #  include "mmap_win.h"
+#elif defined(__wii__) || defined(__vita__)
+#  define mmap(...) (NULL)
+#  define munmap(...) (NULL)
+#  define MAP_SHARED 0
+#  define MAP_ANON 0
 #else
 #  include <sys/mman.h>
 #endif

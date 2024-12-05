@@ -46,7 +46,7 @@ protected:
 	/**
 	 * If there is no reader it is created out of this factory.
 	 */
-	boost::shared_ptr<AUD_IFactory> m_factory;
+	std::shared_ptr<AUD_IFactory> m_factory;
 
 	/**
 	 * Returns the reader created out of the factory.
@@ -54,7 +54,7 @@ protected:
 	 * classes.
 	 * \return The reader to mix.
 	 */
-	boost::shared_ptr<AUD_IReader> getReader() const;
+	std::shared_ptr<AUD_IReader> getReader() const;
 
 public:
 	/**
@@ -62,7 +62,7 @@ public:
 	 * \param factory The factory to create the readers to mix out of.
 	 * \param specs The target specification.
 	 */
-	AUD_MixerFactory(boost::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
+	AUD_MixerFactory(std::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
 
 	/**
 	 * Returns the target specification for resampling.
@@ -73,7 +73,7 @@ public:
 	 * Returns the saved factory.
 	 * \return The factory.
 	 */
-	boost::shared_ptr<AUD_IFactory> getFactory() const;
+	std::shared_ptr<AUD_IFactory> getFactory() const;
 };
 
 #endif //__AUD_MIXERFACTORY_H__

@@ -32,14 +32,14 @@
 
 #include <cstring>
 
-AUD_ChannelMapperFactory::AUD_ChannelMapperFactory(boost::shared_ptr<AUD_IFactory> factory,
+AUD_ChannelMapperFactory::AUD_ChannelMapperFactory(std::shared_ptr<AUD_IFactory> factory,
 												   AUD_DeviceSpecs specs) :
 		AUD_MixerFactory(factory, specs)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_ChannelMapperFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_ChannelMapperFactory::createReader()
 {
-	boost::shared_ptr<AUD_IReader> reader = getReader();
-	return boost::shared_ptr<AUD_IReader>(new AUD_ChannelMapperReader(reader, m_specs.channels));
+	std::shared_ptr<AUD_IReader> reader = getReader();
+	return std::shared_ptr<AUD_IReader>(new AUD_ChannelMapperReader(reader, m_specs.channels));
 }

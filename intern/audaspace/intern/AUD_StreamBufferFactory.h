@@ -33,7 +33,7 @@
 #include "AUD_IFactory.h"
 #include "AUD_Buffer.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This factory creates a buffer out of a reader. This way normally streamed
@@ -45,7 +45,7 @@ private:
 	/**
 	 * The buffer that holds the audio data.
 	 */
-	boost::shared_ptr<AUD_Buffer> m_buffer;
+	std::shared_ptr<AUD_Buffer> m_buffer;
 
 	/**
 	 * The specification of the samples.
@@ -63,9 +63,9 @@ public:
 	 * \param factory The factory that creates the reader for buffering.
 	 * \exception AUD_Exception Thrown if the reader cannot be created.
 	 */
-	AUD_StreamBufferFactory(boost::shared_ptr<AUD_IFactory> factory);
+	AUD_StreamBufferFactory(std::shared_ptr<AUD_IFactory> factory);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_STREAMBUFFERFACTORY_H__

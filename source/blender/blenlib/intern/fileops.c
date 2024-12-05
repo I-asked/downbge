@@ -624,7 +624,11 @@ static int recursive_operation(const char *startfrom, const char *startto,
 			if (to)
 				join_dirfile_alloc(&to_path, &to_alloc_len, to, dirent->d_name);
 
+#if defined(__vita__)
+			if (dirent->d_stat.st_attr & SCE_SO_IFDIR) {
+#else
 			if (dirent->d_type == DT_DIR) {
+#endif
 				/* recursively dig into a subfolder */
 				ret = recursive_operation(from_path, to_path, callback_dir_pre, callback_file, callback_dir_post);
 			}
@@ -861,6 +865,9 @@ static int copy_single_file(const char *from, const char *to)
 	         S_ISFIFO(st.st_mode) ||
 	         S_ISSOCK(st.st_mode))
 	{
+#if defined(__vita__) || defined(__wii__)
+    return RecursiveOp_Callback_Error;
+#else
 		/* copy special type of file */
 		if (mknod(to, st.st_mode, st.st_rdev)) {
 			perror("mknod");
@@ -871,6 +878,7 @@ static int copy_single_file(const char *from, const char *to)
 			return RecursiveOp_Callback_Error;
 
 		return RecursiveOp_Callback_OK;
+#endif
 	}
 	else if (!S_ISREG(st.st_mode)) {
 		fprintf(stderr, "Copying of this kind of files isn't supported yet\n");

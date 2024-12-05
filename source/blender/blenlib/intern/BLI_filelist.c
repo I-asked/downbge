@@ -34,11 +34,13 @@
 #include <sys/stat.h>
 #include <string.h>  /* strcpy etc.. */
 
-#ifdef WIN32
+#if defined(WIN32)
 #  include <io.h>
 #  include <direct.h>
 #  include "BLI_winstuff.h"
 #  include "utfconv.h"
+#elif defined(__vita__) || defined(__wii__)
+#  include <unistd.h>
 #else
 #  include <sys/ioctl.h>
 #  include <unistd.h>
@@ -312,7 +314,7 @@ void BLI_filelist_entry_mode_to_string(
 void BLI_filelist_entry_owner_to_string(
         const struct stat *st, const bool UNUSED(compact), char r_owner[FILELIST_DIRENTRY_OWNER_LEN])
 {
-#ifdef WIN32
+#if defined(WIN32) || defined(__vita__) || defined(__wii__)
 	strcpy(r_owner, "unknown");
 #else
 	struct passwd *pwuser = getpwuid(st->st_uid);

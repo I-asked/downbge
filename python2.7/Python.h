@@ -2,8 +2,8 @@
 
 #include_next <Python.h>
 #include <stdlib.h>
-#include <python2.7/structseq.h>
-#include <python2.7/longintrepr.h>
+#include <structseq.h>
+#include <longintrepr.h>
 
 #define PyLong_AS_LONG(op) PyLong_AsLong(op)
 

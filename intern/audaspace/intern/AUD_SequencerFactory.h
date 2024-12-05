@@ -48,7 +48,7 @@ class AUD_SequencerFactory : public AUD_IFactory//, public AUD_ILockable
 	friend class AUD_SequencerReader;
 private:
 	/// The sequence.
-	boost::shared_ptr<AUD_Sequencer> m_sequence;
+	std::shared_ptr<AUD_Sequencer> m_sequence;
 
 	// hide copy constructor and operator=
 	AUD_SequencerFactory(const AUD_SequencerFactory&);
@@ -157,21 +157,21 @@ public:
 	 * \param skip How much seconds should be skipped at the beginning.
 	 * \return The entry added.
 	 */
-	boost::shared_ptr<AUD_SequencerEntry> add(boost::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip);
+	std::shared_ptr<AUD_SequencerEntry> add(std::shared_ptr<AUD_IFactory> sound, float begin, float end, float skip);
 
 	/**
 	 * Removes an entry from the scene.
 	 * \param entry The entry to remove.
 	 */
-	void remove(boost::shared_ptr<AUD_SequencerEntry> entry);
+	void remove(std::shared_ptr<AUD_SequencerEntry> entry);
 
 	/**
 	 * Creates a new reader with high quality resampling.
 	 * \return The new reader.
 	 */
-	boost::shared_ptr<AUD_IReader> createQualityReader();
+	std::shared_ptr<AUD_IReader> createQualityReader();
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_SEQUENCERFACTORY_H__

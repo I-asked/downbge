@@ -30,16 +30,16 @@
 #include "AUD_SumFactory.h"
 #include "AUD_IIRFilterReader.h"
 
-AUD_SumFactory::AUD_SumFactory(boost::shared_ptr<AUD_IFactory> factory) :
+AUD_SumFactory::AUD_SumFactory(std::shared_ptr<AUD_IFactory> factory) :
 		AUD_EffectFactory(factory)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_SumFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_SumFactory::createReader()
 {
 	std::vector<float> a, b;
 	a.push_back(1);
 	a.push_back(-1);
 	b.push_back(1);
-	return boost::shared_ptr<AUD_IReader>(new AUD_IIRFilterReader(getReader(), b, a));
+	return std::shared_ptr<AUD_IReader>(new AUD_IIRFilterReader(getReader(), b, a));
 }

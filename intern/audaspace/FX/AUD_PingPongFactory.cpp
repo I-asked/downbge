@@ -31,16 +31,16 @@
 #include "AUD_DoubleReader.h"
 #include "AUD_ReverseFactory.h"
 
-AUD_PingPongFactory::AUD_PingPongFactory(boost::shared_ptr<AUD_IFactory> factory) :
+AUD_PingPongFactory::AUD_PingPongFactory(std::shared_ptr<AUD_IFactory> factory) :
 		AUD_EffectFactory(factory)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_PingPongFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_PingPongFactory::createReader()
 {
-	boost::shared_ptr<AUD_IReader> reader = getReader();
+	std::shared_ptr<AUD_IReader> reader = getReader();
 	AUD_ReverseFactory factory(m_factory);
-	boost::shared_ptr<AUD_IReader> reader2 = factory.createReader();
+	std::shared_ptr<AUD_IReader> reader2 = factory.createReader();
 
-	return boost::shared_ptr<AUD_IReader>(new AUD_DoubleReader(reader, reader2));
+	return std::shared_ptr<AUD_IReader>(new AUD_DoubleReader(reader, reader2));
 }

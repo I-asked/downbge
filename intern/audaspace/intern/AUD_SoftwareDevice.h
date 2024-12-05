@@ -59,16 +59,16 @@ protected:
 	{
 	public:
 		/// The reader source.
-		boost::shared_ptr<AUD_IReader> m_reader;
+		std::shared_ptr<AUD_IReader> m_reader;
 
 		/// The pitch reader in between.
-		boost::shared_ptr<AUD_PitchReader> m_pitch;
+		std::shared_ptr<AUD_PitchReader> m_pitch;
 
 		/// The resample reader in between.
-		boost::shared_ptr<AUD_ResampleReader> m_resampler;
+		std::shared_ptr<AUD_ResampleReader> m_resampler;
 
 		/// The channel mapper reader in between.
-		boost::shared_ptr<AUD_ChannelMapperReader> m_mapper;
+		std::shared_ptr<AUD_ChannelMapperReader> m_mapper;
 
 		/// Whether to keep the source if end of it is reached.
 		bool m_keep;
@@ -152,7 +152,7 @@ protected:
 		 * \param mapper The channel mapping reader.
 		 * \param keep Whether to keep the handle when the sound ends.
 		 */
-		AUD_SoftwareHandle(AUD_SoftwareDevice* device, boost::shared_ptr<AUD_IReader> reader, boost::shared_ptr<AUD_PitchReader> pitch, boost::shared_ptr<AUD_ResampleReader> resampler, boost::shared_ptr<AUD_ChannelMapperReader> mapper, bool keep);
+		AUD_SoftwareHandle(AUD_SoftwareDevice* device, std::shared_ptr<AUD_IReader> reader, std::shared_ptr<AUD_PitchReader> pitch, std::shared_ptr<AUD_ResampleReader> resampler, std::shared_ptr<AUD_ChannelMapperReader> mapper, bool keep);
 
 		/**
 		 * Updates the handle's playback parameters.
@@ -208,7 +208,7 @@ protected:
 		virtual bool setConeVolumeOuter(float volume);
 	};
 
-	typedef std::list<boost::shared_ptr<AUD_SoftwareHandle> >::iterator AUD_HandleIterator;
+	typedef std::list<std::shared_ptr<AUD_SoftwareHandle> >::iterator AUD_HandleIterator;
 
 	/**
 	 * The specification of the device.
@@ -218,7 +218,7 @@ protected:
 	/**
 	 * The mixer.
 	 */
-	boost::shared_ptr<AUD_Mixer> m_mixer;
+	std::shared_ptr<AUD_Mixer> m_mixer;
 
 	/**
 	 * Whether to do high or low quality resampling.
@@ -263,12 +263,12 @@ private:
 	/**
 	 * The list of sounds that are currently playing.
 	 */
-	std::list<boost::shared_ptr<AUD_SoftwareHandle> > m_playingSounds;
+	std::list<std::shared_ptr<AUD_SoftwareHandle> > m_playingSounds;
 
 	/**
 	 * The list of sounds that are currently paused.
 	 */
-	std::list<boost::shared_ptr<AUD_SoftwareHandle> > m_pausedSounds;
+	std::list<std::shared_ptr<AUD_SoftwareHandle> > m_pausedSounds;
 
 	/**
 	 * Whether there is currently playback.
@@ -322,8 +322,8 @@ public:
 	void setQuality(bool quality);
 
 	virtual AUD_DeviceSpecs getSpecs() const;
-	virtual boost::shared_ptr<AUD_IHandle> play(boost::shared_ptr<AUD_IReader> reader, bool keep = false);
-	virtual boost::shared_ptr<AUD_IHandle> play(boost::shared_ptr<AUD_IFactory> factory, bool keep = false);
+	virtual std::shared_ptr<AUD_IHandle> play(std::shared_ptr<AUD_IReader> reader, bool keep = false);
+	virtual std::shared_ptr<AUD_IHandle> play(std::shared_ptr<AUD_IFactory> factory, bool keep = false);
 	virtual void stopAll();
 	virtual void lock();
 	virtual void unlock();

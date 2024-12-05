@@ -41,6 +41,10 @@ extern "C" {
 #include <libkern/OSAtomic.h>
 #endif
 
+#ifdef __wii__
+#include <machine/spinlock.h>
+#endif
+
 /* for tables, button in UI, etc */
 #define BLENDER_MAX_THREADS     64
 
@@ -97,7 +101,8 @@ void    BLI_unlock_thread(int type);
 /* Mutex Lock */
 
 typedef pthread_mutex_t ThreadMutex;
-#define BLI_MUTEX_INITIALIZER   PTHREAD_MUTEX_INITIALIZER
+#define BLI_MUTEX_INITIALIZER   {}
+#define BLI_COND_INITIALIZER   {}
 
 void BLI_mutex_init(ThreadMutex *mutex);
 void BLI_mutex_end(ThreadMutex *mutex);
@@ -111,8 +116,10 @@ void BLI_mutex_unlock(ThreadMutex *mutex);
 
 /* Spin Lock */
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
 typedef OSSpinLock SpinLock;
+#elif defined(__wii__)
+typedef spinlock_t SpinLock;
 #else
 typedef pthread_spinlock_t SpinLock;
 #endif
@@ -127,9 +134,15 @@ void BLI_spin_end(SpinLock *spin);
 #define THREAD_LOCK_READ    1
 #define THREAD_LOCK_WRITE   2
 
+#ifdef __wii__
+#define BLI_RWLOCK_INITIALIZER RW_LOCK_UNLOCKED
+
+typedef rwlock_t ThreadRWMutex;
+#else
 #define BLI_RWLOCK_INITIALIZER PTHREAD_RWLOCK_INITIALIZER
 
 typedef pthread_rwlock_t ThreadRWMutex;
+#endif
 
 void BLI_rw_mutex_init(ThreadRWMutex *mutex);
 void BLI_rw_mutex_end(ThreadRWMutex *mutex);

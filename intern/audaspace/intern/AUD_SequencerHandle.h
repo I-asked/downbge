@@ -43,13 +43,13 @@ class AUD_SequencerHandle
 {
 private:
 	/// The entry this handle belongs to.
-	boost::shared_ptr<AUD_SequencerEntry> m_entry;
+	std::shared_ptr<AUD_SequencerEntry> m_entry;
 
 	/// The handle in the read device.
-	boost::shared_ptr<AUD_IHandle> m_handle;
+	std::shared_ptr<AUD_IHandle> m_handle;
 
 	/// The 3D handle in the read device.
-	boost::shared_ptr<AUD_I3DHandle> m_3dhandle;
+	std::shared_ptr<AUD_I3DHandle> m_3dhandle;
 
 	/// Whether the sound is playable.
 	bool m_valid;
@@ -84,7 +84,7 @@ public:
 	 * \param entry The entry this handle plays.
 	 * \param device The read device to play on.
 	 */
-	AUD_SequencerHandle(boost::shared_ptr<AUD_SequencerEntry> entry, AUD_ReadDevice& device);
+	AUD_SequencerHandle(std::shared_ptr<AUD_SequencerEntry> entry, AUD_ReadDevice& device);
 
 	/**
 	 * Destroys the handle.
@@ -96,7 +96,7 @@ public:
 	 * \param entry The entry to compare to.
 	 * \return Whether the entries ID is smaller, equal or bigger.
 	 */
-	int compare(boost::shared_ptr<AUD_SequencerEntry> entry) const;
+	int compare(std::shared_ptr<AUD_SequencerEntry> entry) const;
 
 	/**
 	 * Stops playing back the handle.

@@ -48,9 +48,9 @@ public:
 	 * \param factory The input factory.
 	 * \param specs The target specifications.
 	 */
-	AUD_JOSResampleFactory(boost::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
+	AUD_JOSResampleFactory(std::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_JOSRESAMPLEFACTORY_H__

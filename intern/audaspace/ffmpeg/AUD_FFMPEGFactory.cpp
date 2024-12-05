@@ -46,10 +46,10 @@ AUD_FFMPEGFactory::AUD_FFMPEGFactory(const data_t* buffer, int size) :
 	memcpy(m_buffer->getBuffer(), buffer, size);
 }
 
-boost::shared_ptr<AUD_IReader> AUD_FFMPEGFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_FFMPEGFactory::createReader()
 {
 	if(m_buffer.get())
-		return boost::shared_ptr<AUD_IReader>(new AUD_FFMPEGReader(m_buffer));
+		return std::shared_ptr<AUD_IReader>(new AUD_FFMPEGReader(m_buffer));
 	else
-		return boost::shared_ptr<AUD_IReader>(new AUD_FFMPEGReader(m_filename));
+		return std::shared_ptr<AUD_IReader>(new AUD_FFMPEGReader(m_filename));
 }

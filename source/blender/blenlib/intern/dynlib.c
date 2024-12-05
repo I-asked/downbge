@@ -41,7 +41,7 @@ struct DynamicLibrary {
 	void *handle;
 };
 
-#ifdef WIN32
+#if defined(WIN32)
 
 #define _WIN32_WINNT 0x501 /* Windows XP or newer */
 #define WIN32_LEAN_AND_MEAN
@@ -99,6 +99,27 @@ void BLI_dynlib_close(DynamicLibrary *lib)
 {
 	FreeLibrary(lib->handle);
 	MEM_freeN(lib);
+}
+
+#elif defined(__wii__)
+
+DynamicLibrary *BLI_dynlib_open(char *name)
+{
+	return NULL;
+}
+
+void *BLI_dynlib_find_symbol(DynamicLibrary *lib, const char *symname)
+{
+	return NULL;
+}
+
+char *BLI_dynlib_get_error_as_string(DynamicLibrary *lib)
+{
+	return NULL;
+}
+	
+void BLI_dynlib_close(DynamicLibrary *lib)
+{
 }
 
 #else /* Unix */

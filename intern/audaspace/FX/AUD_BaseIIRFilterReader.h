@@ -90,7 +90,7 @@ protected:
 	 * \param in The count of past input samples needed.
 	 * \param out The count of past output samples needed.
 	 */
-	AUD_BaseIIRFilterReader(boost::shared_ptr<AUD_IReader> reader, int in, int out);
+	AUD_BaseIIRFilterReader(std::shared_ptr<AUD_IReader> reader, int in, int out);
 
 	void setLengths(int in, int out);
 

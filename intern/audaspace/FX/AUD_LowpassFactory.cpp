@@ -31,8 +31,8 @@
 #include "AUD_IIRFilterReader.h"
 #include "AUD_LowpassCalculator.h"
 
-AUD_LowpassFactory::AUD_LowpassFactory(boost::shared_ptr<AUD_IFactory> factory, float frequency,
+AUD_LowpassFactory::AUD_LowpassFactory(std::shared_ptr<AUD_IFactory> factory, float frequency,
 									   float Q) :
-		AUD_DynamicIIRFilterFactory(factory, boost::shared_ptr<AUD_IDynamicIIRFilterCalculator>(new AUD_LowpassCalculator(frequency, Q)))
+		AUD_DynamicIIRFilterFactory(factory, std::shared_ptr<AUD_IDynamicIIRFilterCalculator>(new AUD_LowpassCalculator(frequency, Q)))
 {
 }

@@ -30,13 +30,13 @@
 #include "AUD_JOSResampleFactory.h"
 #include "AUD_JOSResampleReader.h"
 
-AUD_JOSResampleFactory::AUD_JOSResampleFactory(boost::shared_ptr<AUD_IFactory> factory,
+AUD_JOSResampleFactory::AUD_JOSResampleFactory(std::shared_ptr<AUD_IFactory> factory,
 													 AUD_DeviceSpecs specs) :
 		AUD_MixerFactory(factory, specs)
 {
 }
 
-boost::shared_ptr<AUD_IReader> AUD_JOSResampleFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_JOSResampleFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_JOSResampleReader(getReader(), m_specs.specs));
+	return std::shared_ptr<AUD_IReader>(new AUD_JOSResampleReader(getReader(), m_specs.specs));
 }

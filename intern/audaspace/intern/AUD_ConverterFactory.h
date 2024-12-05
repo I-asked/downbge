@@ -49,9 +49,9 @@ public:
 	 * \param factory The input factory.
 	 * \param specs The target specifications.
 	 */
-	AUD_ConverterFactory(boost::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
+	AUD_ConverterFactory(std::shared_ptr<AUD_IFactory> factory, AUD_DeviceSpecs specs);
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_CONVERTERFACTORY_H__

@@ -36,7 +36,7 @@
 #include "AUD_IHandle.h"
 #include "AUD_ILockable.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * This class represents an output device for sound sources.
@@ -69,7 +69,7 @@ public:
 	 * \exception AUD_Exception Thrown if there's an unexpected (from the
 	 *            device side) error during creation of the reader.
 	 */
-	virtual boost::shared_ptr<AUD_IHandle> play(boost::shared_ptr<AUD_IReader> reader, bool keep = false)=0;
+	virtual std::shared_ptr<AUD_IHandle> play(std::shared_ptr<AUD_IReader> reader, bool keep = false)=0;
 
 	/**
 	 * Plays a sound source.
@@ -81,7 +81,7 @@ public:
 	 * \exception AUD_Exception Thrown if there's an unexpected (from the
 	 *            device side) error during creation of the reader.
 	 */
-	virtual boost::shared_ptr<AUD_IHandle> play(boost::shared_ptr<AUD_IFactory> factory, bool keep = false)=0;
+	virtual std::shared_ptr<AUD_IHandle> play(std::shared_ptr<AUD_IFactory> factory, bool keep = false)=0;
 
 	/**
 	 * Stops all playing sounds.

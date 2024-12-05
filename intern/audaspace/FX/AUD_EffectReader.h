@@ -26,13 +26,12 @@
  *  \ingroup audfx
  */
 
+#include <memory>
 
 #ifndef __AUD_EFFECTREADER_H__
 #define __AUD_EFFECTREADER_H__
 
 #include "AUD_IReader.h"
-
-#include <boost/shared_ptr.hpp>
 
 /**
  * This reader is a base class for all effect readers that take one other reader
@@ -49,14 +48,14 @@ protected:
 	/**
 	 * The reader to read from.
 	 */
-	boost::shared_ptr<AUD_IReader> m_reader;
+	std::shared_ptr<AUD_IReader> m_reader;
 
 public:
 	/**
 	 * Creates a new effect reader.
 	 * \param reader The reader to read from.
 	 */
-	AUD_EffectReader(boost::shared_ptr<AUD_IReader> reader);
+	AUD_EffectReader(std::shared_ptr<AUD_IReader> reader);
 
 	/**
 	 * Destroys the reader.

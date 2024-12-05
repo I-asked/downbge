@@ -37,7 +37,7 @@
 
 #include <sys/stat.h>
 
-#if defined(__NetBSD__) || defined(__DragonFly__) || defined(__sun__) || defined(__sun)
+#if defined(__NetBSD__) || defined(__DragonFly__) || defined(__sun__) || defined(__sun) || defined(__vita__) || defined(__wii__)
    /* Other modern unix os's should probably use this also */
 #  include <sys/statvfs.h>
 #  define USE_STATFS_STATVFS
@@ -60,11 +60,13 @@
 #include <fcntl.h>
 #include <string.h>  /* strcpy etc.. */
 
-#ifdef WIN32
+#if defined(WIN32)
 #  include <io.h>
 #  include <direct.h>
 #  include "BLI_winstuff.h"
 #  include "utfconv.h"
+#elif defined(__vita__) || defined(__wii__)
+#  include <unistd.h>
 #else
 #  include <sys/ioctl.h>
 #  include <unistd.h>

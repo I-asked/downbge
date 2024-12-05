@@ -31,7 +31,7 @@
 #include "AUD_DelayReader.h"
 #include "AUD_Space.h"
 
-AUD_DelayFactory::AUD_DelayFactory(boost::shared_ptr<AUD_IFactory> factory, float delay) :
+AUD_DelayFactory::AUD_DelayFactory(std::shared_ptr<AUD_IFactory> factory, float delay) :
 		AUD_EffectFactory(factory),
 		m_delay(delay)
 {
@@ -42,7 +42,7 @@ float AUD_DelayFactory::getDelay() const
 	return m_delay;
 }
 
-boost::shared_ptr<AUD_IReader> AUD_DelayFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_DelayFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_DelayReader(getReader(), m_delay));
+	return std::shared_ptr<AUD_IReader>(new AUD_DelayReader(getReader(), m_delay));
 }

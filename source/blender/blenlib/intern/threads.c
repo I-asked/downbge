@@ -112,17 +112,17 @@ static TaskScheduler *task_scheduler = NULL;
  *
  ************************************************ */
 static SpinLock _malloc_lock;
-static pthread_mutex_t _image_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _image_draw_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _viewer_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _custom1_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _rcache_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _opengl_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _nodes_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _movieclip_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _colormanage_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _fftw_lock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t _view3d_lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t _image_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _image_draw_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _viewer_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _custom1_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _rcache_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _opengl_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _nodes_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _movieclip_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _colormanage_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _fftw_lock = BLI_MUTEX_INITIALIZER;
+static pthread_mutex_t _view3d_lock = BLI_MUTEX_INITIALIZER;
 static pthread_t mainid;
 static int thread_levels = 0;  /* threads can be invoked inside threads */
 static int num_threads_override = 0;
@@ -474,8 +474,10 @@ void BLI_mutex_free(ThreadMutex *mutex)
 
 void BLI_spin_init(SpinLock *spin)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	*spin = OS_SPINLOCK_INIT;
+#elif defined(__wii__)
+	*spin = SPIN_LOCK_UNLOCKED;
 #else
 	pthread_spin_init(spin, 0);
 #endif
@@ -483,8 +485,10 @@ void BLI_spin_init(SpinLock *spin)
 
 void BLI_spin_lock(SpinLock *spin)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	OSSpinLockLock(spin);
+#elif defined(__wii__)
+	spin_lock(spin);
 #else
 	pthread_spin_lock(spin);
 #endif
@@ -492,14 +496,16 @@ void BLI_spin_lock(SpinLock *spin)
 
 void BLI_spin_unlock(SpinLock *spin)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__)
 	OSSpinLockUnlock(spin);
+#elif defined(__wii__)
+	spin_unlock(spin);
 #else
 	pthread_spin_unlock(spin);
 #endif
 }
 
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__wii__)
 void BLI_spin_end(SpinLock *spin)
 {
 	pthread_spin_destroy(spin);
@@ -512,6 +518,29 @@ void BLI_spin_end(SpinLock *UNUSED(spin))
 
 /* Read/Write Mutex Lock */
 
+#ifdef __wii__
+void BLI_rw_mutex_init(ThreadRWMutex *mutex)
+{
+	*mutex = RW_LOCK_UNLOCKED;
+}
+
+void BLI_rw_mutex_lock(ThreadRWMutex *mutex, int mode)
+{
+	if (mode == THREAD_LOCK_READ)
+		read_lock(mutex);
+	else
+		write_lock(mutex);
+}
+
+void BLI_rw_mutex_unlock(ThreadRWMutex *mutex)
+{
+	read_unlock(mutex);
+}
+
+void BLI_rw_mutex_end(ThreadRWMutex *mutex)
+{
+}
+#else
 void BLI_rw_mutex_init(ThreadRWMutex *mutex)
 {
 	pthread_rwlock_init(mutex, NULL);
@@ -534,6 +563,7 @@ void BLI_rw_mutex_end(ThreadRWMutex *mutex)
 {
 	pthread_rwlock_destroy(mutex);
 }
+#endif
 
 ThreadRWMutex *BLI_rw_mutex_alloc(void)
 {

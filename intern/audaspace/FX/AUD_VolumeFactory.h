@@ -55,7 +55,7 @@ public:
 	 * \param factory The input factory.
 	 * \param volume The desired volume.
 	 */
-	AUD_VolumeFactory(boost::shared_ptr<AUD_IFactory> factory, float volume);
+	AUD_VolumeFactory(std::shared_ptr<AUD_IFactory> factory, float volume);
 
 	/**
 	 * Returns the volume.
@@ -63,7 +63,7 @@ public:
 	 */
 	float getVolume() const;
 
-	virtual boost::shared_ptr<AUD_IReader> createReader();
+	virtual std::shared_ptr<AUD_IReader> createReader();
 };
 
 #endif //__AUD_VOLUMEFACTORY_H__

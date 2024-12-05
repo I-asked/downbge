@@ -31,7 +31,7 @@
 #include "AUD_LimiterReader.h"
 #include "AUD_Space.h"
 
-AUD_LimiterFactory::AUD_LimiterFactory(boost::shared_ptr<AUD_IFactory> factory,
+AUD_LimiterFactory::AUD_LimiterFactory(std::shared_ptr<AUD_IFactory> factory,
 									   float start, float end) :
 		AUD_EffectFactory(factory),
 		m_start(start),
@@ -49,7 +49,7 @@ float AUD_LimiterFactory::getEnd() const
 	return m_end;
 }
 
-boost::shared_ptr<AUD_IReader> AUD_LimiterFactory::createReader()
+std::shared_ptr<AUD_IReader> AUD_LimiterFactory::createReader()
 {
-	return boost::shared_ptr<AUD_IReader>(new AUD_LimiterReader(getReader(), m_start, m_end));
+	return std::shared_ptr<AUD_IReader>(new AUD_LimiterReader(getReader(), m_start, m_end));
 }
