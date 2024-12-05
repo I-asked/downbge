@@ -49,7 +49,7 @@ for api_file in api_files:
 
 generated_files = [filename[:-2] + '_gen.c' for filename in generated_files]
 
-makesrna_tool = env.Clone(CPPFLAGS='', CXXFLAGS='', CCFLAGS='', LINKFLAGS='')
+makesrna_tool = env.Clone()
 rna = env.Clone()
 
 defs = []
@@ -183,12 +183,11 @@ else:
     USE_WINE = False
 
 if not USE_WINE:
-    if env['OURPLATFORM'] in ('linuxcross', 'wii', 'psp', 'vita'):
-        #makesrna_tool.Replace(CC='gcc')
-        #makesrna_tool.Replace(AR='ar')
-        #makesrna_tool.Replace(LINK='gcc')
-        #makesrna_tool.Append(LINKFLAGS=['-L../build/linux/lib'])
-        pass
+    if env['OURPLATFORM'] == 'linuxcross':
+        makesrna_tool.Replace(CC='gcc')
+        makesrna_tool.Replace(AR='ar')
+        makesrna_tool.Replace(LINK='gcc')
+        makesrna_tool.Append(LINKFLAGS=['-L../build/linux/lib'])
 
 makesrna_tool.Append(CCFLAGS = '-DBASE_HEADER="\\"source/blender/makesrna/\\"" ')
 
@@ -223,14 +222,13 @@ targetpath = root_build_dir+'/makesrna'
 if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetpath = '#' + targetpath
 
-if env['OURPLATFORM'] not in ('wii', 'psp', 'vita'):
-    if env['OURPLATFORM'] == 'linux' and root_build_dir[0]==os.sep:
-        makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
-    else:
-        makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
+if env['OURPLATFORM'] == 'linux' and root_build_dir[0]==os.sep:
+    makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
+else:
+    makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
 
 rna_dict = rna.Dictionary()
-#rna.Depends (generated_files, makesrna)
+rna.Depends (generated_files, makesrna)
 
 build_dir = Dir(".").abspath + os.sep
     
