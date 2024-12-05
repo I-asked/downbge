@@ -252,7 +252,7 @@ if WITH_BF_FFMPEG:
     CXXFLAGS += ['-D__STDC_CONSTANT_MACROS', ]
 REL_CFLAGS = []
 REL_CXXFLAGS = []
-REL_CCFLAGS = ['-Oz']
+REL_CCFLAGS = ['-Oz', '-flto']
 
 C_WARN = ['-Wno-char-subscripts', '-Wdeclaration-after-statement', '-Wunused-parameter', '-Wstrict-prototypes', '-Werror=declaration-after-statement', '-Werror=implicit-function-declaration', '-Werror=return-type']
 CC_WARN = ['-Wall']

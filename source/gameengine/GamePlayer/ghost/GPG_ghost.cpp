@@ -40,6 +40,10 @@
 #endif /* __alpha__ */
 #endif /* __linux__ */
 
+#ifdef __wii__
+#  include <system.h>
+#endif
+
 #include "KX_KetsjiEngine.h"
 #include "KX_PythonInit.h"
 #include "KX_PythonMain.h"
@@ -433,7 +437,11 @@ int main(int argc, char** argv)
 	int validArguments=0;
 	bool samplesParFound = false;
 	GHOST_TUns16 aasamples = 0;
-	
+
+#ifdef __wii__
+	SYS_STDIO_Report(true);
+#endif
+
 #ifdef __linux__
 #ifdef __alpha__
 	signal (SIGFPE, SIG_IGN);
