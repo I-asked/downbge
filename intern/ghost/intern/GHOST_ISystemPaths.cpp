@@ -38,14 +38,14 @@
 
 #include "GHOST_ISystemPaths.h"
 
-#ifdef WIN32
+#if defined(WIN32)
 #  include "GHOST_SystemPathsWin32.h"
+#elif defined(__APPLE__)
+#  include "GHOST_SystemPathsCocoa.h"
+#elif defined(__wii__)
+#  include "GHOST_SystemPathsWii.h"
 #else
-#  ifdef __APPLE__
-#      include "GHOST_SystemPathsCocoa.h"
-#  else
-#    include "GHOST_SystemPathsX11.h"
-#  endif
+#  include "GHOST_SystemPathsX11.h"
 #endif
 
 
@@ -56,14 +56,14 @@ GHOST_TSuccess GHOST_ISystemPaths::create()
 {
 	GHOST_TSuccess success;
 	if (!m_systemPaths) {
-#ifdef WIN32
+#ifdef defined(WIN32)
 		m_systemPaths = new GHOST_SystemPathsWin32();
-#else
-#  ifdef __APPLE__
+#elif defined(__APPLE__)
 		m_systemPaths = new GHOST_SystemPathsCocoa();
-#  else
+#elif defined(__wii__)
+		m_systemPaths = new GHOST_SystemPathsWii();
+#else
 		m_systemPaths = new GHOST_SystemPathsX11();
-#  endif
 #endif 
 		success = m_systemPaths != 0 ? GHOST_kSuccess : GHOST_kFailure;
 	}

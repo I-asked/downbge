@@ -358,7 +358,7 @@ int BLI_system_thread_count(void)
 		GetSystemInfo(&info);
 		t = (int) info.dwNumberOfProcessors;
 #else 
-#   ifdef __APPLE__
+#   if defined(__APPLE__)
 		int mib[2];
 		size_t len;
 
@@ -366,6 +366,8 @@ int BLI_system_thread_count(void)
 		mib[1] = HW_NCPU;
 		len = sizeof(t);
 		sysctl(mib, 2, &t, &len, NULL, 0);
+#   elif defined(__wii__)
+		t = 1;
 #   else
 		t = (int)sysconf(_SC_NPROCESSORS_ONLN);
 #   endif

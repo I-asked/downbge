@@ -761,6 +761,9 @@ static bool check_the_same(const char *path_a, const char *path_b)
  */
 static int set_permissions(const char *file, const struct stat *st)
 {
+#if defined(__wii__)
+	return -1;
+#else
 	if (chown(file, st->st_uid, st->st_gid)) {
 		perror("chown");
 		return -1;
@@ -772,6 +775,7 @@ static int set_permissions(const char *file, const struct stat *st)
 	}
 
 	return 0;
+#endif
 }
 
 /* pre-recursive callback for copying operation
@@ -796,11 +800,13 @@ static int copy_callback_pre(const char *from, const char *to)
 		return RecursiveOp_Callback_Error;
 	}
 
+#if !defined(__wii__)
 	/* set proper owner and group on new directory */
 	if (chown(to, st.st_uid, st.st_gid)) {
 		perror("chown");
 		return RecursiveOp_Callback_Error;
 	}
+#endif
 
 	return RecursiveOp_Callback_OK;
 }
