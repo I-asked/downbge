@@ -1168,7 +1168,9 @@ BGL_Wrap(LoadIdentity,              void,      (void))
 BGL_Wrap(LoadMatrixd,               void,      (GLdoubleP))
 BGL_Wrap(LoadMatrixf,               void,      (GLfloatP))
 BGL_Wrap(LoadName,                  void,      (GLuint))
+#ifndef __wii__
 BGL_Wrap(LogicOp,                   void,      (GLenum))
+#endif
 BGL_Wrap(Map1d,                     void,      (GLenum, GLdouble, GLdouble, GLint, GLint, GLdoubleP))
 BGL_Wrap(Map1f,                     void,      (GLenum, GLfloat, GLfloat, GLint, GLint, GLfloatP))
 BGL_Wrap(Map2d,                     void,      (GLenum, GLdouble, GLdouble, GLint, GLint, GLdouble, GLdouble, GLint, GLint, GLdoubleP))
@@ -1341,10 +1343,12 @@ BGL_Wrap(AreTexturesResident,       GLboolean, (GLsizei, GLuintP, GLbooleanP))
 BGL_Wrap(ArrayElement,              void,      (GLint))
 BGL_Wrap(BindTexture,               void,      (GLenum, GLuint))
 BGL_Wrap(ColorPointer,              void,      (GLint, GLenum, GLsizei, GLvoidP))
+#ifndef __wii__
 BGL_Wrap(CopyTexImage1D,            void,      (GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLint))
 BGL_Wrap(CopyTexImage2D,            void,      (GLenum, GLint, GLenum, GLint, GLint, GLsizei, GLsizei, GLint))
 BGL_Wrap(CopyTexSubImage1D,         void,      (GLenum, GLint, GLint, GLint, GLint, GLsizei))
 BGL_Wrap(CopyTexSubImage2D,         void,      (GLenum, GLint, GLint, GLint, GLint, GLint, GLsizei, GLsizei))
+#endif
 BGL_Wrap(DeleteTextures,            void,      (GLsizei, GLuintP))
 BGL_Wrap(DisableClientState,        void,      (GLenum))
 BGL_Wrap(DrawArrays,                void,      (GLenum, GLint, GLsizei))
@@ -1745,7 +1749,9 @@ PyObject *BPyInit_bgl(void)
 		PY_MOD_ADD_METHOD(Hint);
 		PY_MOD_ADD_METHOD(IsEnabled);
 		PY_MOD_ADD_METHOD(LineWidth);
+#ifndef __wii__
 		PY_MOD_ADD_METHOD(LogicOp);
+#endif
 		PY_MOD_ADD_METHOD(PixelStoref);
 		PY_MOD_ADD_METHOD(PixelStorei);
 		PY_MOD_ADD_METHOD(PointSize);
@@ -2030,10 +2036,12 @@ PyObject *BPyInit_bgl(void)
 	/* GL_VERSION_1_1 */
 	{
 		PY_MOD_ADD_METHOD(BindTexture);
+#ifndef __wii__
 		PY_MOD_ADD_METHOD(CopyTexImage1D);
 		PY_MOD_ADD_METHOD(CopyTexImage2D);
 		PY_MOD_ADD_METHOD(CopyTexSubImage1D);
 		PY_MOD_ADD_METHOD(CopyTexSubImage2D);
+#endif
 		PY_MOD_ADD_METHOD(DeleteTextures);
 		PY_MOD_ADD_METHOD(DrawArrays);
 		PY_MOD_ADD_METHOD(DrawElements);

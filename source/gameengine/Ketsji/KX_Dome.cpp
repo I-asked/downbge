@@ -167,6 +167,7 @@ KX_Dome::KX_Dome (
 // destructor
 KX_Dome::~KX_Dome (void)
 {
+#ifndef __wii__
 	ClearGLImages();
 
 	if (fboSupported)
@@ -174,6 +175,7 @@ KX_Dome::~KX_Dome (void)
 
 	if (dlistSupported)
 		glDeleteLists(dlistId, (GLsizei) m_numimages);
+#endif
 }
 
 void KX_Dome::SetViewPort(const int viewport[4])
@@ -191,6 +193,7 @@ void KX_Dome::SetViewPort(const int viewport[4])
 
 void KX_Dome::CreateGLImages(void)
 {
+#ifndef __wii__
 	glGenTextures(m_numimages, (GLuint*)&domefacesId);
 
 	for (int j=0;j<m_numfaces;j++) {
@@ -213,11 +216,14 @@ void KX_Dome::CreateGLImages(void)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
+#endif
 }
 
 void KX_Dome::ClearGLImages(void)
 {
+#ifndef __wii__
 	glDeleteTextures(m_numimages, (GLuint*)&domefacesId);
+#endif
 #if 0
 	for (int i=0;i<m_numimages;i++)
 		if (glIsTexture(domefacesId[i]))
@@ -257,6 +263,7 @@ void KX_Dome::CalculateImageSize(void)
 
 bool KX_Dome::CreateDL()
 {
+#ifndef __wii__
 	dlistId = glGenLists((GLsizei) m_numimages);
 	if (dlistId != 0) {
 		if (m_mode == DOME_FISHEYE || m_mode == DOME_TRUNCATED_FRONT || m_mode == DOME_TRUNCATED_REAR) {
@@ -329,10 +336,14 @@ bool KX_Dome::CreateDL()
 		return false;
 
 	return true;
+#else
+  return false;
+#endif
 }
 
 bool KX_Dome::CreateFBO(void)
 {
+#ifndef __wii__
 	if (!GLEW_EXT_framebuffer_object)
 	{
 		printf("Dome Error: FrameBuffer unsupported. Using low resolution warp image.");
@@ -369,10 +380,14 @@ bool KX_Dome::CreateFBO(void)
 	//nothing failed: we can use the whole FBO as buffersize
 	warp.bufferwidth = warp.bufferheight = warp.imagesize;
 	return true;
+#else
+  return false;
+#endif
 }
 
 void KX_Dome::GLDrawTriangles(vector <DomeFace>& face, int nfaces)
 {
+#ifndef __wii__
 	int i,j;
 	glBegin(GL_TRIANGLES);
 		for (i=0;i<nfaces;i++) {
@@ -449,6 +464,7 @@ void KX_Dome::GLDrawWarpQuads(void)
 	else {
 		printf("Dome Error: Warp Mode %d unsupported. Try 1 for Polar Mesh or 2 for Fisheye.\n", warp.mode);
 	}
+#endif
 }
 
 
@@ -1612,6 +1628,7 @@ void KX_Dome::RotateCamera(KX_Camera* cam, int i)
 void KX_Dome::Draw(void)
 {
 
+#ifndef __wii__
 	if (fboSupported) {
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, warp.fboId);
 
@@ -1651,6 +1668,7 @@ void KX_Dome::Draw(void)
 		}
 		DrawDomeWarped();
 	}
+#endif
 }
 
 void KX_Dome::DrawEnvMap(void)
@@ -2010,8 +2028,10 @@ void KX_Dome::DrawDomeWarped(void)
 
 void KX_Dome::BindImages(int i)
 {
+#ifndef __wii__
 	glBindTexture(GL_TEXTURE_2D, domefacesId[i]);
 	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_viewport.GetLeft(), m_viewport.GetBottom(), m_buffersize, m_buffersize);
+#endif
 }
 
 void KX_Dome::RenderDomeFrame(KX_Scene* scene, KX_Camera* cam, int i)

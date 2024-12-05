@@ -150,7 +150,7 @@ BF_REDCODE_LIBPATH='${BF_REDCODE}/lib'
 WITH_BF_STATICOPENGL = False
 BF_OPENGL = '/opt/devkitpro'
 BF_OPENGL_INC = '${BF_OPENGL}/include'
-BF_OPENGL_LIB = 'opengx GLU'
+BF_OPENGL_LIB = 'SDL2 aesnd wiiuse bte wiikeyboard opengx GLU ogc'
 BF_OPENGL_LIBPATH = '/opt/devkitpro/portlibs/wii/lib'
 BF_OPENGL_LIB_STATIC = '${BF_OPENGL_LIBPATH}/libGL.a ${BF_OPENGL_LIBPATH}/libGLU.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a ${BF_OPENGL_LIBPATH}/libX11.a ${BF_OPENGL_LIBPATH}/libXi.a ${BF_OPENGL_LIBPATH}/libXext.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a'
 

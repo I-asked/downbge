@@ -180,4 +180,8 @@ static __attribute__((always_inline)) inline int pthread_cond_destroy(pthread_co
    return LWP_CondDestroy(*cond);
 }
 
-extern int pthread_equal(pthread_t t1, pthread_t t2);
+//extern int pthread_equal(pthread_t t1, pthread_t t2);
+static __attribute__((always_inline)) inline int pthread_equal(pthread_t t1, pthread_t t2)
+{
+    return t1 == t2;
+}

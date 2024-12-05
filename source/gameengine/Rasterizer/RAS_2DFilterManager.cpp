@@ -402,6 +402,7 @@ void RAS_2DFilterManager::UpdateCanvasTextureCoord(const int viewport[4])
 
 void RAS_2DFilterManager::RenderFilters(RAS_ICanvas* canvas)
 {
+#ifndef __wii__
 	bool need_depth=false;
 	bool need_luminance=false;
 	int num_filters = 0;
@@ -508,6 +509,7 @@ void RAS_2DFilterManager::RenderFilters(RAS_ICanvas* canvas)
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+#endif
 }
 
 void RAS_2DFilterManager::EnableFilter(vector<STR_String>& propNames, void* gameObj, RAS_2DFILTER_MODE mode, int pass, STR_String& text)

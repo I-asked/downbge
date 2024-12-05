@@ -138,7 +138,8 @@ void ImageViewport::calcImage (unsigned int texId, double ts)
 		loadTexture(texId, m_image, m_size);
 		m_texInit = true;
 	}
-	// if texture can be directly created
+#ifndef __wii__
+	// if texture can be directly create
 	if (texId != 0 && m_pyfilter == NULL && m_capSize[0] == calcSize(m_capSize[0])
 	    && m_capSize[1] == calcSize(m_capSize[1]) && !m_flip && !m_zbuff && !m_depth)
 	{
@@ -148,6 +149,7 @@ void ImageViewport::calcImage (unsigned int texId, double ts)
 		// image is not available
 		m_avail = false;
 	}
+#endif
 	// otherwise copy viewport to buffer, if image is not available
 	else if (!m_avail) {
 		if (m_zbuff) {
