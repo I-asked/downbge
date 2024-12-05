@@ -39,7 +39,7 @@ root_build_dir=normpath(env['BF_BUILDDIR'])
 source_files = ['makesdna.c']
 header_files = env.Glob('../*.h')
 
-makesdna_tool = env.Clone(CPPFLAGS='', CXXFLAGS='', CCFLAGS='', LINKFLAGS='')
+makesdna_tool = env.Clone()
 dna = env.Clone()
 
 if env['OURPLATFORM'] == 'linuxcross':
@@ -48,12 +48,10 @@ else:
     USE_WINE = False
 
 if not USE_WINE:
-    if env['OURPLATFORM'] in ('linuxcross', 'wii', 'psp', 'vita'):
-        #makesdna_tool.Replace(CC='gcc')
-        #makesdna_tool.Replace(AR='ar')
-        #makesdna_tool.Replace(LINK='gcc')
-        #makesdna_tool.Append(LINKFLAGS=['-L../build/linux/lib'])
-        pass
+    if env['OURPLATFORM'] == 'linuxcross':
+        makesdna_tool.Replace(CC='gcc')
+        makesdna_tool.Replace(AR='ar')
+        makesdna_tool.Replace(LINK='gcc')
 
 makesdna_tool.Append(CCFLAGS = '-DBASE_HEADER="\\"source/blender/makesdna/\\"" ')
 
@@ -81,10 +79,10 @@ targetdir = normpath(root_build_dir + '/makesdna')
 if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetdir = '#' + targetdir
 
-#makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_blenlib'])
+makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_blenlib'])
 
 dna_dict = dna.Dictionary()
-#dna.Depends ('dna.c', makesdna)
+dna.Depends ('dna.c', makesdna)
 dna.Depends ('dna.c', header_files)
 
 if env['OURPLATFORM'] not in ('linuxcross', 'wii', 'psp', 'vita'):
