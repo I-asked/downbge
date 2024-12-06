@@ -40,7 +40,7 @@ GHOST_SystemSDL::GHOST_SystemSDL()
     :
       GHOST_System()
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		printf("Error initializing SDL:  %s\n", SDL_GetError());
 	}
 

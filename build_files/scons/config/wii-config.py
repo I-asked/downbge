@@ -24,7 +24,7 @@ BF_OPENAL_LIB_STATIC = '${BF_OPENAL}/lib/libopenal.a'
 
 BF_CXX = '/opt/devkitpro/devkitPPC/powerpc-eabi'
 WITH_BF_STATICCXX = False
-BF_CXX_LIB_STATIC = '${BF_CXX}/lib/libstdc++.a'
+#BF_CXX_LIB_STATIC = '${BF_CXX}/lib/libstdc++.a'
 
 WITH_BF_AUDASPACE = True
 
@@ -150,7 +150,7 @@ BF_REDCODE_LIBPATH='${BF_REDCODE}/lib'
 WITH_BF_STATICOPENGL = False
 BF_OPENGL = '/opt/devkitpro'
 BF_OPENGL_INC = '${BF_OPENGL}/include'
-BF_OPENGL_LIB = 'SDL2 aesnd wiiuse bte wiikeyboard opengx GLU ogc'
+BF_OPENGL_LIB = 'SDL2 aesnd wiiuse bte wiikeyboard opengx GLU ogc fat'
 BF_OPENGL_LIBPATH = '/opt/devkitpro/portlibs/wii/lib'
 BF_OPENGL_LIB_STATIC = '${BF_OPENGL_LIBPATH}/libGL.a ${BF_OPENGL_LIBPATH}/libGLU.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a ${BF_OPENGL_LIBPATH}/libX11.a ${BF_OPENGL_LIBPATH}/libXi.a ${BF_OPENGL_LIBPATH}/libXext.a ${BF_OPENGL_LIBPATH}/libXxf86vm.a'
 
@@ -240,7 +240,7 @@ BF_OPENSUBDIV_LIBPATH = '${BF_OPENSUBDIV}/lib'
 CC = 'powerpc-eabi-gcc'
 CXX = 'powerpc-eabi-g++'
 
-CCFLAGS = ['-pipe', '-mrvl', '-fPIC','-funsigned-char','-fno-strict-aliasing', '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE', '-Iintern/ogc-mx', '-I/opt/devkitpro/portlibs/wii/include', '-I/opt/devkitpro/portlibs/ppc/include', '-I/opt/devkitpro/libogc/include/ogc', '-I/opt/devkitpro/libogc/include', '-I../GLU_install/wii/include', '-L/opt/devkitpro/portlibs/wii/lib', '-L/opt/devkitpro/portlibs/ppc/lib', '-L/opt/devkitpro/libogc/lib/wii']
+CCFLAGS = ['-pipe', '-mrvl','-funsigned-char','-fno-strict-aliasing', '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE', '-Iintern/ogc-mx', '-I/opt/devkitpro/portlibs/wii/include', '-I/opt/devkitpro/portlibs/ppc/include', '-I/opt/devkitpro/libogc/include/ogc', '-I/opt/devkitpro/libogc/include', '-I../GLU_install/wii/include', '-L/opt/devkitpro/portlibs/wii/lib', '-L/opt/devkitpro/portlibs/ppc/lib', '-L/opt/devkitpro/libogc/lib/wii']
 CFLAGS = ['-std=gnu89']
 CXXFLAGS = []
 
@@ -258,7 +258,7 @@ C_WARN = ['-Wno-char-subscripts', '-Wdeclaration-after-statement', '-Wunused-par
 CC_WARN = ['-Wall']
 CXX_WARN = ['-Wno-invalid-offsetof', '-Wno-sign-compare']
 
-LLIBS = ['util', 'bz2', 'stdc++', 'ogc', 'm']
+LLIBS = ['util', 'bz2', 'ogc', 'm']
 LINKFLAGS = ['-mrvl', '-L/opt/devkitpro/portlibs/wii/lib', '-L/opt/devkitpro/portlibs/ppc/lib', '-L/opt/devkitpro/libogc/lib/wii']
 
 BF_PROFILE = False
