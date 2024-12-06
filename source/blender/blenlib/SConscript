@@ -54,3 +54,11 @@ if env['OURPLATFORM'] == 'linuxcross':
         incs += ' ' + env['BF_OPENMP_INC']
 
 env.BlenderLib ( 'bf_blenlib', sources, Split(incs), Split(defs), libtype=['core','player'], priority = [370,230], compileflags =cflags )
+
+
+def _flags(typ):
+    return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
+
+
+build_env = env.Clone(CCFLAGS=_flags('CCFLAGS'), CFLAGS=_flags('CFLAGS'), CXXFLAGS=_flags('CXXFLAGS'), LINKFLAGS=env['PLATFORM_LINKFLAGS'], CC='gcc', CXX='g++', AR='ar', LINK='g++', OBJSUFFIX="_for_bld"+env['OBJSUFFIX'], LIBSUFFIX="_for_bld"+env['LIBSUFFIX'])
+build_env.BlenderLib ( 'bf_blenlib', sources, Split(incs), Split(defs), libtype=['core','player'], priority = [370,230], compileflags =cflags )

@@ -542,7 +542,7 @@ if env['WITH_BF_OCEANSIM'] == 1:
     env['CPPFLAGS'].append('-DWITH_MOD_OCEANSIM')
 
 
-if btools.ENDIAN == "big":
+if btools.ENDIAN == "big" or platform == "wii":
     env['CPPFLAGS'].append('-D__BIG_ENDIAN__')
 else:
     env['CPPFLAGS'].append('-D__LITTLE_ENDIAN__')
