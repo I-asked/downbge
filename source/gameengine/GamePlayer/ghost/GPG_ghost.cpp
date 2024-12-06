@@ -41,7 +41,19 @@
 #endif /* __linux__ */
 
 #ifdef __wii__
-#  include <system.h>
+#include <fat.h>
+#include <ogc/usbmouse.h>
+#include <ogcsys.h>
+#include <wiikeyboard/keyboard.h>
+#include <wiiuse/wpad.h>
+
+static void ShutdownCB()
+{
+}
+
+static void ResetCB()
+{
+}
 #endif
 
 #include "KX_KetsjiEngine.h"
@@ -403,7 +415,42 @@ static int GPG_PyNextFrame(void *state0)
 	}
 }
 
+int real_main(int argc, char** argv);
+
 int main(int argc, char** argv)
+{
+#ifdef __wii__
+	s32 preferred, version;
+
+	L2Enhance();
+	version = IOS_GetVersion();
+	preferred = IOS_GetPreferredVersion();
+
+	if (preferred > 0 && version != (u32)preferred)
+		IOS_ReloadIOS(preferred);
+
+	// Wii Power/Reset buttons
+	WPAD_Init();
+	WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
+	SYS_SetPowerCallback(ShutdownCB);
+	SYS_SetResetCallback(ResetCB);
+	// TODO OGC_InitVideoSystem();
+	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
+	WPAD_SetVRes(WPAD_CHAN_ALL, 640, 480);
+
+	MOUSE_Init();
+	KEYBOARD_Init(NULL);
+	fatInitDefault();
+	SYS_STDIO_Report(true);
+
+	char *args[] = { strdup("blenderplayer"), strdup("init.blend") };
+	return real_main(sizeof(args) / sizeof(*args), args);
+#else
+	return real_main(argc, argv);
+#endif
+}
+
+int real_main(int argc, char** argv)
 {
 	int i;
 	int argc_py_clamped= argc; /* use this so python args can be added after ' - ' */
@@ -437,10 +484,6 @@ int main(int argc, char** argv)
 	int validArguments=0;
 	bool samplesParFound = false;
 	GHOST_TUns16 aasamples = 0;
-
-#ifdef __wii__
-	SYS_STDIO_Report(true);
-#endif
 
 #ifdef __linux__
 #ifdef __alpha__

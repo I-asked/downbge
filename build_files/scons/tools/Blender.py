@@ -1079,7 +1079,7 @@ class BlenderEnvironment(SConsEnvironment):
         lenv = self.Clone()
         lenv.Append(LINKFLAGS = lenv['PLATFORM_LINKFLAGS'])
         lenv.Append(LINKFLAGS = lenv['BF_PROGRAM_LINKFLAGS'])
-        if lenv['OURPLATFORM'] in ('win32-mingw', 'win64-mingw', 'linuxcross', 'cygwin', 'linux'):
+        if lenv['OURPLATFORM'] in ('win32-mingw', 'win64-mingw', 'linuxcross', 'cygwin', 'linux', 'wii', 'psp', 'vita'):
             lenv.Replace(LINK = '$CXX')
         if lenv['OURPLATFORM'] in ('win32-vc', 'cygwin', 'win64-vc'):
             if lenv['BF_DEBUG']:
