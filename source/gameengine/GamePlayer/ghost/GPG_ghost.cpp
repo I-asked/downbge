@@ -443,7 +443,9 @@ int main(int argc, char** argv)
 	fatInitDefault();
 	SYS_STDIO_Report(true);
 
-	char *args[] = { strdup("blenderplayer"), strdup("init.blend") };
+	MEM_set_error_callback(mem_error_cb);
+
+	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };
 	return real_main(sizeof(args) / sizeof(*args), args);
 #else
 	return real_main(argc, argv);

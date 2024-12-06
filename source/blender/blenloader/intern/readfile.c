@@ -886,6 +886,7 @@ static void decode_blender_header(FileData *fd)
 			if (((((char *)&remove_this_endian_test)[0] == 1) ? L_ENDIAN : B_ENDIAN) != ((header[8] == 'v') ? L_ENDIAN : B_ENDIAN)) {
 				fd->flags |= FD_FLAGS_SWITCH_ENDIAN;
 			}
+			fprintf(stderr, "fdf=%d\n", (fd->flags & FD_FLAGS_SWITCH_ENDIAN));
 			
 			/* get the version number */
 			memcpy(num, header + 9, 3);
@@ -893,6 +894,7 @@ static void decode_blender_header(FileData *fd)
 			fd->fileversion = atoi(num);
 		}
 	}
+	fprintf(stderr, "bv=%d\n", fd->fileversion);
 }
 
 static int read_file_dna(FileData *fd)
@@ -1063,7 +1065,11 @@ static FileData *filedata_new(void)
 	 * but it keeps us re-entrant,  remove once we have
 	 * a lib that provides a nice lock. - zr
 	 */
+//#ifdef __wii__
+//	fd->memsdna = DNA_sdna_from_data(DNAstr, DNAlen, true);
+//#else
 	fd->memsdna = DNA_sdna_from_data(DNAstr, DNAlen, false);
+//#endif
 	
 	fd->datamap = oldnewmap_new();
 	fd->globmap = oldnewmap_new();

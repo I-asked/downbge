@@ -42,4 +42,16 @@ incs = [
 if env['WITH_BF_FREESTYLE']:
     defs.append('WITH_FREESTYLE')
 
-env.BlenderLib('bf_dna', objs, incs, defs, libtype=['core', 'player'], priority = [215, 200])
+dna = env.BlenderLib('bf_dna', objs, incs, defs, libtype=['core', 'player'], priority = [215, 200])
+
+
+def _flags(typ):
+    return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
+
+
+build_env = env.Clone(CCFLAGS=_flags('CCFLAGS'), CFLAGS=_flags('CFLAGS'), CXXFLAGS=_flags('CXXFLAGS'), LINKFLAGS=env['PLATFORM_LINKFLAGS'], CC='gcc', CXX='g++', AR='ar', LINK='g++', OBJSUFFIX="_for_bld"+env['OBJSUFFIX'], LIBSUFFIX="_for_bld"+env['LIBSUFFIX'])
+dna_bld = build_env.BlenderLib('bf_dna', objs, incs, defs, libtype=['core', 'player'], priority = [215, 200])
+
+env.Depends (dna, dna_bld)
+
+env['DNA_BLD'] = dna_bld
