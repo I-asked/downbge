@@ -296,7 +296,7 @@ void* NSGLGetProcAddress (const GLubyte *name)
 #      define glewGetProcAddress(name) dlGetProcAddress(name)
 #    elif defined(__wii__)
 extern void *ogx_get_proc_address(const char *proc);
-#      define glewGetProcAddress(name) ogx_get_proc_address
+#      define glewGetProcAddress(name) ogx_get_proc_address(name)
 #    else /* __linux */
 #      define glewGetProcAddress(name) (*glXGetProcAddressARB)(name)
 #    endif

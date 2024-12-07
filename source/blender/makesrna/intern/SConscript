@@ -28,6 +28,8 @@
 import sys
 import os
 
+import btools
+
 def normpath(path):
     return os.path.abspath(os.path.normpath(path))
 
@@ -50,11 +52,7 @@ for api_file in api_files:
 generated_files = [filename[:-2] + '_gen.c' for filename in generated_files]
 
 
-def _flags(typ):
-    return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
-
-
-makesrna_tool = env.Clone(CCFLAGS=_flags('CCFLAGS'), CFLAGS=_flags('CFLAGS'), CXXFLAGS=_flags('CXXFLAGS'), LINKFLAGS=['-pthread'], CC='gcc', CXX='g++', AR='ar', LINK='g++', OBJSUFFIX="_for_bld"+env['OBJSUFFIX'], LIBSUFFIX="_for_bld"+env['LIBSUFFIX'])
+makesrna_tool = btools.make_build(env)
 rna = env.Clone()
 
 defs = []
@@ -229,6 +227,8 @@ if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetpath = '#' + targetpath
 
 makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_dna_for_bld', 'bf_blenlib_for_bld'])
+makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
+makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
 makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_dna_for_bld.a')
 
 rna_dict = rna.Dictionary()
