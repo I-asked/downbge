@@ -916,3 +916,26 @@ def check_environ():
         return False
     else:
         return True
+
+
+def make_build(env):
+    def _flags(typ):
+        return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
+
+    if env['OURPLATFORM'] == 'wii':
+        toolprefix = 'powerpc-linux-gnu-'
+    else:
+        toolprefix = ''
+
+    return env.Clone(
+            CCFLAGS=_flags('CCFLAGS'),
+            CFLAGS=_flags('CFLAGS'),
+            CXXFLAGS=_flags('CXXFLAGS'),
+            LINKFLAGS=['-pthread','-static'],
+            CC=toolprefix+'gcc',
+            CXX=toolprefix+'g++',
+            AR=toolprefix+'ar',
+            LINK=toolprefix+'gcc',
+            OBJSUFFIX="_for_bld"+env['OBJSUFFIX'],
+            LIBSUFFIX="_for_bld"+env['LIBSUFFIX']
+    )

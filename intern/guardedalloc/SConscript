@@ -25,6 +25,8 @@
 #
 # ***** END GPL LICENSE BLOCK *****
 
+import btools
+
 Import('env')
 
 defs = []
@@ -45,9 +47,5 @@ incs = '. ../atomic'
 env.BlenderLib ('bf_intern_guardedalloc', sources, Split(incs), defs, libtype=['intern','player'], priority = [5,150] )
 
 
-def _flags(typ):
-    return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
-
-
-build_env = env.Clone(CCFLAGS=_flags('CCFLAGS'), CFLAGS=_flags('CFLAGS'), CXXFLAGS=_flags('CXXFLAGS'), LINKFLAGS=env['PLATFORM_LINKFLAGS'], CC='gcc', CXX='g++', AR='ar', LINK='g++', OBJSUFFIX="_for_bld"+env['OBJSUFFIX'], LIBSUFFIX="_for_bld"+env['LIBSUFFIX'])
+build_env = btools.make_build(env)
 build_env.BlenderLib ('bf_intern_guardedalloc', sources, Split(incs), defs, libtype=['intern','player'], priority = [5,150] )

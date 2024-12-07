@@ -28,8 +28,12 @@
 import sys
 import os
 
+import btools
+
+
 def normpath(path):
     return os.path.abspath(os.path.normpath(path))
+
 
 Import ('env')
 cflags = ''
@@ -40,11 +44,7 @@ source_files = ['makesdna.c']
 header_files = env.Glob('../*.h')
 
 
-def _flags(typ):
-    return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
-
-
-makesdna_tool = env.Clone(CCFLAGS=_flags('CCFLAGS'), CFLAGS=_flags('CFLAGS'), CXXFLAGS=_flags('CXXFLAGS'), LINKFLAGS=['-pthread'], CC='gcc', CXX='g++', AR='ar', LINK='g++', OBJSUFFIX="_for_bld"+env['OBJSUFFIX'], LIBSUFFIX="_for_bld"+env['LIBSUFFIX'])
+makesdna_tool = btools.make_build(env)
 dna = env.Clone()
 
 if env['OURPLATFORM'] == 'linuxcross':
@@ -83,6 +83,8 @@ if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetdir = '#' + targetdir
 
 makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_blenlib_for_bld'])
+makesdna_tool.Depends ('dna.c', root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
+makesdna_tool.Depends ('dna.c', root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
 
 dna_dict = dna.Dictionary()
 dna.Depends ('dna.c', makesdna)
