@@ -227,9 +227,9 @@ if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetpath = '#' + targetpath
 
 makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_dna_for_bld', 'bf_blenlib_for_bld'])
-makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
-makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
-makesrna_tool.Depends (generated_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_dna_for_bld.a')
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_dna_for_bld.a')
 
 rna_dict = rna.Dictionary()
 rna.Depends (generated_files, makesrna)
