@@ -445,6 +445,11 @@ int main(int argc, char** argv)
 
 	MEM_set_error_callback(mem_error_cb);
 
+	setenv("HOME", "/", 1);
+	setenv("PYTHONHOME", "/2.76/python/lib/python2.7/", 1);
+	setenv("PYTHONPATH", "/2.76/python/lib/python2.7/", 1);
+	setenv("PYTHONUSERBASE", "/", 1);
+
 	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };
 	return real_main(sizeof(args) / sizeof(*args), args);
 #else

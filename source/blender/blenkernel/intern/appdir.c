@@ -704,7 +704,11 @@ static void where_is_temp(char *fullname, char *basename, const size_t maxlen, c
 #endif
 	
 	if (fullname[0] == '\0') {
+#ifdef __wii__
+		BLI_strncpy(fullname, "/", maxlen);
+#else
 		BLI_strncpy(fullname, "/tmp/", maxlen);
+#endif
 	}
 	else {
 		/* add a trailing slash if needed */

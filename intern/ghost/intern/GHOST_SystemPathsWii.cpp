@@ -48,7 +48,7 @@ const GHOST_TUns8 *GHOST_SystemPathsWii::getSystemDir(int, const char *versionst
 
 const GHOST_TUns8 *GHOST_SystemPathsWii::getUserDir(int, const char *versionstr) const
 {
-	return NULL;
+	return "/2.76/";
 }
 
 const GHOST_TUns8 *GHOST_SystemPathsWii::getBinaryDir() const
