@@ -31,6 +31,7 @@
 #include "GHOST_ContextSDL.h"
 
 #include <assert.h>
+#include <cstdio>
 
 GHOST_WindowSDL::GHOST_WindowSDL(GHOST_SystemSDL *system,
                                  const STR_String& title,

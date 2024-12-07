@@ -33,6 +33,7 @@
 
 #include "GPG_System.h"
 #include <assert.h>
+#include <cstdio>
 #include "GHOST_ISystem.h"
 
 GPG_System::GPG_System(GHOST_ISystem* system)
@@ -44,7 +45,7 @@ GPG_System::GPG_System(GHOST_ISystem* system)
 
 double GPG_System::GetTimeInSeconds()
 {
-	GHOST_TInt64 millis = (GHOST_TInt64)m_system->getMilliSeconds();
+	GHOST_TUns64 millis = m_system->getMilliSeconds();
 	double time = (double)millis;
 	time /= 1000.0f;
 	return time;

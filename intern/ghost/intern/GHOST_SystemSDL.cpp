@@ -41,7 +41,9 @@ GHOST_SystemSDL::GHOST_SystemSDL()
       GHOST_System()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		printf("Error initializing SDL:  %s\n", SDL_GetError());
+		fprintf(stderr, "Error initializing SDL:  %s\n", SDL_GetError());
+	} else {
+		fprintf(stderr, "SDL initialized\n");
 	}
 
 	/* SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); */
@@ -265,7 +267,7 @@ convertSDLKey(SDL_Scancode key)
 			GXMAP(type, SDL_SCANCODE_AUDIONEXT,      GHOST_kKeyMediaLast);
 
 			default:
-				printf("Unknown\n");
+				fprintf(stderr, "Unknown\n");
 				type = GHOST_kKeyUnknown;
 				break;
 		}
@@ -596,6 +598,7 @@ GHOST_SystemSDL::processEvents(bool waitForEvent)
 		if (generateWindowExposeEvents()) {
 			anyProcessed = true;
 		}
+
 	} while (waitForEvent && !anyProcessed);
 
 	return anyProcessed;
@@ -659,7 +662,7 @@ GHOST_SystemSDL::putClipboard(GHOST_TInt8 *buffer, bool selection) const
 }
 
 GHOST_TUns64
-GHOST_SystemSDL::getMilliSeconds()
+GHOST_SystemSDL::getMilliSeconds() const
 {
 	return GHOST_TUns64(SDL_GetTicks()); /* note, 32 -> 64bits */
 }
