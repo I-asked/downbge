@@ -83,8 +83,8 @@ if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetdir = '#' + targetdir
 
 makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_blenlib_for_bld'])
-makesdna_tool.Depends ('dna.c', root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
-makesdna_tool.Depends ('dna.c', root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
 
 dna_dict = dna.Dictionary()
 dna.Depends ('dna.c', makesdna)
