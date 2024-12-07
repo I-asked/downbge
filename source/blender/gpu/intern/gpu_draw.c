@@ -2075,6 +2075,7 @@ void GPU_state_init(void)
 	/* also called when doing opengl rendering and in the game engine */
 	float mat_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
 	float mat_specular[] = { 0.5, 0.5, 0.5, 1.0 };
+	float mat_shininess[] = { 0.27 };
 	int a, x, y;
 	GLubyte pat[32 * 32];
 	const GLubyte *patc = pat;
@@ -2082,7 +2083,11 @@ void GPU_state_init(void)
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_specular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+#ifdef __wii__
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+#else
 	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 35);
+#endif
 
 	GPU_default_lights();
 	
@@ -2108,18 +2113,20 @@ void GPU_state_init(void)
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	
-	glPixelTransferi(GL_MAP_COLOR, GL_FALSE);
-	glPixelTransferi(GL_RED_SCALE, 1);
-	glPixelTransferi(GL_RED_BIAS, 0);
-	glPixelTransferi(GL_GREEN_SCALE, 1);
-	glPixelTransferi(GL_GREEN_BIAS, 0);
-	glPixelTransferi(GL_BLUE_SCALE, 1);
-	glPixelTransferi(GL_BLUE_BIAS, 0);
-	glPixelTransferi(GL_ALPHA_SCALE, 1);
-	glPixelTransferi(GL_ALPHA_BIAS, 0);
-	
-	glPixelTransferi(GL_DEPTH_BIAS, 0);
-	glPixelTransferi(GL_DEPTH_SCALE, 1);
+	if (glPixelTransferi) {
+		glPixelTransferi(GL_MAP_COLOR, GL_FALSE);
+		glPixelTransferi(GL_RED_SCALE, 1);
+		glPixelTransferi(GL_RED_BIAS, 0);
+		glPixelTransferi(GL_GREEN_SCALE, 1);
+		glPixelTransferi(GL_GREEN_BIAS, 0);
+		glPixelTransferi(GL_BLUE_SCALE, 1);
+		glPixelTransferi(GL_BLUE_BIAS, 0);
+		glPixelTransferi(GL_ALPHA_SCALE, 1);
+		glPixelTransferi(GL_ALPHA_BIAS, 0);
+		
+		glPixelTransferi(GL_DEPTH_BIAS, 0);
+		glPixelTransferi(GL_DEPTH_SCALE, 1);
+	}
 	glDepthRange(0.0, 1.0);
 	
 	a = 0;
