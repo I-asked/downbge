@@ -1150,9 +1150,9 @@ int real_main(int argc, char** argv)
 								pynextframestate.state = &gpg_nextframestate;
 								pynextframestate.func = &GPG_PyNextFrame;
 
-								printf("Yielding control to Python script '%s'...\n", python_main);
+								fprintf(stderr, "Yielding control to Python script '%s'...\n", python_main);
 								PyRun_SimpleString(python_code);
-								printf("Exit Python script '%s'\n", python_main);
+								fprintf(stderr, "Exit Python script '%s'\n", python_main);
 #endif // WITH_PYTHON
 								MEM_freeN(python_code);
 							}

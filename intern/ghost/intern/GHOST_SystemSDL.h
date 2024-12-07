@@ -74,7 +74,7 @@ public:
 	putClipboard(GHOST_TInt8 *buffer, bool selection) const;
 
 	GHOST_TUns64
-	getMilliSeconds();
+	getMilliSeconds() const;
 
 	GHOST_TUns8
 	getNumDisplays() const;

@@ -760,11 +760,19 @@ void RAS_OpenGLRasterizer::SetProjectionMatrix(MT_CmMatrix4x4 &mat)
 void RAS_OpenGLRasterizer::SetProjectionMatrix(const MT_Matrix4x4 & mat)
 {
 	glMatrixMode(GL_PROJECTION);
+#ifdef __wii__
+	float matrix[16];
+	/* Get into argument. Looks a bit dodgy, but it's ok. */
+	mat.getValue(matrix);
+	/* Internally, MT_Matrix4x4 uses doubles (MT_Scalar). */
+	glLoadMatrixf(matrix);
+#else
 	double matrix[16];
 	/* Get into argument. Looks a bit dodgy, but it's ok. */
 	mat.getValue(matrix);
 	/* Internally, MT_Matrix4x4 uses doubles (MT_Scalar). */
 	glLoadMatrixd(matrix);
+#endif
 
 	m_camortho= (mat[3][3] != 0.0);
 }
@@ -898,11 +906,19 @@ void RAS_OpenGLRasterizer::SetViewMatrix(const MT_Matrix4x4 &mat,
 	m_viewinvmatrix.invert();
 
 	// note: getValue gives back column major as needed by OpenGL
+#ifdef __wii__
+	float glviewmat[16];
+	m_viewmatrix.getValue(glviewmat);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(glviewmat);
+#else
 	MT_Scalar glviewmat[16];
 	m_viewmatrix.getValue(glviewmat);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(glviewmat);
+#endif
 	m_campos = pos;
 }
 
