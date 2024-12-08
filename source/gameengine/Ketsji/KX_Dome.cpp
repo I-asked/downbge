@@ -397,10 +397,12 @@ void KX_Dome::GLDrawTriangles(vector <DomeFace>& face, int nfaces)
 			}
 		}
 	glEnd();
+#endif
 }
 
 void KX_Dome::GLDrawWarpQuads(void)
 {
+#ifndef __wii__
 	int i, j, i2;
 
 	float uv_width = (float)(warp.bufferwidth) / warp.imagesize;

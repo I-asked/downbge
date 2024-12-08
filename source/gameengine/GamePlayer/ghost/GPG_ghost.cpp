@@ -47,12 +47,16 @@
 #include <wiikeyboard/keyboard.h>
 #include <wiiuse/wpad.h>
 
+void close();
+
 static void ShutdownCB()
 {
+	close();
 }
 
 static void ResetCB()
 {
+	close();
 }
 #endif
 
@@ -144,6 +148,12 @@ extern char datatoc_bmonofont_ttf[];
 
 const int kMinWindowWidth = 100;
 const int kMinWindowHeight = 100;
+
+GPG_Application *g_app;
+
+static void close() {
+	g_app->quit();
+}
 
 static void mem_error_cb(const char *errorStr)
 {
@@ -420,6 +430,8 @@ int real_main(int argc, char** argv);
 int main(int argc, char** argv)
 {
 #ifdef __wii__
+	//freopen("/dump.log", "a+", stdout);
+	dup2(STDERR_FILENO, STDOUT_FILENO);
 	s32 preferred, version;
 
 	L2Enhance();
@@ -449,6 +461,10 @@ int main(int argc, char** argv)
 	setenv("PYTHONHOME", "/2.76/python/lib/python2.7/", 1);
 	setenv("PYTHONPATH", "/2.76/python/lib/python2.7/", 1);
 	setenv("PYTHONUSERBASE", "/", 1);
+	
+#ifndef NDEBUG
+	setenv("OPENGX_DEBUG", "all", 1);
+#endif
 
 	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };
 	return real_main(sizeof(args) / sizeof(*args), args);
@@ -906,6 +922,7 @@ int real_main(int argc, char** argv)
 				int exitcode = KX_EXIT_REQUEST_NO_REQUEST;
 				STR_String exitstring = "";
 				GPG_Application app(system);
+				g_app = &app;
 				bool firstTimeRunning = true;
 				char filename[FILE_MAX];
 				char pathname[FILE_MAX];

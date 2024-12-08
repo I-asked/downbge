@@ -80,6 +80,8 @@ public:
 	                             const bool stereoVisual, const int stereoMode, const GHOST_TUns16 samples=0);
 #endif
 
+	void quit();
+
 	virtual	bool processEvent(GHOST_IEvent* event);
 	int getExitRequested(void);
 	const STR_String& getExitString(void);

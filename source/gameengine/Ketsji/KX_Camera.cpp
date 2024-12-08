@@ -449,8 +449,9 @@ int KX_Camera::BoxInsideFrustum(const MT_Point3 *box)
 int KX_Camera::SphereInsideFrustum(const MT_Point3& center, const MT_Scalar &radius)
 {
 	ExtractFrustumSphere();
-	if (center.distance2(m_frustum_center) > (radius + m_frustum_radius)*(radius + m_frustum_radius))
+	if (center.distance2(m_frustum_center) > (radius + m_frustum_radius)*(radius + m_frustum_radius)) {
 		return OUTSIDE;
+	}
 
 	unsigned int p;
 	ExtractClipPlanes();

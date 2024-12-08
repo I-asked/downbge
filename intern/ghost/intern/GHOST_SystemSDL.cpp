@@ -664,5 +664,5 @@ GHOST_SystemSDL::putClipboard(GHOST_TInt8 *buffer, bool selection) const
 GHOST_TUns64
 GHOST_SystemSDL::getMilliSeconds() const
 {
-	return GHOST_TUns64(SDL_GetTicks()); /* note, 32 -> 64bits */
+	return GHOST_TUns64((double)SDL_GetPerformanceCounter() * ((double)SDL_GetPerformanceFrequency() / 1000.F)); /* note, 32 -> 64bits */
 }

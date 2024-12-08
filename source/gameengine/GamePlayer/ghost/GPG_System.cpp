@@ -47,7 +47,7 @@ double GPG_System::GetTimeInSeconds()
 {
 	GHOST_TUns64 millis = m_system->getMilliSeconds();
 	double time = (double)millis;
-	time /= 1000.0f;
+	time /= 1000.0F;
 	return time;
 }
 

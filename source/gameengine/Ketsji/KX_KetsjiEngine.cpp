@@ -275,10 +275,8 @@ void KX_KetsjiEngine::SetSceneConverter(KX_ISceneConverter* sceneconverter)
 
 void KX_KetsjiEngine::InitDome(short res, short mode, short angle, float resbuf, short tilt, struct Text* text)
 {
-#ifndef __wii__
 	m_dome = new KX_Dome(m_canvas, m_rasterizer,this, res, mode, angle, resbuf, tilt, text);
 	m_usedome = true;
-#endif
 }
 
 void KX_KetsjiEngine::RenderDome()
@@ -583,7 +581,7 @@ bool KX_KetsjiEngine::NextFrame()
 
 
 	// Compute the number of logic frames to do each update (fixed tic bricks)
-	int frames =int(ceil(deltatime*m_ticrate+1e-6));
+	int frames =int(deltatime*m_ticrate+1e-6);
 //	if (frames>1)
 //		printf("****************************************");
 //	printf("dt = %f, deltatime = %f, frames = %d\n",dt, deltatime,frames);
