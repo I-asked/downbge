@@ -607,6 +607,9 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 		if (gm->flag & GAME_SHOW_MOUSE)
 			m_canvas->SetMouseState(RAS_ICanvas::MOUSE_NORMAL);
 		
+#ifdef __wii__
+		gm->raster_storage = RAS_STORE_VA;
+#endif
 		//Don't use displaylists with VBOs
 		//If auto starts using VBOs, make sure to check for that here
 		if (useLists && gm->raster_storage != RAS_STORE_VBO)
@@ -976,6 +979,11 @@ bool GPG_Application::handleKey(GHOST_IEvent* event, bool isDown)
 	return handled;
 }
 
+
+void GPG_Application::quit()
+{
+	m_exitRequested = KX_EXIT_REQUEST_OUTSIDE;
+}
 
 
 static void frameTimerProc(GHOST_ITimerTask* task, GHOST_TUns64 time)
