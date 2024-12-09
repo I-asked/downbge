@@ -396,6 +396,8 @@ bool BL_Texture::InitCubeMap(int unit,  EnvMap *cubemap)
 
 bool BL_Texture::IsValid()
 {
+	if (!glIsTexture)
+		return true;
 	return (mTexture!= 0)?glIsTexture(mTexture)!=0:false;
 }
 

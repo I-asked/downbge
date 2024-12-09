@@ -118,7 +118,9 @@ static struct GPUGlobal {
 	GPUShaders shaders;
 	GPUTexture *invalid_tex_1D; /* texture used in place of invalid textures (not loaded correctly, missing) */
 	GPUTexture *invalid_tex_2D;
+#ifndef __wii__
 	GPUTexture *invalid_tex_3D;
+#endif
 	float dfdyfactors[2]; /* workaround for different calculation of dfdy factors on GPUs. Some GPUs/drivers
 	                         calculate dfdy in shader differently when drawing to an offscreen buffer. First
 	                         number is factor on screen and second is off-screen */
@@ -245,11 +247,6 @@ void gpu_extensions_init(void)
 			GG.dlistsdisabled = 1;
 		}
 	}
-
-#ifdef __wii__
-	//GG.npotdisabled = 1;
-	GG.dlistsdisabled = 1;
-#endif
 
 	/* make sure double side isn't used by default and only getting enabled in places where it's
 	 * really needed to prevent different unexpected behaviors like with intel gme965 card (sergey) */
@@ -570,6 +567,7 @@ static GPUTexture *GPU_texture_create_nD(
 
 GPUTexture *GPU_texture_create_3D(int w, int h, int depth, int channels, const float *fpixels)
 {
+#ifndef __wii__
 	GPUTexture *tex;
 	GLenum type, format, internalformat;
 	void *pixels = NULL;
@@ -708,6 +706,9 @@ GPUTexture *GPU_texture_create_3D(int w, int h, int depth, int channels, const f
 	GPU_texture_unbind(tex);
 
 	return tex;
+#else
+	return NULL;
+#endif
 }
 
 GPUTexture *GPU_texture_from_blender(Image *ima, ImageUser *iuser, bool is_data, double time, int mipmap)
@@ -886,21 +887,16 @@ GPUTexture *GPU_texture_create_1D_procedural(int w, const float *pixels, char er
 
 void GPU_invalid_tex_init(void)
 {
-#ifdef __wii__
-	GG.invalid_tex_1D = NULL;
-	GG.invalid_tex_2D = NULL;
-	GG.invalid_tex_3D = NULL;
-#else
 	const float color[4] = {1.0f, 0.0f, 1.0f, 1.0f};
 	GG.invalid_tex_1D = GPU_texture_create_1D(1, color, NULL);
 	GG.invalid_tex_2D = GPU_texture_create_2D(1, 1, color, GPU_HDR_NONE, NULL);
+#ifndef __wii__
 	GG.invalid_tex_3D = GPU_texture_create_3D(1, 1, 1, 4, color);
 #endif
 }
 
 void GPU_invalid_tex_bind(int mode)
 {
-#ifndef __wii__
 	switch (mode) {
 		case GL_TEXTURE_1D:
 			glBindTexture(GL_TEXTURE_1D, GG.invalid_tex_1D->bindcode);
@@ -908,11 +904,12 @@ void GPU_invalid_tex_bind(int mode)
 		case GL_TEXTURE_2D:
 			glBindTexture(GL_TEXTURE_2D, GG.invalid_tex_2D->bindcode);
 			break;
+#ifndef __wii__
 		case GL_TEXTURE_3D:
 			glBindTexture(GL_TEXTURE_3D, GG.invalid_tex_3D->bindcode);
 			break;
-	}
 #endif
+	}
 }
 
 void GPU_invalid_tex_free(void)
@@ -921,8 +918,10 @@ void GPU_invalid_tex_free(void)
 		GPU_texture_free(GG.invalid_tex_1D);
 	if (GG.invalid_tex_2D)
 		GPU_texture_free(GG.invalid_tex_2D);
+#ifndef __wii__
 	if (GG.invalid_tex_3D)
 		GPU_texture_free(GG.invalid_tex_3D);
+#endif
 }
 
 
