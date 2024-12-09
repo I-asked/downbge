@@ -34,7 +34,9 @@
 #include "opj_includes.h"
 
 double opj_clock(void) {
-#ifdef _WIN32
+#if defined(__wii__)
+    return .0F;
+#elif defined(_WIN32)
 	/* _WIN32: use QueryPerformance (very accurate) */
     LARGE_INTEGER freq , t ;
     /* freq is the clock speed of the CPU */

@@ -238,26 +238,18 @@ print B.bc.OKGREEN + "Build with debug symbols%s: %s" % (B.bc.ENDC, env['BF_DEBU
 
 if 'blenderlite' in B.targets:
     target_env_defs = {}
-    target_env_defs['WITH_BF_GAMEENGINE'] = False
     target_env_defs['WITH_BF_CYCLES'] = False
-    target_env_defs['WITH_BF_OPENAL'] = False
     target_env_defs['WITH_BF_OPENEXR'] = False
-    target_env_defs['WITH_BF_PSD'] = False
     target_env_defs['WITH_BF_OPENMP'] = False
     target_env_defs['WITH_BF_ICONV'] = False
     target_env_defs['WITH_BF_INTERNATIONAL'] = False
-    target_env_defs['WITH_BF_OPENJPEG'] = False
     target_env_defs['WITH_BF_FFMPEG'] = False
     target_env_defs['WITH_BF_QUICKTIME'] = False
     target_env_defs['WITH_BF_REDCODE'] = False
-    target_env_defs['WITH_BF_DDS'] = False
     target_env_defs['WITH_BF_CINEON'] = False
     target_env_defs['WITH_BF_FRAMESERVER'] = False
     target_env_defs['WITH_BF_HDR'] = False
-    target_env_defs['WITH_BF_ZLIB'] = False
     target_env_defs['WITH_BF_SDL'] = False
-    target_env_defs['WITH_BF_JPEG'] = False
-    target_env_defs['WITH_BF_PNG'] = False
     target_env_defs['WITH_BF_BULLET'] = False
     target_env_defs['WITH_BF_BINRELOC'] = False
     target_env_defs['BF_BUILDINFO'] = False

@@ -55,10 +55,6 @@ typedef struct PyModuleDef{
 #define _PyUnicode_AsStringAndSize(unicode, size) \
   (*size = PyUnicode_GET_DATA_SIZE(unicode), PyUnicode_AS_DATA(unicode))
 
-//#define PyUnicode_FromStringAndSize(str, size) \
-//  PyUnicode_FromObject( \
-//      PyString_FromStringAndSize(str, size))
-
 #define PyUnicode_EncodeFSDefault PyUnicode_AS_DATA
 #define PyUnicode_DecodeFSDefaultAndSize PyUnicode_FromStringAndSize
 

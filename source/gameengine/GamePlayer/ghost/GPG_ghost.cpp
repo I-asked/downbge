@@ -430,8 +430,6 @@ int real_main(int argc, char** argv);
 int main(int argc, char** argv)
 {
 #ifdef __wii__
-	//freopen("/dump.log", "a+", stdout);
-	dup2(STDERR_FILENO, STDOUT_FILENO);
 	s32 preferred, version;
 
 	L2Enhance();
@@ -455,12 +453,22 @@ int main(int argc, char** argv)
 	fatInitDefault();
 	SYS_STDIO_Report(true);
 
+	dup2(STDERR_FILENO, STDOUT_FILENO);
+
 	MEM_set_error_callback(mem_error_cb);
 
-	setenv("HOME", "/", 1);
-	setenv("PYTHONHOME", "/2.76/python/lib/python2.7/", 1);
-	setenv("PYTHONPATH", "/2.76/python/lib/python2.7/", 1);
-	setenv("PYTHONUSERBASE", "/", 1);
+	char home_dir[PATH_MAX];
+	if (getcwd(home_dir, PATH_MAX) != home_dir) {
+		home_dir[0] = '/';
+		home_dir[1] = '\0';
+	}
+
+	const auto python_home = std::string(home_dir) + "/2.76/python/lib/python2.7/";
+
+	setenv("HOME", home_dir, 1);
+	setenv("PYTHONHOME", python_home.c_str(), 1);
+	setenv("PYTHONPATH", python_home.c_str(), 1);
+	setenv("PYTHONUSERBASE", home_dir, 1);
 	
 #ifndef NDEBUG
 	setenv("OPENGX_DEBUG", "all", 1);
@@ -473,7 +481,7 @@ int main(int argc, char** argv)
 #endif
 }
 
-int real_main(int argc, char** argv)
+inline __attribute__((always_inline)) int real_main(int argc, char** argv)
 {
 	int i;
 	int argc_py_clamped= argc; /* use this so python args can be added after ' - ' */

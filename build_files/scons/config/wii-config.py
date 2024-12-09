@@ -61,8 +61,8 @@ BF_OPENEXR_LIB_STATIC = '${BF_OPENEXR}/lib/libHalf.a ${BF_OPENEXR}/lib/libIlmImf
 
 WITH_BF_DDS = False
 
-WITH_BF_JPEG = False
-BF_JPEG = '/opt/devkitpro'
+WITH_BF_JPEG = True
+BF_JPEG = '/opt/devkitpro/portlibs/ppc'
 BF_JPEG_INC = '${BF_JPEG}/include'
 BF_JPEG_LIB = 'jpeg'
 
@@ -252,7 +252,7 @@ if WITH_BF_FFMPEG:
     CXXFLAGS += ['-D__STDC_CONSTANT_MACROS', ]
 REL_CFLAGS = []
 REL_CXXFLAGS = []
-REL_CCFLAGS = ['-Os']
+REL_CCFLAGS = ['-Os', '-flto']
 
 C_WARN = ['-Wno-char-subscripts', '-Wdeclaration-after-statement', '-Wunused-parameter', '-Wstrict-prototypes', '-Werror=declaration-after-statement', '-Werror=implicit-function-declaration', '-Werror=return-type']
 CC_WARN = ['-Wall']
