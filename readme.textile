@@ -25,9 +25,7 @@ h2. Building for Wii
 
 h3. Build Stackless Python port for Wii
 
-bc..
-
-$ git clone https://github.com/I-asked/stackless.git -b v2.7.18-slp-porting stackless-porting
+bc.. $ git clone https://github.com/I-asked/stackless.git -b v2.7.18-slp-porting stackless-porting
 $ cd stackless-porting/
 $ echo -e 'ac_cv_file__dev_ptmx=no\nac_cv_file__dev_ptc=no' >config.site
 $ export CONFIG_SITE=config.site
@@ -40,9 +38,7 @@ $ cd -
 
 h3. Build "fixed" OpenGX for Wii
 
-bc..
-
-$ git clone https://github.com/I-asked/opengx.git opengx-jula
+bc.. $ git clone https://github.com/I-asked/opengx.git opengx-jula
 $ cd opengx-jula/
 $ cmake -S. -Bbuild -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
 $ cmake --build build -j
@@ -51,9 +47,7 @@ $ cd -
 
 h3. Build OpenAL for Wii
 
-bc..
-
-$ git clone https://github.com/I-asked/openal-soft.git openal-soft-porting
+bc.. $ git clone https://github.com/I-asked/openal-soft.git openal-soft-porting
 $ cd openal-soft-porting/
 $ cmake -S. -Bbuild \
         -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
@@ -67,9 +61,7 @@ h3. Build the PowerPC Linux Cross Toolchain
 
 h3. Build the downBGE runtime (@blenderplayer@)
 
-bc..
-
-$ cd downbge/
+bc.. $ cd downbge/
 $ python2 -m virtualenv .virtualenv
 $ . .virtualenv/bin/activate
 $ pip install scons
