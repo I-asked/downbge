@@ -1038,6 +1038,8 @@ void AUD_OpenALDevice::updateStreams()
 			m_playing = false;
 			unlock();
 			pthread_exit(NULL);
+
+			return;
 		}
 
 		unlock();
