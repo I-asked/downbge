@@ -197,7 +197,7 @@ bool AUD_OpenALDevice::AUD_OpenALHandle::stop()
 	if(!m_status)
 		return false;
 
-	AUD_MutexLock lock(*m_device);
+	//AUD_MutexLock lock(*m_device);
 
 	if(!m_status)
 		return false;
@@ -1267,27 +1267,29 @@ std::shared_ptr<AUD_IHandle> AUD_OpenALDevice::play(std::shared_ptr<AUD_IReader>
 	if(!getFormat(format, specs))
 		return std::shared_ptr<AUD_IHandle>();
 
-	AUD_MutexLock lock(*this);
-
-	alcSuspendContext(m_context);
-
 	std::shared_ptr<AUD_OpenALDevice::AUD_OpenALHandle> sound;
 
-	try
 	{
-		// create the handle
-		sound = std::shared_ptr<AUD_OpenALDevice::AUD_OpenALHandle>(new AUD_OpenALDevice::AUD_OpenALHandle(this, format, reader, keep));
-	}
-	catch(AUD_Exception&)
-	{
+		AUD_MutexLock lock(*this);
+
+		alcSuspendContext(m_context);
+
+		try
+		{
+			// create the handle
+			sound = std::shared_ptr<AUD_OpenALDevice::AUD_OpenALHandle>(new AUD_OpenALDevice::AUD_OpenALHandle(this, format, reader, keep));
+		}
+		catch(AUD_Exception&)
+		{
+			alcProcessContext(m_context);
+			throw;
+		}
+
 		alcProcessContext(m_context);
-		throw;
+
+		// play sound
+		m_playingSounds.push_back(sound);
 	}
-
-	alcProcessContext(m_context);
-
-	// play sound
-	m_playingSounds.push_back(sound);
 
 	start();
 
