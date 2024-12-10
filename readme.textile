@@ -1,0 +1,79 @@
+h1. downBGE
+
+**downBGE** is a fork of the Blender Game Engine, slimmed down for retro hardware.
+
+Currently, **downBGE** runs on PC and Nintendo Wii.
+
+h2. Prerequisites
+
+* "*downBGE* source":https://github.com/I-asked/downbge
+* "Stackless Python 2.7":https://github.com/stackless-dev/stackless/releases/tag/v2.7.18-slp
+* For editor:
+** "downBGE addons":https://github.com/I-asked/downbge-addons
+* For Wii runtime:
+** "devkitPPC for Wii":https://devkitpro.org/wiki/Getting_Started
+** GNU/Linux PowerPC toolchain and @qemu-ppc-static@ (temporary requirement until cross-build endianness issues are sorted out)
+** "Stackless Python 2.7 port":https://github.com/I-asked/stackless
+** "__Fixed__ OpenGX":https://github.com/I-asked/opengx
+** "OpenAL port":https://github.com/I-asked/openal-soft
+
+h2. Building for PC
+
+**downBGE** is intended to be built with SCons running on Python 2.7.
+
+h2. Building for Wii
+
+h3. Build Stackless Python port for Wii
+
+bc..
+
+$ git clone https://github.com/I-asked/stackless.git -b v2.7.18-slp-porting stackless-porting
+$ cd stackless-porting/
+$ echo -e 'ac_cv_file__dev_ptmx=no\nac_cv_file__dev_ptc=no' >config.site
+$ export CONFIG_SITE=config.site
+$ ./configure --build=x86_64-linux-gnu --host=powerpc-eabi --prefix=$PWD/_install/wii/ \
+              --disable-ipv6 --enable-optimizations --disable-shared --without-pymalloc \
+              --without-signal-module --with-threads \
+              CC=$DEVKITPPC/bin/powerpc-eabi-gcc
+$ make -j$(nproc) install
+$ cd -
+
+h3. Build "fixed" OpenGX for Wii
+
+bc..
+
+$ git clone https://github.com/I-asked/opengx.git opengx-jula
+$ cd opengx-jula/
+$ cmake -S. -Bbuild -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
+$ cmake --build build -j
+$ sudo cmake --install build
+$ cd -
+
+h3. Build OpenAL for Wii
+
+bc..
+
+$ git clone https://github.com/I-asked/openal-soft.git openal-soft-porting
+$ cd openal-soft-porting/
+$ cmake -S. -Bbuild \
+        -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
+        -DCMAKE_CXX_FLAGS="-I$PWD/../downbge/intern/ogc-sup -I$DEVKITPRO/libogc/include/ogc -mrvl" \
+        -DCMAKE_SYSTEM_NAME=NintendoWii
+$ cmake --build build -j
+$ sudo cmake --install build
+$ cd -
+
+h3. Build the PowerPC Linux Cross Toolchain
+
+h3. Build the downBGE runtime (@blenderplayer@)
+
+bc..
+
+$ cd downbge/
+$ python2 -m virtualenv .virtualenv
+$ . .virtualenv/bin/activate
+$ pip install scons
+$ scons -Qj$(nproc) \
+        BF_PYTHON=$PWD/../stackless-porting/_install/wii \
+        BF_CROSS=wii \
+        blenderlite
