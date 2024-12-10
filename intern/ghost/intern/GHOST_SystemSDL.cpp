@@ -26,6 +26,8 @@
 
 #include <assert.h>
 
+#include <queue>
+
 #include "GHOST_SystemSDL.h"
 #include "GHOST_WindowSDL.h"
 
@@ -36,14 +38,18 @@
 #include "GHOST_EventButton.h"
 #include "GHOST_EventWheel.h"
 
+#include <pthread.h>
+
+std::queue<SDL_Event> gGhostJoySdlEvents; // TODO:XXX: ugly hack!
+pthread_mutex_t gGhostJoySdlEventsMutex;
+
 GHOST_SystemSDL::GHOST_SystemSDL()
     :
       GHOST_System()
 {
+	pthread_mutex_init(&gGhostJoySdlEventsMutex, nullptr);
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		fprintf(stderr, "Error initializing SDL:  %s\n", SDL_GetError());
-	} else {
-		fprintf(stderr, "SDL initialized\n");
 	}
 
 	/* SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); */
@@ -59,6 +65,7 @@ GHOST_SystemSDL::GHOST_SystemSDL()
 GHOST_SystemSDL::~GHOST_SystemSDL()
 {
 	SDL_Quit();
+	pthread_mutex_destroy(&gGhostJoySdlEventsMutex);
 }
 
 GHOST_IWindow *
@@ -591,6 +598,12 @@ GHOST_SystemSDL::processEvents(bool waitForEvent)
 
 		SDL_Event sdl_event;
 		while (SDL_PollEvent(&sdl_event)) {
+			if (sdl_event.type >= SDL_JOYAXISMOTION
+					&& sdl_event.type <= SDL_JOYBATTERYUPDATED) {
+				pthread_mutex_lock(&gGhostJoySdlEventsMutex);
+				gGhostJoySdlEvents.push(sdl_event);
+				pthread_mutex_unlock(&gGhostJoySdlEventsMutex);
+			}
 			processEvent(&sdl_event);
 			anyProcessed = true;
 		}

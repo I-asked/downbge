@@ -44,9 +44,11 @@ incs = ' '.join(incs)
 
 defs = []
 
-if env['WITH_BF_SDL']:
+if env['WITH_BF_SDL'] or env['WITH_GHOST_SDL']:
     defs.append('WITH_SDL')
     incs += ' ' + env['BF_SDL_INC']
+    if env['WITH_GHOST_SDL']:
+        defs.append('WITH_GHOST_SDL')
 
 if env['WITH_BF_PYTHON']:
     incs += ' ' + env['BF_PYTHON_INC']

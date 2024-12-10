@@ -40,6 +40,14 @@
 #  include <cstdio> /* printf */
 #endif
 
+#ifdef WITH_GHOST_SDL
+#include <pthread.h>
+#include <queue>
+
+extern std::queue<SDL_Event> gGhostJoySdlEvents; // TODO:XXX: ugly hack!
+extern pthread_mutex_t	 gGhostJoySdlEventsMutex;
+#endif
+
 #ifdef WITH_SDL
 void SCA_Joystick::OnAxisMotion(SDL_Event* sdl_event)
 {
@@ -95,8 +103,15 @@ void SCA_Joystick::HandleEvents(void)
 		if (SCA_Joystick::m_instance[i])
 			SCA_Joystick::m_instance[i]->OnNothing(&sdl_event);
 	}
-	
+
+#ifdef WITH_GHOST_SDL
+	pthread_mutex_lock(&gGhostJoySdlEventsMutex);
+	while (!gGhostJoySdlEvents.empty()) {
+		sdl_event = gGhostJoySdlEvents.front();
+		gGhostJoySdlEvents.pop();
+#else
 	while (SDL_PollEvent(&sdl_event)) {
+#endif
 		/* Note! m_instance[sdl_event.jaxis.which]
 		 * will segfault if over JOYINDEX_MAX, not too nice but what are the chances? */
 		
@@ -131,9 +146,12 @@ void SCA_Joystick::HandleEvents(void)
 				break;
 #endif
 			default:
-				printf("SCA_Joystick::HandleEvents, Unknown SDL event (%d), this should not happen\n", sdl_event.type);
+				fprintf(stderr, "SCA_Joystick::HandleEvents, Unknown SDL event (%d), this should not happen\n", sdl_event.type);
 				break;
 		}
 	}
+#ifdef WITH_GHOST_SDL
+	pthread_mutex_unlock(&gGhostJoySdlEventsMutex);
+#endif
 }
 #endif /* WITH_SDL */

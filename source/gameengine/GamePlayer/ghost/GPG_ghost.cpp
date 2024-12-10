@@ -471,7 +471,7 @@ int main(int argc, char** argv)
 	setenv("PYTHONUSERBASE", home_dir, 1);
 	
 #ifndef NDEBUG
-	setenv("OPENGX_DEBUG", "all", 1);
+	setenv("OPENGX_DEBUG", "warning", 1);
 #endif
 
 	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };

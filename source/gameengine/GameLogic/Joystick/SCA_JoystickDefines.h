@@ -40,7 +40,7 @@
 #  define JOYSTICK_ECHO(x)
 #else
 #  include <iostream>
-#  define JOYSTICK_ECHO(x) std::cout << x << std::endl;
+#  define JOYSTICK_ECHO(x) std::cerr << x << std::endl;
 #endif
 
 #define JOYINDEX_MAX			8
