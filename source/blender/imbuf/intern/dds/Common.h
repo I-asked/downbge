@@ -28,15 +28,20 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#ifndef min
+#ifdef min
+#undef min
+#endif
 #define min(a,b) ((a) <= (b) ? (a) : (b))
+
+#ifdef max
+#undef max
 #endif
-#ifndef max
 #define max(a,b) ((a) >= (b) ? (a) : (b))
+
+#ifdef clamp
+#undef clamp
 #endif
-#ifndef clamp
 #define clamp(x,a,b) min(max((x), (a)), (b))
-#endif
 
 template<typename T>
 inline void

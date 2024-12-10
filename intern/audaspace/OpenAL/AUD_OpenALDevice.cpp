@@ -873,12 +873,16 @@ void AUD_OpenALDevice::start(bool join)
 			pthread_join(m_thread, NULL);
 
 		pthread_attr_t attr;
+#ifndef __wii__
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+#endif
 
 		pthread_create(&m_thread, &attr, AUD_openalRunThread, this);
 
+#ifndef __wii__
 		pthread_attr_destroy(&attr);
+#endif
 
 		m_playing = true;
 	}
