@@ -211,8 +211,10 @@ void BKE_sound_init(struct Main *bmain)
 	if (specs.channels <= AUD_CHANNELS_INVALID)
 		specs.channels = AUD_CHANNELS_STEREO;
 
-	if (!(sound_device = AUD_init(device_name, specs, buffersize, "Blender")))
+	if (!(sound_device = AUD_init(device_name, specs, buffersize, "Blender"))) {
+		fprintf(stderr, "Audio device \"%s\" is not supported on this system. Falling back to \"Null\"\n", device_name);
 		sound_device = AUD_init("Null", specs, buffersize, "Blender");
+	}
 
 	BKE_sound_init_main(bmain);
 }

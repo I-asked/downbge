@@ -597,6 +597,10 @@ inline __attribute__((always_inline)) int real_main(int argc, char** argv)
 	U.audioformat = 0x24;
 	U.audiochannels = 2;
 
+#ifdef __wii__
+	BKE_sound_force_device("SDL");
+#endif
+
 	// XXX this one too
 	U.anisotropic_filter = 2;
 	// enable fast mipmap generation

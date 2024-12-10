@@ -183,7 +183,7 @@ AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, 
 		AUD_device = dev;
 		AUD_3ddevice = dynamic_cast<AUD_I3DDevice *>(AUD_device.get());
 
-		return (AUD_Device*)1;
+		return (AUD_Device*)dev.get();
 	}
 	catch(AUD_Exception&)
 	{
