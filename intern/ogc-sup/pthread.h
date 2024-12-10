@@ -90,98 +90,101 @@ typedef OSCond pthread_cond_t;
 typedef OSCond pthread_condattr_t;
 
 static __attribute__((always_inline)) inline int pthread_create(pthread_t *thread,
-      const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg)
+    const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg)
 {
-   *thread = 0;
-   return OSCreateThread(thread, start_routine, 0 /* unused */, arg,
-         0, STACKSIZE, 64, 0 /* unused */);
+  (void)attr;
+  *thread = 0;
+  return OSCreateThread(thread, start_routine, 0 /* unused */, arg,
+      0, STACKSIZE, 64, 0 /* unused */);
 }
 
 static __attribute__((always_inline)) inline pthread_t pthread_self(void)
 {
-   /* zero 20-mar-2016: untested */
-   return LWP_GetSelf();
+  /* zero 20-mar-2016: untested */
+  return LWP_GetSelf();
 }
 
 static __attribute__((always_inline)) inline int pthread_mutex_init(pthread_mutex_t *mutex,
-      const pthread_mutexattr_t *attr)
+    const pthread_mutexattr_t *attr)
 {
-   return OSInitMutex(mutex);
+  (void)attr;
+  return OSInitMutex(mutex);
 }
 
 static __attribute__((always_inline)) inline int pthread_mutex_destroy(pthread_mutex_t *mutex)
 {
-   return LWP_MutexDestroy(*mutex);
+  return LWP_MutexDestroy(*mutex);
 }
 
 static __attribute__((always_inline)) inline int pthread_mutex_lock(pthread_mutex_t *mutex)
 {
-   return OSLockMutex(*mutex);
+  return OSLockMutex(*mutex);
 }
 
 static __attribute__((always_inline)) inline int pthread_mutex_unlock(pthread_mutex_t *mutex)
 {
-   return OSUnlockMutex(*mutex);
+  return OSUnlockMutex(*mutex);
 }
 
 static __attribute__((always_inline)) inline void pthread_exit(void *retval)
 {
-   /* FIXME: No LWP equivalent for this? */
-   (void)retval;
+  /* FIXME: No LWP equivalent for this? */
+  (void)retval;
 }
 
 static __attribute__((always_inline)) inline int pthread_detach(pthread_t thread)
 {
-   /* FIXME: pthread_detach equivalent missing? */
-   (void)thread;
-   return 0;
+  /* FIXME: pthread_detach equivalent missing? */
+  (void)thread;
+  return 0;
 }
 
 static __attribute__((always_inline)) inline int pthread_join(pthread_t thread, void **retval)
 {
-   return OSJoinThread(thread, retval);
+  return OSJoinThread(thread, retval);
 }
 
 static __attribute__((always_inline)) inline int pthread_mutex_trylock(pthread_mutex_t *mutex)
 {
-   return OSTryLockMutex(*mutex);
+  return OSTryLockMutex(*mutex);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_wait(pthread_cond_t *cond,
-      pthread_mutex_t *mutex)
+    pthread_mutex_t *mutex)
 {
-   return OSWaitCond(*cond, *mutex);
+  return OSWaitCond(*cond, *mutex);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_timedwait(pthread_cond_t *cond,
-      pthread_mutex_t *mutex, const struct timespec *abstime)
+    pthread_mutex_t *mutex, const struct timespec *abstime)
 {
-   return LWP_CondTimedWait(*cond, *mutex, abstime);
+  return LWP_CondTimedWait(*cond, *mutex, abstime);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_init(pthread_cond_t *cond,
-      const pthread_condattr_t *attr)
+    const pthread_condattr_t *attr)
 {
-   return OSInitCond(cond);
+  (void)attr;
+  return OSInitCond(cond);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_signal(pthread_cond_t *cond)
 {
-   return LWP_CondSignal(*cond);
+  return LWP_CondSignal(*cond);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_broadcast(pthread_cond_t *cond)
 {
-   return LWP_CondBroadcast(*cond);
+  return LWP_CondBroadcast(*cond);
 }
 
 static __attribute__((always_inline)) inline int pthread_cond_destroy(pthread_cond_t *cond)
 {
-   return LWP_CondDestroy(*cond);
+  return LWP_CondDestroy(*cond);
 }
 
 //extern int pthread_equal(pthread_t t1, pthread_t t2);
 static __attribute__((always_inline)) inline int pthread_equal(pthread_t t1, pthread_t t2)
 {
-    return t1 == t2;
+  return t1 == t2;
 }

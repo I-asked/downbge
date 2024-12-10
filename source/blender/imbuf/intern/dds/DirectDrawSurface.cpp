@@ -64,6 +64,21 @@
 #include <math.h>  // sqrt
 #include <sys/types.h>
 
+#ifdef min
+#undef min
+#endif
+#define min(a,b) ((a) <= (b) ? (a) : (b))
+
+#ifdef max
+#undef max
+#endif
+#define max(a,b) ((a) >= (b) ? (a) : (b))
+
+#ifdef clamp
+#undef clamp
+#endif
+#define clamp(x,a,b) min(max((x), (a)), (b))
+
 /*** declarations ***/
 
 #if !defined(DDS_MAKEFOURCC)
@@ -1102,7 +1117,7 @@ void DirectDrawSurface::mipmap(Image *img, uint face, uint mipmap)
 	// Compute width and height.
 	for (uint m = 0; m < mipmap; m++)
 	{
-		w = max(1U, w / 2);
+		w = max(0U, w / 2);
 		h = max(1U, h / 2);
 	}
 	
