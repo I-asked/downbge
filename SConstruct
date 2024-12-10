@@ -250,7 +250,6 @@ if 'blenderlite' in B.targets:
     target_env_defs['WITH_BF_FRAMESERVER'] = False
     target_env_defs['WITH_BF_HDR'] = False
     target_env_defs['WITH_BF_SDL'] = False
-    target_env_defs['WITH_BF_BULLET'] = False
     target_env_defs['WITH_BF_BINRELOC'] = False
     target_env_defs['BF_BUILDINFO'] = False
     target_env_defs['WITH_BF_FLUID'] = False
