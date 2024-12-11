@@ -632,7 +632,7 @@ public:
 };
 
 #ifdef WITH_PYTHON
-PyObject *PyUnicode_From_STR_String(const STR_String& str);
+PyObject *PyString_From_STR_String(const STR_String& str);
 
 inline PyObject *_bge_proxy_from_ref_borrow(void *self_v)
 {

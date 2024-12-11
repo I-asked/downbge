@@ -199,7 +199,7 @@ void KX_WorldInfo::UpdateWorldSettings()
  * ------------------------------------------------------------------------- */
 PyObject *KX_WorldInfo::py_repr(void)
 {
-	return PyUnicode_From_STR_String(GetName());
+	return PyString_From_STR_String(GetName());
 }
 
 /* -------------------------------------------------------------------------

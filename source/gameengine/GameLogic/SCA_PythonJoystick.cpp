@@ -63,7 +63,7 @@ SCA_PythonJoystick::~SCA_PythonJoystick()
 /* ------------------------------------------------------------------------- */
 PyObject* SCA_PythonJoystick::py_repr(void)
 {
-	return PyUnicode_FromString(m_joystick->GetName());
+	return PyString_FromString(m_joystick->GetName());
 }
 
 
@@ -183,6 +183,6 @@ PyObject* SCA_PythonJoystick::pyattr_get_name(void *self_v, const KX_PYATTRIBUTE
 {
 	SCA_PythonJoystick* self = static_cast<SCA_PythonJoystick*>(self_v);
 
-	return PyUnicode_FromString(self->m_joystick->GetName());
+	return PyString_FromString(self->m_joystick->GetName());
 }
 #endif

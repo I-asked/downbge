@@ -61,7 +61,7 @@ SCA_PythonKeyboard::~SCA_PythonKeyboard()
 static PyObject *gPyGetClipboard(PyObject *args, PyObject *kwds)
 {
 	char *buf = (char *)GHOST_getClipboard(0);
-	return PyUnicode_FromString(buf?buf:"");
+	return PyString_FromString(buf?buf:"");
 }
 
 static PyObject *gPySetClipboard(PyObject *args, PyObject *value)

@@ -163,7 +163,7 @@ void SCA_PythonController::SetNamespace(PyObject*	pythondictionary)
 	
 	/* Without __file__ set the sys.argv[0] is used for the filename
 	 * which ends up with lines from the blender binary being printed in the console */
-	PyDict_SetItemString(m_pythondictionary, "__file__", PyUnicode_From_STR_String(m_scriptName));
+	PyDict_SetItemString(m_pythondictionary, "__file__", PyString_From_STR_String(m_scriptName));
 	
 }
 #endif
@@ -200,9 +200,9 @@ SCA_IActuator* SCA_PythonController::LinkedActuatorFromPy(PyObject *value)
 	std::vector<SCA_IActuator*> lacts =  m_sCurrentController->GetLinkedActuators();
 	std::vector<SCA_IActuator*>::iterator it;
 	
-	if (PyUnicode_Check(value)) {
+	if (PyString_Check(value)) {
 		/* get the actuator from the name */
-		const char *name= _PyUnicode_AsString(value);
+		const char *name= PyString_AsString(value);
 		for (it = lacts.begin(); it!= lacts.end(); ++it) {
 			if ( name == (*it)->GetName() ) {
 				return *it;
@@ -503,7 +503,7 @@ PyObject *SCA_PythonController::pyattr_get_script(void *self_v, const KX_PYATTRI
 	// static_cast<void *>(dynamic_cast<Derived *>(obj)) - static_cast<void *>(obj)
 
 	SCA_PythonController* self = static_cast<SCA_PythonController*>(self_v);
-	return PyUnicode_From_STR_String(self->m_scriptText);
+	return PyString_From_STR_String(self->m_scriptText);
 }
 
 
@@ -512,7 +512,7 @@ int SCA_PythonController::pyattr_set_script(void *self_v, const KX_PYATTRIBUTE_D
 {
 	SCA_PythonController* self = static_cast<SCA_PythonController*>(self_v);
 	
-	const char *scriptArg = _PyUnicode_AsString(value);
+	const char *scriptArg = PyString_AsString(value);
 	
 	if (scriptArg==NULL) {
 		PyErr_SetString(PyExc_TypeError, "controller.script = string: Python Controller, expected a string script text");

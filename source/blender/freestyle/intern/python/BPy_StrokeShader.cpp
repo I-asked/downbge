@@ -198,7 +198,7 @@ static void StrokeShader___dealloc__(BPy_StrokeShader *self)
 
 static PyObject *StrokeShader___repr__(BPy_StrokeShader *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->ss);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->ss);
 }
 
 static char StrokeShader_shade___doc__[] =
@@ -245,7 +245,7 @@ PyDoc_STRVAR(StrokeShader_name_doc,
 
 static PyObject *StrokeShader_name_get(BPy_StrokeShader *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 static PyGetSetDef BPy_StrokeShader_getseters[] = {

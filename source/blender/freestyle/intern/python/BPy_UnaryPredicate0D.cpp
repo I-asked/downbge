@@ -103,7 +103,7 @@ static void UnaryPredicate0D___dealloc__(BPy_UnaryPredicate0D *self)
 
 static PyObject *UnaryPredicate0D___repr__(BPy_UnaryPredicate0D *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->up0D);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->up0D);
 }
 
 static PyObject *UnaryPredicate0D___call__(BPy_UnaryPredicate0D *self, PyObject *args, PyObject *kwds)
@@ -144,7 +144,7 @@ PyDoc_STRVAR(UnaryPredicate0D_name_doc,
 
 static PyObject *UnaryPredicate0D_name_get(BPy_UnaryPredicate0D *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 static PyGetSetDef BPy_UnaryPredicate0D_getseters[] = {

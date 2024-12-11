@@ -91,7 +91,7 @@ static void SShape_dealloc(BPy_SShape *self)
 
 static PyObject *SShape_repr(BPy_SShape *self)
 {
-	return PyUnicode_FromFormat("SShape - address: %p", self->ss);
+	return PyString_FromFormat("SShape - address: %p", self->ss);
 }
 
 static char SShape_add_edge_doc[] =
@@ -185,16 +185,16 @@ PyDoc_STRVAR(SShape_name_doc,
 
 static PyObject *SShape_name_get(BPy_SShape *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(self->ss->getName());
+	return PyString_FromString(self->ss->getName());
 }
 
 static int SShape_name_set(BPy_SShape *self, PyObject *value, void *UNUSED(closure))
 {
-	if (!PyUnicode_Check(value)) {
+	if (!PyString_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, "value must be a string");
 		return -1;
 	}
-	const char *name = _PyUnicode_AsString(value);
+	const char *name = PyString_AsString(value);
 	self->ss->setName(name);
 	return 0;
 }

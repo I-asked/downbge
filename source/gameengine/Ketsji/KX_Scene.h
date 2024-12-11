@@ -637,7 +637,7 @@ public:
 	static PyObject*	pyattr_get_gravity(void* self_v, const KX_PYATTRIBUTE_DEF *attrdef);
 	static int			pyattr_set_gravity(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef, PyObject *value);
 
-	virtual PyObject *py_repr(void) { return PyUnicode_From_STR_String(GetName()); }
+	virtual PyObject *py_repr(void) { return PyString_From_STR_String(GetName()); }
 	
 	/* getitem/setitem */
 	static PyMappingMethods	Mapping;

@@ -77,7 +77,7 @@ static void ViewMap_dealloc(BPy_ViewMap *self)
 
 static PyObject *ViewMap_repr(BPy_ViewMap *self)
 {
-	return PyUnicode_FromFormat("ViewMap - address: %p", self->vm);
+	return PyString_FromFormat("ViewMap - address: %p", self->vm);
 }
 
 PyDoc_STRVAR(ViewMap_get_closest_viewedge_doc,

@@ -69,8 +69,5 @@ __attribute__((always_inline)) inline int _PyErr_WarnFormat2(PyObject *cat, char
 }
 #endif
 
-//#define PyErr_WarnFormat(cat, sl, fmt, ...) \
-//  _PyErr_WarnFormat2(cat, asprintf(fmt, __VA_ARGS__), sl)
-
 #define PyErr_WarnFormat(cat, sl, fmt, ...) \
   PyErr_WarnEx(cat, asprintf(fmt, __VA_ARGS__), sl)

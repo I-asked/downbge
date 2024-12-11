@@ -87,7 +87,7 @@ static void UnaryFunction0DId___dealloc__(BPy_UnaryFunction0DId *self)
 
 static PyObject *UnaryFunction0DId___repr__(BPy_UnaryFunction0DId *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_id);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_id);
 }
 
 static PyObject *UnaryFunction0DId___call__(BPy_UnaryFunction0DId *self, PyObject *args, PyObject *kwds)

@@ -97,7 +97,7 @@ static void Id_dealloc(BPy_Id *self)
 
 static PyObject *Id_repr(BPy_Id *self)
 {
-	return PyUnicode_FromFormat("[ first: %i, second: %i ](BPy_Id)", self->id->getFirst(), self->id->getSecond());
+	return PyString_FromFormat("[ first: %i, second: %i ](BPy_Id)", self->id->getFirst(), self->id->getSecond());
 }
 
 static PyObject *Id_RichCompare(BPy_Id *o1, BPy_Id *o2, int opid)

@@ -816,7 +816,7 @@ static PyObject *gLibNew(PyObject *, PyObject *args)
 		PyObject *ret= PyList_New(0);
 		PyObject *item;
 		for (Py_ssize_t i= 0; i < PyList_GET_SIZE(names); i++) {
-			name= _PyUnicode_AsString(PyList_GET_ITEM(names, i));
+			name= PyString_AsString(PyList_GET_ITEM(names, i));
 			if (name) {
 				RAS_MeshObject *meshobj= kx_scene->GetSceneConverter()->ConvertMeshSpecial(kx_scene, maggie, name);
 				if (meshobj) {
@@ -866,7 +866,7 @@ static PyObject *gLibList(PyObject *, PyObject *args)
 	
 	for (vector<Main*>::iterator it=dynMaggie.begin(); !(it==dynMaggie.end()); it++)
 	{
-		PyList_SET_ITEM(list, i++, PyUnicode_FromString( (*it)->name) );
+		PyList_SET_ITEM(list, i++, PyString_FromString( (*it)->name) );
 	}
 	
 	return list;
@@ -1579,7 +1579,7 @@ PyMODINIT_FUNC initGameLogicPythonBinding()
 	}
 	PyDict_SetItemString(d, "joysticks", joylist);
 
-	ErrorObject = PyUnicode_FromString("GameLogic.error");
+	ErrorObject = PyString_FromString("GameLogic.error");
 	PyDict_SetItemString(d, "error", ErrorObject);
 	Py_DECREF(ErrorObject);
 	
@@ -2315,7 +2315,7 @@ PyMODINIT_FUNC initRasterizerPythonBinding()
 
 	// Add some symbolic constants to the module
 	d = PyModule_GetDict(m);
-	ErrorObject = PyUnicode_FromString("Rasterizer.error");
+	ErrorObject = PyString_FromString("Rasterizer.error");
 	PyDict_SetItemString(d, "error", ErrorObject);
 	Py_DECREF(ErrorObject);
 
@@ -2403,10 +2403,10 @@ static PyObject *gPyEventToCharacter(PyObject *, PyObject *args)
 	if (IsPrintable(event)) {
 		char ch[2] = {'\0', '\0'};
 		ch[0] = ToCharacter(event, (bool)shift);
-		return PyUnicode_FromString(ch);
+		return PyString_FromString(ch);
 	}
 	else {
-		return PyUnicode_FromString("");
+		return PyString_FromString("");
 	}
 }
 
@@ -2617,9 +2617,9 @@ PyMODINIT_FUNC initApplicationPythonBinding()
 
 	PyDict_SetItemString(d, "version", Py_BuildValue("(iii)",
 		BLENDER_VERSION / 100, BLENDER_VERSION % 100, BLENDER_SUBVERSION));
-	PyDict_SetItemString(d, "version_string", PyUnicode_FromFormat("%d.%02d (sub %d)",
+	PyDict_SetItemString(d, "version_string", PyString_FromFormat("%d.%02d (sub %d)",
 		BLENDER_VERSION / 100, BLENDER_VERSION % 100, BLENDER_SUBVERSION));
-	PyDict_SetItemString(d, "version_char", PyUnicode_FromString(
+	PyDict_SetItemString(d, "version_char", PyString_FromString(
 		STRINGIFY(BLENDER_VERSION_CHAR)));
 
 	PyDict_SetItemString(d, "has_texture_ffmpeg",

@@ -119,7 +119,7 @@ static void ViewShape_dealloc(BPy_ViewShape *self)
 
 static PyObject *ViewShape_repr(BPy_ViewShape *self)
 {
-	return PyUnicode_FromFormat("ViewShape - address: %p", self->vs);
+	return PyString_FromFormat("ViewShape - address: %p", self->vs);
 }
 
 PyDoc_STRVAR(ViewShape_add_edge_doc,
@@ -293,7 +293,7 @@ PyDoc_STRVAR(ViewShape_name_doc,
 
 static PyObject *ViewShape_name_get(BPy_ViewShape *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(self->vs->getName());
+	return PyString_FromString(self->vs->getName());
 }
 
 PyDoc_STRVAR(ViewShape_id_doc,

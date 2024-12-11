@@ -87,7 +87,7 @@ static void UnaryFunction0DMaterial___dealloc__(BPy_UnaryFunction0DMaterial *sel
 
 static PyObject *UnaryFunction0DMaterial___repr__(BPy_UnaryFunction0DMaterial *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_material);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_material);
 }
 
 static PyObject *UnaryFunction0DMaterial___call__(BPy_UnaryFunction0DMaterial *self, PyObject *args, PyObject *kwds)

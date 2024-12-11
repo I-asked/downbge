@@ -498,7 +498,7 @@ PyObject *Freestyle_Init(void)
 		char modpath[FILE_MAX];
 		BLI_join_dirfile(modpath, sizeof(modpath), path, "modules");
 		PyObject *sys_path = PySys_GetObject("path"); /* borrow */
-		PyObject *py_modpath = PyUnicode_FromString(modpath);
+		PyObject *py_modpath = PyString_FromString(modpath);
 		PyList_Append(sys_path, py_modpath);
 		Py_DECREF(py_modpath);
 #if 0

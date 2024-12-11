@@ -543,7 +543,7 @@ PyAttributeDef CValue::Attributes[] = {
 PyObject *CValue::pyattr_get_name(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)
 {
 	CValue * self = static_cast<CValue *> (self_v);
-	return PyUnicode_From_STR_String(self->GetName());
+	return PyString_From_STR_String(self->GetName());
 }
 
 /**
@@ -610,9 +610,9 @@ CValue *CValue::ConvertPythonToValue(PyObject *pyobj, const bool do_type_excepti
 	{
 		vallie = new CIntValue( (cInt)PyLong_AsLongLong(pyobj) );
 	} else
-	if (PyUnicode_Check(pyobj))
+	if (PyString_Check(pyobj))
 	{
-		vallie = new CStringValue(_PyUnicode_AsString(pyobj),"");
+		vallie = new CStringValue(PyString_AsString(pyobj),"");
 	} else
 	if (PyObject_TypeCheck(pyobj, &CValue::Type)) /* Note, don't let these get assigned to GameObject props, must check elsewhere */
 	{
@@ -639,7 +639,7 @@ PyObject *CValue::ConvertKeysToPython(void)
 		std::map<STR_String,CValue*>::iterator it;
 		for (it= m_pNamedPropertyArray->begin(); (it != m_pNamedPropertyArray->end()); it++)
 		{
-			PyList_SET_ITEM(pylist, i++, PyUnicode_From_STR_String((*it).first));
+			PyList_SET_ITEM(pylist, i++, PyString_From_STR_String((*it).first));
 		}
 
 		return pylist;

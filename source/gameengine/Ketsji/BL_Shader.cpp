@@ -874,12 +874,12 @@ KX_PYMETHODDEF_DOC( BL_Shader, isValid, "isValid()" )
 
 KX_PYMETHODDEF_DOC( BL_Shader, getVertexProg, "getVertexProg( )" )
 {
-	return PyUnicode_FromString(vertProg?vertProg:"");
+	return PyString_FromString(vertProg?vertProg:"");
 }
 
 KX_PYMETHODDEF_DOC( BL_Shader, getFragmentProg, "getFragmentProg( )" )
 {
-	return PyUnicode_FromString(fragProg?fragProg:"");
+	return PyString_FromString(fragProg?fragProg:"");
 }
 
 KX_PYMETHODDEF_DOC( BL_Shader, validate, "validate()")

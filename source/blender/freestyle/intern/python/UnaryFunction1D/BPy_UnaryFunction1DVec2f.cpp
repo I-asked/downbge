@@ -110,7 +110,7 @@ static void UnaryFunction1DVec2f___dealloc__(BPy_UnaryFunction1DVec2f *self)
 
 static PyObject *UnaryFunction1DVec2f___repr__(BPy_UnaryFunction1DVec2f *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf1D_vec2f);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf1D_vec2f);
 }
 
 static PyObject *UnaryFunction1DVec2f___call__(BPy_UnaryFunction1DVec2f *self, PyObject *args, PyObject *kwds)

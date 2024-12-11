@@ -95,7 +95,7 @@ static void UnaryFunction0D___dealloc__(BPy_UnaryFunction0D *self)
 
 static PyObject *UnaryFunction0D___repr__(BPy_UnaryFunction0D * /*self*/)
 {
-	return PyUnicode_FromString("UnaryFunction0D");
+	return PyString_FromString("UnaryFunction0D");
 }
 
 /*----------------------UnaryFunction0D get/setters ----------------------------*/
@@ -107,7 +107,7 @@ PyDoc_STRVAR(UnaryFunction0D_name_doc,
 
 static PyObject *UnaryFunction0D_name_get(BPy_UnaryFunction0D *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 static PyGetSetDef BPy_UnaryFunction0D_getseters[] = {

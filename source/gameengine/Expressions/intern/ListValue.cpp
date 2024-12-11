@@ -361,8 +361,8 @@ static PyObject *listvalue_mapping_subscript(PyObject *self, PyObject *key)
 		return NULL;
 	}
 	
-	if (PyUnicode_Check(key)) {
-		CValue *item = ((CListValue*) list)->FindValue(_PyUnicode_AsString(key));
+	if (PyString_Check(key)) {
+		CValue *item = ((CListValue*) list)->FindValue(PyString_AsString(key));
 		if (item) {
 			PyObject *pyobj = item->ConvertValueToPython();
 			if (pyobj)
@@ -482,8 +482,8 @@ static int listvalue_buffer_contains(PyObject *self_v, PyObject *value)
 		return -1;
 	}
 	
-	if (PyUnicode_Check(value)) {
-		if (self->FindValue((const char *)_PyUnicode_AsString(value))) {
+	if (PyString_Check(value)) {
+		if (self->FindValue((const char *)PyString_AsString(value))) {
 			return 1;
 		}
 	}

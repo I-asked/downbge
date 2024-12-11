@@ -92,7 +92,7 @@ static void BinaryPredicate0D___dealloc__(BPy_BinaryPredicate0D *self)
 
 static PyObject *BinaryPredicate0D___repr__(BPy_BinaryPredicate0D *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->bp0D);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->bp0D);
 }
 
 static PyObject *BinaryPredicate0D___call__(BPy_BinaryPredicate0D *self, PyObject *args, PyObject *kwds)
@@ -128,7 +128,7 @@ PyDoc_STRVAR(BinaryPredicate0D_name_doc,
 
 static PyObject *BinaryPredicate0D_name_get(BPy_BinaryPredicate0D *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 static PyGetSetDef BPy_BinaryPredicate0D_getseters[] = {

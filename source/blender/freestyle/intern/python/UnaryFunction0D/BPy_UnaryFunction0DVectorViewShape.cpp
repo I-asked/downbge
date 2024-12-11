@@ -89,7 +89,7 @@ static void UnaryFunction0DVectorViewShape___dealloc__(BPy_UnaryFunction0DVector
 
 static PyObject *UnaryFunction0DVectorViewShape___repr__(BPy_UnaryFunction0DVectorViewShape *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_vectorviewshape);
+	return PyString_FromFormat("type: %s - address: %p", Py_TYPE(self)->tp_name, self->uf0D_vectorviewshape);
 }
 
 static PyObject *UnaryFunction0DVectorViewShape___call__(BPy_UnaryFunction0DVectorViewShape *self,

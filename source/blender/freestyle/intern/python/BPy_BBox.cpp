@@ -71,7 +71,7 @@ static void BBox_dealloc(BPy_BBox *self)
 
 static PyObject *BBox_repr(BPy_BBox *self)
 {
-	return PyUnicode_FromFormat("BBox - address: %p", self->bb);
+	return PyString_FromFormat("BBox - address: %p", self->bb);
 }
 
 /*-----------------------BPy_BBox type definition ------------------------------*/

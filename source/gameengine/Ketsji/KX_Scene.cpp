@@ -2205,7 +2205,7 @@ PyMethodDef KX_Scene::Methods[] = {
 static PyObject *Map_GetItem(PyObject *self_v, PyObject *item)
 {
 	KX_Scene* self = static_cast<KX_Scene*>BGE_PROXY_REF(self_v);
-	const char *attr_str= _PyUnicode_AsString(item);
+	const char *attr_str= PyString_AsString(item);
 	PyObject *pyconvert;
 	
 	if (self == NULL) {
@@ -2234,7 +2234,7 @@ static PyObject *Map_GetItem(PyObject *self_v, PyObject *item)
 static int Map_SetItem(PyObject *self_v, PyObject *key, PyObject *val)
 {
 	KX_Scene* self = static_cast<KX_Scene*>BGE_PROXY_REF(self_v);
-	const char *attr_str= _PyUnicode_AsString(key);
+	const char *attr_str= PyString_AsString(key);
 	if (attr_str==NULL)
 		PyErr_Clear();
 	
@@ -2321,7 +2321,7 @@ PySequenceMethods KX_Scene::Sequence = {
 PyObject *KX_Scene::pyattr_get_name(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)
 {
 	KX_Scene* self = static_cast<KX_Scene*>(self_v);
-	return PyUnicode_From_STR_String(self->GetName());
+	return PyString_From_STR_String(self->GetName());
 }
 
 PyObject *KX_Scene::pyattr_get_objects(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)

@@ -987,8 +987,8 @@ bool ConvertPythonToCamera(PyObject *value, KX_Camera **object, bool py_none_ok,
 		}
 	}
 	
-	if (PyUnicode_Check(value)) {
-		STR_String value_str = _PyUnicode_AsString(value);
+	if (PyString_Check(value)) {
+		STR_String value_str = PyString_AsString(value);
 		*object = KX_GetActiveScene()->FindCamera(value_str);
 		
 		if (*object) {
@@ -996,7 +996,7 @@ bool ConvertPythonToCamera(PyObject *value, KX_Camera **object, bool py_none_ok,
 		} else {
 			PyErr_Format(PyExc_ValueError,
 			             "%s, requested name \"%s\" did not match any KX_Camera in this scene",
-			             error_prefix, _PyUnicode_AsString(value));
+			             error_prefix, PyString_AsString(value));
 			return false;
 		}
 	}
@@ -1156,7 +1156,7 @@ KX_PYMETHODDEF_DOC_VARARGS(KX_Camera, getScreenRay,
 		PyTuple_SET_ITEM(argValue, 0, PyObjectFrom(vect));
 		PyTuple_SET_ITEM(argValue, 1, PyFloat_FromDouble(dist));
 		if (propName)
-			PyTuple_SET_ITEM(argValue, 2, PyUnicode_FromString(propName));
+			PyTuple_SET_ITEM(argValue, 2, PyString_FromString(propName));
 
 		PyObject *ret= this->PyrayCastTo(argValue,NULL);
 		Py_DECREF(argValue);

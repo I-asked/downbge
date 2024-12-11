@@ -2082,7 +2082,7 @@ PyObject *KX_GameObject::PyReinstancePhysicsMesh(PyObject *args)
 static PyObject *Map_GetItem(PyObject *self_v, PyObject *item)
 {
 	KX_GameObject* self = static_cast<KX_GameObject*>BGE_PROXY_REF(self_v);
-	const char *attr_str= _PyUnicode_AsString(item);
+	const char *attr_str= PyString_AsString(item);
 	CValue* resultattr;
 	PyObject *pyconvert;
 	
@@ -2116,7 +2116,7 @@ static PyObject *Map_GetItem(PyObject *self_v, PyObject *item)
 static int Map_SetItem(PyObject *self_v, PyObject *key, PyObject *val)
 {
 	KX_GameObject* self = static_cast<KX_GameObject*>BGE_PROXY_REF(self_v);
-	const char *attr_str= _PyUnicode_AsString(key);
+	const char *attr_str= PyString_AsString(key);
 	if (attr_str==NULL)
 		PyErr_Clear();
 	
@@ -2209,7 +2209,7 @@ static int Seq_Contains(PyObject *self_v, PyObject *value)
 		return -1;
 	}
 	
-	if (PyUnicode_Check(value) && self->GetProperty(_PyUnicode_AsString(value)))
+	if (PyString_Check(value) && self->GetProperty(PyString_AsString(value)))
 		return 1;
 	
 	if (self->m_attr_dict && PyDict_GetItem(self->m_attr_dict, value))
@@ -2269,7 +2269,7 @@ PyTypeObject KX_GameObject::Type = {
 PyObject *KX_GameObject::pyattr_get_name(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)
 {
 	KX_GameObject* self = static_cast<KX_GameObject*>(self_v);
-	return PyUnicode_From_STR_String(self->GetName());
+	return PyString_From_STR_String(self->GetName());
 }
 
 PyObject *KX_GameObject::pyattr_get_parent(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)
@@ -3965,7 +3965,7 @@ KX_PYMETHODDEF_DOC(KX_GameObject, getActionName,
 
 	layer_check(layer, "getActionName");
 
-	return PyUnicode_FromString(GetActionName(layer));
+	return PyString_FromString(GetActionName(layer));
 }
 
 KX_PYMETHODDEF_DOC(KX_GameObject, setActionFrame,
@@ -4037,8 +4037,8 @@ PyObject *KX_GameObject::Pyget(PyObject *args)
 		return NULL;
 	
 	
-	if (PyUnicode_Check(key)) {
-		CValue *item = GetProperty(_PyUnicode_AsString(key));
+	if (PyString_Check(key)) {
+		CValue *item = GetProperty(PyString_AsString(key));
 		if (item) {
 			ret = item->ConvertValueToPython();
 			if (ret)
@@ -4076,13 +4076,13 @@ bool ConvertPythonToGameObject(PyObject *value, KX_GameObject **object, bool py_
 		}
 	}
 	
-	if (PyUnicode_Check(value)) {
-		*object = (KX_GameObject*)SCA_ILogicBrick::m_sCurrentLogicManager->GetGameObjectByName(STR_String( _PyUnicode_AsString(value) ));
+	if (PyString_Check(value)) {
+		*object = (KX_GameObject*)SCA_ILogicBrick::m_sCurrentLogicManager->GetGameObjectByName(STR_String( PyString_AsString(value) ));
 		
 		if (*object) {
 			return true;
 		} else {
-			PyErr_Format(PyExc_ValueError, "%s, requested name \"%s\" did not match any KX_GameObject in this scene", error_prefix, _PyUnicode_AsString(value));
+			PyErr_Format(PyExc_ValueError, "%s, requested name \"%s\" did not match any KX_GameObject in this scene", error_prefix, PyString_AsString(value));
 			return false;
 		}
 	}

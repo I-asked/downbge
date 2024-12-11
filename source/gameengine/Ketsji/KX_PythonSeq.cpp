@@ -271,8 +271,8 @@ static PyObject *KX_PythonSeq_subscript(PyObject *self, PyObject *key)
 	if (PyIndex_Check(key)) {
 		return KX_PythonSeq_getIndex(self, PyLong_AsSsize_t(key));
 	}
-	else if ( PyUnicode_Check(key) ) {
-		const char *name = _PyUnicode_AsString(key);
+	else if ( PyString_Check(key) ) {
+		const char *name = PyString_AsString(key);
 		PyObjectPlus *ret = KX_PythonSeq_subscript__internal(self, name);
 		
 		if (ret) {
@@ -297,12 +297,12 @@ static int KX_PythonSeq_contains(PyObject *self, PyObject *key)
 		PyErr_SetString(PyExc_SystemError, "key in seq, KX_PythonSeq: " BGE_PROXY_ERROR_MSG);
 		return -1;
 	}
-	if (!PyUnicode_Check(key)) {
+	if (!PyString_Check(key)) {
 		PyErr_SetString(PyExc_SystemError, "key in seq, KX_PythonSeq: key must be a string");
 		return -1;
 	}
 	
-	if (KX_PythonSeq_subscript__internal(self, _PyUnicode_AsString(key)))
+	if (KX_PythonSeq_subscript__internal(self, PyString_AsString(key)))
 		return 1;
 	
 	return 0;

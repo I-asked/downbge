@@ -347,7 +347,7 @@ PyObject *BL_ActionActuator::PyGetChannel(PyObject *value)
 	PyErr_SetString(PyExc_NotImplementedError, "BL_ActionActuator.getChannel() no longer works, please use BL_ArmatureObject.channels instead");
 	return NULL;
 #if 0 // XXX To be removed in a later version (first removed in 2.64)
-	const char *string= _PyUnicode_AsString(value);
+	const char *string= PyString_AsString(value);
 
 	if (GetParent()->GetGameObjectType() != SCA_IObject::OBJ_ARMATURE)
 	{
@@ -555,21 +555,21 @@ PyAttributeDef BL_ActionActuator::Attributes[] = {
 PyObject *BL_ActionActuator::pyattr_get_action(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef)
 {
 	BL_ActionActuator* self = static_cast<BL_ActionActuator*>(self_v);
-	return PyUnicode_FromString(self->GetAction() ? self->GetAction()->id.name+2 : "");
+	return PyString_FromString(self->GetAction() ? self->GetAction()->id.name+2 : "");
 }
 
 int BL_ActionActuator::pyattr_set_action(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef, PyObject *value)
 {
 	BL_ActionActuator* self = static_cast<BL_ActionActuator*>(self_v);
 	
-	if (!PyUnicode_Check(value))
+	if (!PyString_Check(value))
 	{
 		PyErr_SetString(PyExc_ValueError, "actuator.action = val: Action Actuator, expected the string name of the action");
 		return PY_SET_ATTR_FAIL;
 	}
 
 	bAction *action= NULL;
-	STR_String val = _PyUnicode_AsString(value);
+	STR_String val = PyString_AsString(value);
 	
 	if (val != "")
 	{
@@ -607,7 +607,7 @@ PyObject *BL_ActionActuator::pyattr_get_channel_names(void *self_v, const KX_PYA
 	if (pose) {
 		bPoseChannel *pchan;
 		for (pchan= (bPoseChannel *)pose->chanbase.first; pchan; pchan= (bPoseChannel *)pchan->next) {
-			item= PyUnicode_FromString(pchan->name);
+			item= PyString_FromString(pchan->name);
 			PyList_Append(ret, item);
 			Py_DECREF(item);
 		}

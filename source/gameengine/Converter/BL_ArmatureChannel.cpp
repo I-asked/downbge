@@ -64,7 +64,7 @@ PyTypeObject BL_ArmatureChannel::Type = {
 
 PyObject *BL_ArmatureChannel::py_repr(void)
 {
-	return PyUnicode_FromString(m_posechannel->name);
+	return PyString_FromString(m_posechannel->name);
 }
 
 PyObject *BL_ArmatureChannel::GetProxy()
@@ -408,7 +408,7 @@ PyObject *BL_ArmatureBone::NewProxy(bool py_owns)
 PyObject *BL_ArmatureBone::py_bone_repr(PyObject *self)
 {
 	Bone* bone = static_cast<Bone*>BGE_PROXY_PTR(self);
-	return PyUnicode_FromString(bone->name);
+	return PyString_FromString(bone->name);
 }
 
 PyMethodDef BL_ArmatureBone::Methods[] = {

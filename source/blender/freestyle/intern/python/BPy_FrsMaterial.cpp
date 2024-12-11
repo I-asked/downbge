@@ -134,7 +134,7 @@ static void FrsMaterial_dealloc(BPy_FrsMaterial *self)
 
 static PyObject *FrsMaterial_repr(BPy_FrsMaterial *self)
 {
-	return PyUnicode_FromFormat("Material - address: %p", self->m);
+	return PyString_FromFormat("Material - address: %p", self->m);
 }
 
 /*----------------------mathutils callbacks ----------------------------*/

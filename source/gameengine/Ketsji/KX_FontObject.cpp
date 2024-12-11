@@ -274,15 +274,15 @@ PyObject *KX_FontObject::pyattr_get_text(void *self_v, const KX_PYATTRIBUTE_DEF 
 			str += '\n';
 		str += self->m_text[i];
 	}
-	return PyUnicode_From_STR_String(str);
+	return PyString_From_STR_String(str);
 }
 
 int KX_FontObject::pyattr_set_text(void *self_v, const KX_PYATTRIBUTE_DEF *attrdef, PyObject *value)
 {
 	KX_FontObject* self = static_cast<KX_FontObject*>(self_v);
-	if (!PyUnicode_Check(value))
+	if (!PyString_Check(value))
 		return PY_SET_ATTR_FAIL;
-	char* chars = _PyUnicode_AsString(value);
+	char* chars = PyString_AsString(value);
 
 	/* Allow for some logic brick control */
 	CValue* tprop = self->GetProperty("Text");

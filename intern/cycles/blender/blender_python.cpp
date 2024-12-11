@@ -61,12 +61,12 @@ static const char *PyC_StringAsByte(PyObject *py_str, PyObject **coerce)
 	/* bug [#31856] oddly enough, Python3.2 --> 3.3 on Windows will throw an
 	 * exception here this needs to be fixed in python:
 	 * see: bugs.python.org/issue15859 */
-	if(!PyUnicode_Check(py_str)) {
+	if(!PyString_Check(py_str)) {
 		PyErr_BadArgument();
 		return "";
 	}
 #endif
-	if((*coerce = PyUnicode_EncodeFSDefault(py_str))) {
+	if((*coerce = PyString_EncodeFSDefault(py_str))) {
 		return PyBytes_AS_STRING(*coerce);
 	}
 	return "";
@@ -282,7 +282,7 @@ static PyObject *available_devices_func(PyObject * /*self*/, PyObject * /*args*/
 
 	for(size_t i = 0; i < devices.size(); i++) {
 		DeviceInfo& device = devices[i];
-		PyTuple_SET_ITEM(ret, i, PyUnicode_FromString(device.description.c_str()));
+		PyTuple_SET_ITEM(ret, i, PyString_FromString(device.description.c_str()));
 	}
 
 	return ret;
@@ -484,7 +484,7 @@ static PyObject *osl_compile_func(PyObject * /*self*/, PyObject *args)
 static PyObject *system_info_func(PyObject * /*self*/, PyObject * /*value*/)
 {
 	string system_info = Device::device_capabilities();
-	return PyUnicode_FromString(system_info.c_str());
+	return PyString_FromString(system_info.c_str());
 }
 
 #ifdef WITH_OPENCL
@@ -594,7 +594,7 @@ void *CCL_python_module_init()
 	                   Py_BuildValue("(iii)",
 	                                  curversion / 10000, (curversion / 100) % 100, curversion % 100));
 	PyModule_AddObject(mod, "osl_version_string",
-	                   PyUnicode_FromFormat("%2d, %2d, %2d",
+	                   PyString_FromFormat("%2d, %2d, %2d",
 	                                        curversion / 10000, (curversion / 100) % 100, curversion % 100));
 #else
 	PyModule_AddObject(mod, "with_osl", Py_False);

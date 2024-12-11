@@ -63,7 +63,7 @@ PyTypeObject BL_ArmatureConstraint::Type = {
 
 PyObject *BL_ArmatureConstraint::py_repr(void)
 {
-	return PyUnicode_FromString(m_name);
+	return PyString_FromString(m_name);
 }
 
 #endif // WITH_PYTHON
@@ -302,7 +302,7 @@ PyObject *BL_ArmatureConstraint::py_attr_getattr(void *self_v, const struct KX_P
 	case BCA_TYPE:
 		return PyLong_FromLong(constraint->type);
 	case BCA_NAME:
-		return PyUnicode_FromString(constraint->name);
+		return PyString_FromString(constraint->name);
 	case BCA_ENFORCE:
 		return PyFloat_FromDouble(constraint->enforce);
 	case BCA_HEADTAIL:

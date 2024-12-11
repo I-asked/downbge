@@ -84,7 +84,7 @@ static void FrsNoise_dealloc(BPy_FrsNoise *self)
 
 static PyObject *FrsNoise_repr(BPy_FrsNoise *self)
 {
-	return PyUnicode_FromFormat("Noise - address: %p", self->n);
+	return PyString_FromFormat("Noise - address: %p", self->n);
 }
 
 PyDoc_STRVAR(FrsNoise_turbulence1_doc,

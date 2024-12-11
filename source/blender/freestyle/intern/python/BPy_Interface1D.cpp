@@ -126,7 +126,7 @@ static void Interface1D_dealloc(BPy_Interface1D *self)
 
 static PyObject *Interface1D_repr(BPy_Interface1D *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", self->if1D->getExactTypeName().c_str(), self->if1D);
+	return PyString_FromFormat("type: %s - address: %p", self->if1D->getExactTypeName().c_str(), self->if1D);
 }
 
 PyDoc_STRVAR(Interface1D_vertices_begin_doc,
@@ -226,7 +226,7 @@ PyDoc_STRVAR(Interface1D_name_doc,
 
 static PyObject *Interface1D_name_get(BPy_Interface1D *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 PyDoc_STRVAR(Interface1D_id_doc,

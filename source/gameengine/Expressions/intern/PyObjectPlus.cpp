@@ -478,11 +478,11 @@ PyObject *PyObjectPlus::py_get_attrdef(PyObject *self_py, const PyAttributeDef *
 		case KX_PYATTRIBUTE_TYPE_STRING:
 			{
 				STR_String *val = reinterpret_cast<STR_String*>(ptr);
-				return PyUnicode_From_STR_String(*val);
+				return PyString_From_STR_String(*val);
 			}
 		case KX_PYATTRIBUTE_TYPE_CHAR:
 			{
-				return PyUnicode_FromString(ptr);
+				return PyString_FromString(ptr);
 			}
 		default:
 			return NULL;
@@ -1018,10 +1018,11 @@ int PyObjectPlus::py_set_attrdef(PyObject *self_py, PyObject *value, const PyAtt
 			}
 		case KX_PYATTRIBUTE_TYPE_CHAR:
 			{
-				if (PyUnicode_Check(value)) 
+				if (PyString_Check(value)) 
 				{
 					Py_ssize_t val_size;
-					const char *val = _PyUnicode_AsStringAndSize(value, &val_size);
+					const char *val;
+					PyString_AsStringAndSize(value, &val, &val_size);
 					strncpy(ptr, val, attrdef->m_size);
 					ptr[attrdef->m_size-1] = 0;
 				}
@@ -1035,10 +1036,11 @@ int PyObjectPlus::py_set_attrdef(PyObject *self_py, PyObject *value, const PyAtt
 		case KX_PYATTRIBUTE_TYPE_STRING:
 			{
 				STR_String *var = reinterpret_cast<STR_String*>(ptr);
-				if (PyUnicode_Check(value)) 
+				if (PyString_Check(value)) 
 				{
 					Py_ssize_t val_len;
-					const char *val = _PyUnicode_AsStringAndSize(value, &val_len); /* XXX, should be 'const' but we do a silly trick to have a shorter string */
+					const char *val;
+					PyString_AsStringAndSize(value, &val, &val_len); /* XXX, should be 'const' but we do a silly trick to have a shorter string */
 					if (attrdef->m_clamp)
 					{
 						if (val_len < attrdef->m_imin)
@@ -1179,9 +1181,9 @@ PyObject *PyObjectPlus::NewProxyPlus_Ext(PyObjectPlus *self, PyTypeObject *tp, v
 	return self->m_proxy;
 }
 
-PyObject *PyUnicode_From_STR_String(const STR_String& str)
+PyObject *PyString_From_STR_String(const STR_String& str)
 {
-	return PyUnicode_FromStringAndSize(str.ReadPtr(), str.Length());
+	return PyString_FromStringAndSize(str.ReadPtr(), str.Length());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

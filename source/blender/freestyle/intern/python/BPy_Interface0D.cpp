@@ -116,7 +116,7 @@ static void Interface0D_dealloc(BPy_Interface0D *self)
 
 static PyObject *Interface0D_repr(BPy_Interface0D *self)
 {
-	return PyUnicode_FromFormat("type: %s - address: %p", self->if0D->getExactTypeName().c_str(), self->if0D);
+	return PyString_FromFormat("type: %s - address: %p", self->if0D->getExactTypeName().c_str(), self->if0D);
 }
 
 PyDoc_STRVAR(Interface0D_get_fedge_doc,
@@ -159,7 +159,7 @@ PyDoc_STRVAR(Interface0D_name_doc,
 
 static PyObject *Interface0D_name_get(BPy_Interface0D *self, void *UNUSED(closure))
 {
-	return PyUnicode_FromString(Py_TYPE(self)->tp_name);
+	return PyString_FromString(Py_TYPE(self)->tp_name);
 }
 
 PyDoc_STRVAR(Interface0D_point_3d_doc,

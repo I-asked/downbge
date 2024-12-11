@@ -129,7 +129,7 @@ PyObject *KX_MeshProxy::PyGetMaterialName(PyObject *args, PyObject *kwds)
 		return NULL;
 	}
 
-	return PyUnicode_From_STR_String(matname);
+	return PyString_From_STR_String(matname);
 
 }
 
@@ -147,7 +147,7 @@ PyObject *KX_MeshProxy::PyGetTextureName(PyObject *args, PyObject *kwds)
 		return NULL;
 	}
 
-	return PyUnicode_From_STR_String(matname);
+	return PyString_From_STR_String(matname);
 		
 }
 
@@ -424,13 +424,13 @@ bool ConvertPythonToMesh(PyObject *value, RAS_MeshObject **object, bool py_none_
 		}
 	}
 	
-	if (PyUnicode_Check(value)) {
-		*object = (RAS_MeshObject*)SCA_ILogicBrick::m_sCurrentLogicManager->GetMeshByName(STR_String( _PyUnicode_AsString(value) ));
+	if (PyString_Check(value)) {
+		*object = (RAS_MeshObject*)SCA_ILogicBrick::m_sCurrentLogicManager->GetMeshByName(STR_String( PyString_AsString(value) ));
 		
 		if (*object) {
 			return true;
 		} else {
-			PyErr_Format(PyExc_ValueError, "%s, requested name \"%s\" did not match any KX_MeshProxy in this scene", error_prefix, _PyUnicode_AsString(value));
+			PyErr_Format(PyExc_ValueError, "%s, requested name \"%s\" did not match any KX_MeshProxy in this scene", error_prefix, PyString_AsString(value));
 			return false;
 		}
 	}
