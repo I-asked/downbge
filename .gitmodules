@@ -1,7 +1,3 @@
-[submodule "release/scripts/addons"]
-	path = release/scripts/addons
-	url = ../blender-addons.git
-	ignore = all
 [submodule "release/scripts/addons_contrib"]
 	path = release/scripts/addons_contrib
 	url = ../blender-addons-contrib.git
