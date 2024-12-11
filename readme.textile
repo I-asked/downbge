@@ -15,7 +15,6 @@ h2. Prerequisites
 ** GNU/Linux PowerPC toolchain and @qemu-ppc-static@ (temporary requirement until cross-build endianness issues are sorted out)
 ** "Stackless Python 2.7 port":https://github.com/I-asked/stackless
 ** "__Fixed__ OpenGX":https://github.com/I-asked/opengx
-** "OpenAL port":https://github.com/I-asked/openal-soft
 
 h2. Building for PC
 
@@ -41,18 +40,6 @@ h3. Build "fixed" OpenGX for Wii
 bc.. $ git clone https://github.com/I-asked/opengx.git opengx-jula
 $ cd opengx-jula/
 $ cmake -S. -Bbuild -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
-$ cmake --build build -j
-$ sudo cmake --install build
-$ cd -
-
-h3. Build OpenAL for Wii
-
-bc.. $ git clone https://github.com/I-asked/openal-soft.git openal-soft-porting
-$ cd openal-soft-porting/
-$ cmake -S. -Bbuild \
-        -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/Wii.cmake"
-        -DCMAKE_CXX_FLAGS="-I$PWD/../downbge/intern/ogc-sup -I$DEVKITPRO/libogc/include/ogc -mrvl" \
-        -DCMAKE_SYSTEM_NAME=NintendoWii
 $ cmake --build build -j
 $ sudo cmake --install build
 $ cd -
