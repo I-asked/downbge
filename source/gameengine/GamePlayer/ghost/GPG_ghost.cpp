@@ -463,18 +463,16 @@ int main(int argc, char** argv)
 		home_dir[1] = '\0';
 	}
 
-	const auto python_home = std::string(home_dir) + "/2.76/python/lib/python2.7/";
-
 	setenv("HOME", home_dir, 1);
-	setenv("PYTHONHOME", python_home.c_str(), 1);
-	setenv("PYTHONPATH", python_home.c_str(), 1);
 	setenv("PYTHONUSERBASE", home_dir, 1);
-	
+
 #ifndef NDEBUG
 	setenv("OPENGX_DEBUG", "warning", 1);
+	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };
+#else
+	char *args[] = { strdup("blenderplayer"), strdup("init.blend") };
 #endif
 
-	char *args[] = { strdup("blenderplayer"), strdup("-d"), strdup("init.blend") };
 	return real_main(sizeof(args) / sizeof(*args), args);
 #else
 	return real_main(argc, argv);
