@@ -1,4 +1,4 @@
-h1. downBGE
+h1. downBGE !blencat72.png!
 
 **downBGE** is a fork of the Blender Game Engine, slimmed down for retro hardware.
 
