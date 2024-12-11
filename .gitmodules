@@ -2,11 +2,10 @@
 	path = release/scripts/addons
 	url = https://github.com/I-asked/downbge-addons.git
 	ignore = all
-[submodule "release/scripts/addons_contrib"]
-	path = release/scripts/addons_contrib
-	url = https://github.com/I-asked/downbge-addons-contrib.git
-	ignore = all
 [submodule "release/datafiles/locale"]
 	path = release/datafiles/locale
 	url = https://github.com/I-asked/downbge-translations.git
 	ignore = all
+[submodule "release/scripts/addons_contrib"]
+	path = release/scripts/addons_contrib
+	url = https://github.com/I-asked/downbge-addons-contrib.git
