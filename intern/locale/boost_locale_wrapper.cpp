@@ -27,6 +27,7 @@
  */
 
 #include <stdio.h>
+#include <iostream>
 #include <boost/locale.hpp>
 
 #include "boost_locale_wrapper.h"
