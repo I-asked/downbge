@@ -1,11 +1,11 @@
 ;
 ;
-; Blender Self-Installer for Windows (NSIS - http://nsis.sourceforge.net)
+; downBGE Self-Installer for Windows (NSIS - http://nsis.sourceforge.net)
 ;
 
 SetCompressor /SOLID lzma
 
-Name "Blender [VERSION]" 
+Name "downBGE [VERSION]" 
 
 RequestExecutionLevel admin
 
@@ -18,7 +18,7 @@ RequestExecutionLevel admin
 
 !define MUI_ABORTWARNING
 
-!define MUI_WELCOMEPAGE_TEXT  "This wizard will guide you through the installation of Blender. It is recommended that you close all other applications before starting Setup."
+!define MUI_WELCOMEPAGE_TEXT  "This wizard will guide you through the installation of downBGE. It is recommended that you close all other applications before starting Setup."
 !define MUI_WELCOMEFINISHPAGE_BITMAP "[RELDIR]\01.installer.bmp"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP  "[RELDIR]\00.header.bmp"
@@ -59,25 +59,25 @@ UninstallIcon "[RELDIR]\00.installer.ico"
   ;Description
   LangString DESC_InstallFiles ${LANG_ENGLISH} "Copy all required files to the application folder."
   LangString DESC_StartMenu ${LANG_ENGLISH} "Add shortcut items to the Start Menu. (Recommended)"
-  LangString DESC_DesktopShortcut ${LANG_ENGLISH} "Add a shortcut to Blender on your desktop."
-  LangString DESC_BlendRegister ${LANG_ENGLISH} "Blender can register itself with .blend files to allow double-clicking from Windows Explorer, etc."
+  LangString DESC_DesktopShortcut ${LANG_ENGLISH} "Add a shortcut to downBGE on your desktop."
+  LangString DESC_BlendRegister ${LANG_ENGLISH} "downBGE can register itself with .blend files to allow double-clicking from Windows Explorer, etc."
 ;--------------------------------
 ;Data
 
-Caption "Blender [VERSION] Installer"
+Caption "downBGE [VERSION] Installer"
 OutFile "[DISTDIR]\..\blender-[VERSION]-windows[BITNESS].exe"
 InstallDir $INSTDIR ; $INSTDIR is set inside .onInit
-BrandingText "Blender Foundation | http://www.blender.org"
-ComponentText "This will install Blender [VERSION] on your computer."
+BrandingText "downBGE | https://github.com/I-asked/downbge"
+ComponentText "This will install downBGE [VERSION] on your computer."
 
-VIAddVersionKey "ProductName" "Blender"
-VIAddVersionKey "CompanyName" "http://www.blender.org"
-VIAddVersionKey "FileDescription" "Free open source 3D content creation suite."
+VIAddVersionKey "ProductName" "downBGE"
+VIAddVersionKey "CompanyName" "https://github.com/I-asked/downbge"
+VIAddVersionKey "FileDescription" "downBGE Game Engine"
 VIAddVersionKey "FileVersion" "[SHORTVERSION].0.0"
 
 VIProductVersion "[SHORTVERSION].0.0"
 
-DirText "Use the field below to specify the folder where you want Blender to be copied to. To specify a different folder, type a new name or use the Browse button to select an existing folder."
+DirText "Use the field below to specify the folder where you want downBGE to be copied to. To specify a different folder, type a new name or use the Browse button to select an existing folder."
 
 SilentUnInstall normal
 
@@ -97,18 +97,18 @@ Function .onInit
 
   ${If} ${RunningX64}
     ${If} "[BITNESS]" == "32"
-      StrCpy $INSTDIR "$PROGRAMFILES32\Blender Foundation\Blender" ; Can't use InstallDir inside Section
+      StrCpy $INSTDIR "$PROGRAMFILES32\downBGE" ; Can't use InstallDir inside Section
     ${ElseIf} "[BITNESS]" == "64"
-      StrCpy $INSTDIR "$PROGRAMFILES64\Blender Foundation\Blender"
+      StrCpy $INSTDIR "$PROGRAMFILES64\downBGE"
     ${EndIf}
   ${Else}
-    StrCpy $INSTDIR "$PROGRAMFILES\Blender Foundation\Blender"
+    StrCpy $INSTDIR "$PROGRAMFILES\downBGE"
   ${EndIf}
 FunctionEnd
 
 Function un.onInit
   SetShellVarContext current
-  StrCpy $BLENDERCONFIG "$APPDATA\Blender Foundation\Blender"
+  StrCpy $BLENDERCONFIG "$APPDATA\downBGE"
   SetShellVarContext all
 FunctionEnd
 
@@ -141,12 +141,12 @@ Function un.OptionalRemoveConfigOnLeave
 FunctionEnd
 
 
-Section "Blender [VERSION] (required)" InstallFiles
+Section "downBGE [VERSION] (required)" InstallFiles
   SectionIn RO
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
-  ; The contents of Blender installation root dir
+  ; The contents of downBGE installation root dir
   [ROOTDIRCONTS]
   
   ; All datafiles (python, scripts, datafiles)
@@ -157,42 +157,42 @@ Section "Blender [VERSION] (required)" InstallFiles
     SetRegView 64
   ${EndIf}
   ; Write the installation path into the registry
-  WriteRegStr HKLM "SOFTWARE\BlenderFoundation" "Install_Dir" "$INSTDIR"
-  WriteRegStr HKLM "SOFTWARE\BlenderFoundation" "ShortVersion" "[SHORTVERSION]"
+  WriteRegStr HKLM "SOFTWARE\downBGE" "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM "SOFTWARE\downBGE" "ShortVersion" "[SHORTVERSION]"
   ; Write the uninstall keys for Windows
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayName" "Blender"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "Publisher" "Blender Foundation"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "URLInfoAbout" "http://www.blender.org/"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayVersion" "[VERSION]"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayIcon" "$INSTDIR\blender.exe"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "NoRepair " 1
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "DisplayName" "downBGE"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "Publisher" "downBGE"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "URLInfoAbout" "https://github.com/I-asked/downbge"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "DisplayVersion" "[VERSION]"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "DisplayIcon" "$INSTDIR\blender.exe"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\downBGE" "NoRepair " 1
   WriteUninstaller "uninstall.exe"
 
 SectionEnd
 
 Section "Add Start Menu Shortcuts" StartMenu
   SetShellVarContext all
-  CreateDirectory "$SMPROGRAMS\Blender Foundation\Blender\"
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Blender.lnk" "$INSTDIR\Blender.exe" "" "$INSTDIR\blender.exe" 0
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Readme.lnk" "$INSTDIR\readme.html" "" "" 0
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Copyright.lnk" "$INSTDIR\Copyright.txt" "" "$INSTDIR\copyright.txt" 0
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\GPL-license.lnk" "$INSTDIR\GPL-license.txt" "" "$INSTDIR\GPL-license.txt" 0
+  CreateDirectory "$SMPROGRAMS\downBGE\"
+  CreateShortCut "$SMPROGRAMS\downBGE\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\downBGE\downBGE.lnk" "$INSTDIR\downBGE.exe" "" "$INSTDIR\blender.exe" 0
+  CreateShortCut "$SMPROGRAMS\downBGE\Readme.lnk" "$INSTDIR\readme.html" "" "" 0
+  CreateShortCut "$SMPROGRAMS\downBGE\Copyright.lnk" "$INSTDIR\Copyright.txt" "" "$INSTDIR\copyright.txt" 0
+  CreateShortCut "$SMPROGRAMS\downBGE\GPL-license.lnk" "$INSTDIR\GPL-license.txt" "" "$INSTDIR\GPL-license.txt" 0
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)' ; refresh icons
 SectionEnd
 
 Section "Add Desktop Shortcut" DesktopShortcut
-  CreateShortCut "$DESKTOP\Blender.lnk" "$INSTDIR\blender.exe" "" "$INSTDIR\blender.exe" 0
+  CreateShortCut "$DESKTOP\downBGE.lnk" "$INSTDIR\blender.exe" "" "$INSTDIR\blender.exe" 0
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)' ; refresh icons
 SectionEnd
 
-Section "Open .blend files with Blender" BlendRegister
+Section "Open .blend files with downBGE" BlendRegister
   ExecWait '"$INSTDIR\blender.exe" -r'
 SectionEnd
 
-UninstallText "This will uninstall Blender [VERSION], and all installed files. Hit 'Uninstall' to continue."
+UninstallText "This will uninstall downBGE [VERSION], and all installed files. Hit 'Uninstall' to continue."
 
 Section "Uninstall"
   ; Remove registry keys
@@ -200,9 +200,9 @@ Section "Uninstall"
     SetRegView 64
   ${EndIf}
   
-  ReadRegStr $SHORTVERSION HKLM "SOFTWARE\BlenderFoundation" "ShortVersion"
-  DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Blender"
-  DeleteRegKey HKLM "SOFTWARE\BlenderFoundation"
+  ReadRegStr $SHORTVERSION HKLM "SOFTWARE\downBGE" "ShortVersion"
+  DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\downBGE"
+  DeleteRegKey HKLM "SOFTWARE\downBGE"
   DeleteRegKey HKCR ".blend"
   DeleteRegKey HKCR "blendfile"
   DeleteRegKey HKCR "CLSID\{D45F043D-F17F-4e8a-8435-70971D9FA46D}"
@@ -222,11 +222,11 @@ Section "Uninstall"
   ; Remove install directory if it's empty
   RMDir $INSTDIR
   ; Remove shortcuts
-  Delete "$SMPROGRAMS\Blender Foundation\Blender\*.*"
-  Delete "$DESKTOP\Blender.lnk"
+  Delete "$SMPROGRAMS\downBGE\*.*"
+  Delete "$DESKTOP\downBGE.lnk"
   ; Remove all link related directories and files
-  RMDir "$SMPROGRAMS\Blender Foundation\Blender"
-  RMDir "$SMPROGRAMS\Blender Foundation"
+  RMDir "$SMPROGRAMS\downBGE"
+  RMDir "$SMPROGRAMS\downBGE"
   
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)' ; Refresh icons
 SectionEnd

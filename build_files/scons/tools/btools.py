@@ -919,13 +919,19 @@ def check_environ():
 
 
 def make_build(env):
-    def _flags(typ):
-        return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
-
-    if env['OURPLATFORM'] == 'wii':
+    if env['OURPLATFORM'] in ('win32-vc', 'win32-mingw', 'linuxcross', 'win64-vc', 'win64-mingw'):
+        return env.Clone(
+                OBJSUFFIX="_for_bld"+env['OBJSUFFIX'],
+                LIBSUFFIX="_for_bld"+env['LIBSUFFIX']
+        )
+    elif env['OURPLATFORM'] == 'wii':
+        # temporary workaround for endianness issues
         toolprefix = 'powerpc-linux-gnu-'
     else:
         toolprefix = ''
+
+    def _flags(typ):
+        return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
 
     return env.Clone(
             CCFLAGS=_flags('CCFLAGS'),

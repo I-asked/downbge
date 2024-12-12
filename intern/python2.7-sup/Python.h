@@ -1,6 +1,11 @@
 #pragma once
 
+#if defined(_WIN32)
+#include <../include/Python.h>
+#else
 #include_next <Python.h>
+#endif
+
 #include <stdlib.h>
 #include <structseq.h>
 #include <longintrepr.h>
@@ -66,6 +71,36 @@ __attribute__((always_inline)) inline int _PyErr_WarnFormat2(PyObject *cat, char
   int res = PyErr_WarnEx(cat, sb, sl);
   free(sb);
   return res;
+}
+#endif
+
+#if defined(_WIN32)
+__inline int vasprintf(char **strp, const char *fmt, va_list ap) {
+  // _vscprintf tells you how big the buffer needs to be
+  int len = _vscprintf(fmt, ap);
+  if (len == -1) {
+      return -1;
+  }
+  size_t size = (size_t)len + 1;
+  char *str = (char *)malloc(size);
+  if (!str) {
+      return -1;
+  }
+  int r = vsnprintf(str, len + 1, fmt, ap);
+  if (r == -1) {
+      free(str);
+      return -1;
+  }
+  *strp = str;
+  return r;
+}
+
+__inline int asprintf(char **strp, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    int r = vasprintf(strp, fmt, ap);
+    va_end(ap);
+    return r;
 }
 #endif
 

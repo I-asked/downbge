@@ -478,8 +478,12 @@ int main(int argc, char** argv)
 	return real_main(argc, argv);
 #endif
 }
-
-inline __attribute__((always_inline)) int real_main(int argc, char** argv)
+#ifdef _WIN32
+__inline
+#else
+inline __attribute__((always_inline))
+#endif
+int real_main(int argc, char** argv)
 {
 	int i;
 	int argc_py_clamped= argc; /* use this so python args can be added after ' - ' */

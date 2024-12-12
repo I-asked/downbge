@@ -744,7 +744,7 @@ static void Image_releaseBuffer(PyImage *self, Py_buffer *buffer)
 
 PyBufferProcs imageBufferProcs = 
 {
-	(getbufferproc)Image_getbuffer,
-	(releasebufferproc)Image_releaseBuffer
+	(readbufferproc)Image_getbuffer,
+	(writebufferproc)Image_releaseBuffer
 };
 

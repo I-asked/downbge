@@ -766,7 +766,7 @@ static PyObject *gLibLoad(PyObject *, PyObject *args, PyObject *kwds)
 		char *ptr = NULL;
 		long long sz = 0;
 
-		if ((PyObject_AsCharBuffer(py_buffer, &ptr, (Py_ssize_t)&sz) < 0)
+		if ((PyObject_AsCharBuffer(py_buffer, (const char **)&ptr, (Py_ssize_t *)&sz) < 0)
 				|| (status=kx_scene->GetSceneConverter()->LinkBlendFileMemory(ptr, sz, path, group, kx_scene, &err_str, options)))	{
 			Py_DECREF(py_buffer);
 			return status->GetProxy();
@@ -2097,10 +2097,10 @@ PyMODINIT_FUNC initBGE(void)
 
 /* minimal required blender modules to run blenderplayer */
 static struct _inittab bge_internal_modules[] = {
-	{"mathutils", PyInit_mathutils},
-	{"bgl", BPyInit_bgl},
-	{"blf", BPyInit_blf},
-	{"aud", AUD_initPython},
+	{"mathutils", (void (*)(void))PyInit_mathutils},
+	{"bgl", (void (*)(void))BPyInit_bgl},
+	{"blf", (void (*)(void))BPyInit_blf},
+	{"aud", (void (*)(void))AUD_initPython},
 	{NULL, NULL}
 };
 
@@ -2123,7 +2123,7 @@ PyObject *initGamePlayerPythonScripting(Main *maggie, int argc, char** argv)
 	//static wchar_t program_path_wchar[FILE_MAX]; /* python holds a reference */
 	//BLI_strncpy_wchar_from_utf8(program_path_wchar, BKE_appdir_program_path(), ARRAY_SIZE(program_path_wchar));
 	//Py_SetProgramName(program_path_wchar);
-	Py_SetProgramName(BKE_appdir_program_path());
+	Py_SetProgramName(strdup(BKE_appdir_program_path()));
 
 	/* Update, Py3.3 resolves attempting to parse non-existing header */
 #if 0
