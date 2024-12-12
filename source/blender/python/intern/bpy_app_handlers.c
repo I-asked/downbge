@@ -206,9 +206,9 @@ PyObject *BPY_app_handlers_struct(void)
 {
 	PyObject *ret;
 
-#if defined(_MSC_VER) || defined(FREE_WINDOWS)
-	BPyPersistent_Type.ob_base.ob_base.ob_type = &PyType_Type;
-#endif
+//#if defined(_MSC_VER) || defined(FREE_WINDOWS)
+//	BPyPersistent_Type.ob_base.ob_base.ob_type = &PyType_Type;
+//#endif
 
 	if (PyType_Ready(&BPyPersistent_Type) < 0) {
 		BLI_assert(!"error initializing 'bpy.app.handlers.persistent'");

@@ -82,9 +82,12 @@ targetdir = normpath(root_build_dir + '/makesdna')
 if not (root_build_dir[0]==os.sep or root_build_dir[1]==':'):
     targetdir = '#' + targetdir
 
-makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_blenlib_for_bld'])
-makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_blenlib_for_bld.a')
-makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+'libbf_intern_guardedalloc_for_bld.a')
+if env['OURPLATFORM'] not in ('win32-vc', 'win32-mingw', 'linuxcross', 'win64-vc', 'win64-mingw'):
+    makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_blenlib_for_bld'])
+else:
+    makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_blenlib'])
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['OBJPREFIX']+'bf_blenlib_for_bld'+makesdna_tool['OBJSUFFIX'])
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['OBJPREFIX']+'bf_intern_guardedalloc_for_bld'+makesdna_tool['OBJSUFFIX'])
 
 dna_dict = dna.Dictionary()
 dna.Depends ('dna.c', makesdna)

@@ -38,7 +38,7 @@
 
 #include "GHOST_ISystemPaths.h"
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #  include "GHOST_SystemPathsWin32.h"
 #elif defined(__APPLE__)
 #  include "GHOST_SystemPathsCocoa.h"
@@ -56,7 +56,7 @@ GHOST_TSuccess GHOST_ISystemPaths::create()
 {
 	GHOST_TSuccess success;
 	if (!m_systemPaths) {
-#ifdef defined(WIN32)
+#if defined(_WIN32)
 		m_systemPaths = new GHOST_SystemPathsWin32();
 #elif defined(__APPLE__)
 		m_systemPaths = new GHOST_SystemPathsCocoa();
