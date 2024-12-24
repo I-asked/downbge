@@ -1,6 +1,10 @@
 h1. downBGE !https://raw.githubusercontent.com/I-asked/downbge/refs/heads/v2.76b-py2/assets/blencat72.png!
 
+!https://dcbadge.limes.pink/api/server/https://discord.gg/dWtSFYyhtg!:https://discord.gg/dWtSFYyhtg
+
 **downBGE** is a fork of the Blender Game Engine, slimmed down for retro hardware.
+
+!https://raw.githubusercontent.com/I-asked/downbge/refs/heads/v2.76b-py2/assets/screenshot.png!
 
 Currently, **downBGE** runs on PC and Nintendo Wii.
 
