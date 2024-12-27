@@ -480,6 +480,8 @@ void BLI_spin_init(SpinLock *spin)
 	*spin = OS_SPINLOCK_INIT;
 #elif defined(__wii__)
 	*spin = SPIN_LOCK_UNLOCKED;
+#elif defined(__3DS__)
+	pthread_mutex_init(spin, NULL);
 #else
 	pthread_spin_init(spin, 0);
 #endif
@@ -491,6 +493,8 @@ void BLI_spin_lock(SpinLock *spin)
 	OSSpinLockLock(spin);
 #elif defined(__wii__)
 	spin_lock(spin);
+#elif defined(__3DS__)
+	pthread_mutex_lock(spin);
 #else
 	pthread_spin_lock(spin);
 #endif
@@ -502,12 +506,14 @@ void BLI_spin_unlock(SpinLock *spin)
 	OSSpinLockUnlock(spin);
 #elif defined(__wii__)
 	spin_unlock(spin);
+#elif defined(__3DS__)
+	pthread_mutex_unlock(spin);
 #else
 	pthread_spin_unlock(spin);
 #endif
 }
 
-#if !defined(__APPLE__) && !defined(__wii__)
+#if !defined(__APPLE__) && !defined(__wii__) && !defined(__3DS__)
 void BLI_spin_end(SpinLock *spin)
 {
 	pthread_spin_destroy(spin);

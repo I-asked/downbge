@@ -927,17 +927,25 @@ def make_build(env):
     elif env['OURPLATFORM'] == 'wii':
         # temporary workaround for endianness issues
         toolprefix = 'powerpc-linux-gnu-'
+        ccflags = []
+        ldflags = []
+    elif env['OURPLATFORM'] in ('psp', 'vita'):
+        toolprefix = ''
+        ccflags = ['-m32']
+        ldflags = ['-m32']
     else:
         toolprefix = ''
+        ccflags = []
+        ldflags = []
 
     def _flags(typ):
-        return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-I') or f.endswith('ENDIAN__'))]
+        return [f for f in env[typ] if not (f.startswith('-m') or f.startswith('-G') or f.startswith('-I') or f.endswith('ENDIAN__'))]
 
     return env.Clone(
-            CCFLAGS=_flags('CCFLAGS'),
+            CCFLAGS=_flags('CCFLAGS') + ccflags,
             CFLAGS=_flags('CFLAGS'),
             CXXFLAGS=_flags('CXXFLAGS'),
-            LINKFLAGS=['-pthread','-static'],
+            LINKFLAGS=['-pthread','-static']+ldflags,
             CC=toolprefix+'gcc',
             CXX=toolprefix+'g++',
             AR=toolprefix+'ar',

@@ -761,7 +761,7 @@ static bool check_the_same(const char *path_a, const char *path_b)
  */
 static int set_permissions(const char *file, const struct stat *st)
 {
-#if defined(__wii__)
+#if defined(__wii__) || defined(__3DS__)
 	return -1;
 #else
 	if (chown(file, st->st_uid, st->st_gid)) {
@@ -800,7 +800,7 @@ static int copy_callback_pre(const char *from, const char *to)
 		return RecursiveOp_Callback_Error;
 	}
 
-#if !defined(__wii__)
+#if !defined(__wii__) && !defined(__3DS__)
 	/* set proper owner and group on new directory */
 	if (chown(to, st.st_uid, st.st_gid)) {
 		perror("chown");
@@ -871,7 +871,7 @@ static int copy_single_file(const char *from, const char *to)
 	         S_ISFIFO(st.st_mode) ||
 	         S_ISSOCK(st.st_mode))
 	{
-#if defined(__vita__) || defined(__wii__)
+#if defined(__vita__) || defined(__wii__) || defined(__3DS__)
     return RecursiveOp_Callback_Error;
 #else
 		/* copy special type of file */

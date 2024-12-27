@@ -101,7 +101,7 @@ void BLI_dynlib_close(DynamicLibrary *lib)
 	MEM_freeN(lib);
 }
 
-#elif defined(__wii__)
+#elif defined(__wii__) || defined(__3DS__)
 
 DynamicLibrary *BLI_dynlib_open(char *name)
 {

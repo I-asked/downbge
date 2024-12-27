@@ -238,6 +238,8 @@ print B.bc.OKGREEN + "Build with debug symbols%s: %s" % (B.bc.ENDC, env['BF_DEBU
 
 if 'blenderlite' in B.targets:
     target_env_defs = {}
+    target_env_defs['WITH_BF_OPENSUBDIV'] = False
+    target_env_defs['WITH_BF_COMPOSITOR'] = False
     target_env_defs['WITH_BF_CYCLES'] = False
     target_env_defs['WITH_BF_OPENEXR'] = False
     target_env_defs['WITH_BF_OPENMP'] = False

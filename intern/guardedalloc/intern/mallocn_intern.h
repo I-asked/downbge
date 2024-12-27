@@ -35,7 +35,7 @@
 /* mmap exception */
 #if defined(WIN32)
 #  include "mmap_win.h"
-#elif defined(__wii__) || defined(__vita__)
+#elif defined(__wii__) || defined(__vita__) || defined(__3DS__)
 #  define mmap(...) (NULL)
 #  define munmap(...) (NULL)
 #  define MAP_SHARED 0

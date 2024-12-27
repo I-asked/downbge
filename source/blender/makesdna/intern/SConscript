@@ -86,8 +86,8 @@ if env['OURPLATFORM'] not in ('win32-vc', 'win32-mingw', 'linuxcross', 'win64-vc
     makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_blenlib_for_bld'])
 else:
     makesdna = makesdna_tool.Program (target = targetdir, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_blenlib'])
-makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['OBJPREFIX']+'bf_blenlib_for_bld'+makesdna_tool['OBJSUFFIX'])
-makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['OBJPREFIX']+'bf_intern_guardedalloc_for_bld'+makesdna_tool['OBJSUFFIX'])
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['LIBPREFIX']+'bf_blenlib'+makesdna_tool['LIBSUFFIX'])
+makesdna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesdna_tool['LIBPREFIX']+'bf_intern_guardedalloc'+makesdna_tool['LIBSUFFIX'])
 
 dna_dict = dna.Dictionary()
 dna.Depends ('dna.c', makesdna)

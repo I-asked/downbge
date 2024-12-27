@@ -230,9 +230,9 @@ if env['OURPLATFORM'] not in ('win32-vc', 'win32-mingw', 'linuxcross', 'win64-vc
     makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc_for_bld', 'bf_dna_for_bld', 'bf_blenlib_for_bld'])
 else:
     makesrna = makesrna_tool.Program (target = targetpath, source = source_files, LIBS=['bf_intern_guardedalloc', 'bf_dna', 'bf_blenlib'])
-makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['OBJPREFIX']+'bf_blenlib_for_bld'+makesrna_tool['OBJSUFFIX'])
-makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['OBJPREFIX']+'bf_intern_guardedalloc_for_bld'+makesrna_tool['OBJSUFFIX'])
-makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['OBJPREFIX']+'bf_dna_for_bld'+makesrna_tool['OBJSUFFIX'])
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['LIBPREFIX']+'bf_blenlib'+makesrna_tool['LIBSUFFIX'])
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['LIBPREFIX']+'bf_intern_guardedalloc'+makesrna_tool['LIBSUFFIX'])
+makesrna_tool.Depends (source_files, root_build_dir+os.sep+'lib'+os.sep+makesrna_tool['LIBPREFIX']+'bf_dna'+makesrna_tool['LIBSUFFIX'])
 
 rna_dict = rna.Dictionary()
 rna.Depends (generated_files, makesrna)

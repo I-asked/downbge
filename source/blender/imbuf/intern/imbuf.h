@@ -45,7 +45,7 @@
 #include <string.h>
 #include <math.h>
 
-#if !defined(WIN32) && !defined(__wii__)
+#if !defined(WIN32) && !defined(__wii__) && !defined(__3DS__)
 #  include <sys/mman.h>
 #  define O_BINARY 0
 #endif

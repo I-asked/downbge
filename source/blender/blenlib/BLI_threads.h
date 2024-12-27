@@ -129,6 +129,8 @@ void BLI_mutex_unlock(ThreadMutex *mutex);
 typedef OSSpinLock SpinLock;
 #elif defined(__wii__)
 typedef spinlock_t SpinLock;
+#elif defined(__3DS__)
+typedef pthread_mutex_t SpinLock;
 #else
 typedef pthread_spinlock_t SpinLock;
 #endif

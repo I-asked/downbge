@@ -38,7 +38,17 @@ AUD_AnimateableProperty::AUD_AnimateableProperty(int count) :
 {
 	memset(getBuffer(), 0, count * sizeof(float));
 
+#ifdef __wii__
 	pthread_mutex_init(&m_mutex, NULL);
+#else
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+	pthread_mutex_init(&m_mutex, &attr);
+
+	pthread_mutexattr_destroy(&attr);
+#endif
 }
 
 AUD_AnimateableProperty::AUD_AnimateableProperty(int count, float value) :
@@ -49,7 +59,17 @@ AUD_AnimateableProperty::AUD_AnimateableProperty(int count, float value) :
 	for(int i = 0; i < count; i++)
 		buf[i] = value;
 
+#ifdef __wii__
 	pthread_mutex_init(&m_mutex, NULL);
+#else
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+	pthread_mutex_init(&m_mutex, &attr);
+
+	pthread_mutexattr_destroy(&attr);
+#endif
 }
 
 void AUD_AnimateableProperty::updateUnknownCache(int start, int end)

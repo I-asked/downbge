@@ -379,7 +379,7 @@ void *MEM_lockfree_mapallocN(size_t len, const char *str)
 	/* on 64 bit, simply use calloc instead, as mmap does not support
 	 * allocating > 4 GB on Windows. the only reason mapalloc exists
 	 * is to get around address space limitations in 32 bit OSes. */
-#ifdef __wii__
+#if defined(__wii__) || defined(__3DS__)
 	return MEM_lockfree_callocN(len, str);
 #else
 	if (sizeof(void *) >= 8)

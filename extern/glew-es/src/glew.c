@@ -34,7 +34,7 @@
 #  include <GL/eglew.h>
 #elif defined(_WIN32)
 #  include <GL/wglew.h>
-#elif !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+#elif !defined(__3DS__) && !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
 #  include <GL/glxew.h>
 #endif
 
@@ -296,7 +296,10 @@ void* NSGLGetProcAddress (const GLubyte *name)
 #      define glewGetProcAddress(name) dlGetProcAddress(name)
 #    elif defined(__wii__)
 extern void *ogx_get_proc_address(const char *proc);
-#      define glewGetProcAddress(name) ogx_get_proc_address((const GLubyte *)name)
+#      define glewGetProcAddress(name) ogx_get_proc_address((const char *)name)
+#    elif defined(__3DS__)
+extern void *SDL_GL_GetProcAddress(const char *proc);
+#      define glewGetProcAddress(name) SDL_GL_GetProcAddress(name)
 #    else /* __linux */
 #      define glewGetProcAddress(name) (*glXGetProcAddressARB)(name)
 #    endif
@@ -15616,7 +15619,7 @@ GLenum wglewContextInit (WGLEW_CONTEXT_ARG_DEF_LIST)
   return GLEW_OK;
 }
 
-#elif !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+#elif !defined(__3DS__) && !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
 
 PFNGLXGETCURRENTDISPLAYPROC __glewXGetCurrentDisplay = NULL;
 
@@ -16742,7 +16745,7 @@ GLboolean glewExperimental = GL_FALSE;
 extern GLenum eglewContextInit (EGLDisplay display);
 #elif defined(_WIN32)
 extern GLenum wglewContextInit (void);
-#elif !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX) /* _UNIX */
+#elif !defined(__3DS__) && !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX) /* _UNIX */
 extern GLenum glxewContextInit (void);
 #endif /* _WIN32 */
 
@@ -16754,7 +16757,7 @@ GLenum glewInit ()
   return eglewContextInit(eglGetCurrentDisplay());
 #elif defined(_WIN32)
   return wglewContextInit();
-#elif !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX) /* _UNIX */
+#elif !defined(__3DS__) && !defined(__wii__) && !defined(__APPLE__) || defined(GLEW_APPLE_GLX) /* _UNIX */
   return glxewContextInit();
 #endif /* GLEW_INC_EGL */
   return r;

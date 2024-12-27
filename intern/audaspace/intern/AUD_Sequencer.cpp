@@ -51,7 +51,17 @@ AUD_Sequencer::AUD_Sequencer(AUD_Specs specs, float fps, bool muted) :
 	float f = 1;
 	m_volume.write(&f);
 
+#ifdef __wii__
 	pthread_mutex_init(&m_mutex, NULL);
+#else
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+	pthread_mutex_init(&m_mutex, &attr);
+
+	pthread_mutexattr_destroy(&attr);
+#endif
 }
 
 AUD_Sequencer::~AUD_Sequencer()
